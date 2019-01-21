@@ -11,7 +11,7 @@ GCC	=	gcc
 
 CFLAGS	=	-Wall -Wextra -g
 
-SDL =   -L./lib -lSDL2-2.0
+SDL =   -L./lib -lSDL2 -lSDL2_image
 
 RM	=	rm -rf
 

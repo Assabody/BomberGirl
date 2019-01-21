@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 
 typedef struct  system_manager_s
 {
@@ -19,6 +20,20 @@ typedef struct  system_manager_s
     SDL_Event events;
 }   system_manager_t;
 
+//Texture
+typedef struct  texture_container_s
+{
+  SDL_Texture* grass;
+  SDL_Rect grassPosition;
+}   texture_container_t;
+
+typedef struct  game_s
+{
+  SDL_Renderer *renderer;
+}   game_t;
+
 void inputManager(system_manager_t *manager);
+void mapDraw(game_t *game, texture_container_t *texture_container);
+int init();
 
 #endif /* !_MAIN_H_ */
