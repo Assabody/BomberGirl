@@ -5,17 +5,17 @@
 ##      Makefile
 ##
 
-SRC	=	main.c
+SRC		=	sources/main.c
 
-GCC	=	gcc
+GCC		=	gcc
 
 CFLAGS	=	-Wall -Wextra -g
 
-SDL =   -L./lib -lSDL2 -lSDL2_image
+SDL		=   -L./lib -lSDL2 -lSDL2_image
 
-RM	=	rm -rf
+RM		=	rm -rf
 
-MV	=	mv
+MV		=	mv
 
 NAME	=	bomberman
 
@@ -24,14 +24,14 @@ OBJ		=	$(SRC:%.c=%.o)
 $(NAME)	:	$(OBJ)
 			$(GCC) $(CFLAGS) $(SDL) $(SRC) -o $(NAME)
 
-all		: $(NAME)
+all		:	$(NAME)
 
 clean	:
-		$(RM) $(OBJ)
+			$(RM) $(OBJ)
 
 fclean	:	clean
-		$(RM) $(NAME)
+			$(RM) $(NAME)
 
-re	:	fclean all
+re		:	fclean all
 
 .PHONY	: 	all clean fclean re
