@@ -25,6 +25,9 @@ typedef struct  game_s
   SDL_Texture	*grass;
   SDL_Rect	grassPosition;
 
+  SDL_Texture	*stone;
+  SDL_Rect      stonePosition;
+
   SDL_Texture	*player;
   SDL_Rect	playerPosition;
   SDL_Rect	oldPlayerPosition;
@@ -33,9 +36,8 @@ typedef struct  game_s
   SDL_Rect	bombePosition;
 
   int		bombeActive;
-  int		bombeDelay;
-
   int		speed;
+  int		bombeDuration;
 }		game_t;
 
 void    mapDraw(game_t *);
@@ -45,6 +47,7 @@ void	movePlayer(game_t*, SDL_Keycode);
 void	quitGame(game_t *);
 void    initTextures(game_t *);
 void	gameDestroy(game_t *);
+void    initBombe(game_t *);
 
 int	checkEvents(game_t *);
 void	gameDraw(game_t *);

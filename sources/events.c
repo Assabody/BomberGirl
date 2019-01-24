@@ -15,9 +15,7 @@ int    checkEvents(game_t *game)
       switch (event.key.keysym.sym) {
       case SDLK_SPACE:
 	printf("BOMBE\n");
-	game->bombeActive = 1;
-	game->oldPlayerPosition.x = game->playerPosition.x;
-	game->oldPlayerPosition.y = game->playerPosition.y;
+	initBombe(game);
 	break;
       case SDLK_ESCAPE:
 	quit = 0;
@@ -37,4 +35,24 @@ int    checkEvents(game_t *game)
 
   }
   return (quit);
+}
+
+void	initBombe(game_t *game)
+{
+  SDL_Surface* bombeSurface = IMG_Load("./assets/images/bombe.png");
+  if (bombeSurface == NULL) {
+    fprintf(stderr, SDL_GetError());
+    gameDestroy(game);
+  } else {
+    game->bombe = SDL_CreateTextureFromSurface(game->renderer, bombeSurface);
+    if (!game->bombe) {
+      fprintf(stderr, SDL_GetError());
+      gameDestroy(game);
+    }
+    SDL_FreeSurface(bombeSurface);
+  }
+  game->bombeActive = 1;
+  game->bombeDuration = 180;
+  game->oldPlayerPosition.x = game->playerPosition.x;
+  game->oldPlayerPosition.y = game->playerPosition.y;
 }
