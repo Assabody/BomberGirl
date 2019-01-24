@@ -14,37 +14,36 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-typedef struct  system_manager_s
-{
-    int running;
-    SDL_Event events;
-}   system_manager_t;
-
-//Texture
-typedef struct  texture_container_s
-{
-    SDL_Texture* grass;
-    SDL_Rect grassPosition;
-    SDL_Texture* player;
-    SDL_Rect playerPosition;
-    SDL_Texture* bombe;
-    SDL_Rect bombePosition;
-}   texture_container_t;
-
 typedef struct  game_s
 {
-    SDL_Renderer *renderer;
-}   game_t;
+  
+  int running;
+  SDL_Point screenSize;
+  SDL_Window *pWindow;
+  SDL_Renderer *renderer;
 
-void    mapDraw(game_t *game, texture_container_t *texture_container);
-void    playerDraw(game_t *game, texture_container_t *texture_container);
-void	movePlayer(game_t *game, texture_container_t *texture_container, system_manager_t * system_manager, char* direction);
+  SDL_Texture* grass;
+  SDL_Rect grassPosition;
 
-void    bombeDraw(game_t *game, texture_container_t *texture_container);
+  SDL_Texture* player;
+  SDL_Rect playerPosition;
 
-void	checkEvents(game_t *game, texture_container_t *texture_container, system_manager_t *system_manager);
+  SDL_Texture* bombe;
+  SDL_Rect bombePosition;
+}		game_t;
 
+void    mapDraw(game_t *);
+void    playerDraw(game_t *);
+void    bombeDraw(game_t *);
+void	movePlayer(game_t*, SDL_Keycode);
+void	quitGame(game_t *);
+void    initTextures(game_t *);
+void	gameDestroy(game_t *);
 
-int     init();
+int	checkEvents(game_t *);
+int	gameDraw(game_t *);
 
-#endif /* !_MAIN_H_ */
+game_t* init();
+game_t*	initStructs();
+
+#endif

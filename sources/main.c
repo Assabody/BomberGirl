@@ -1,59 +1,130 @@
 #include "../includes/main.h"
 
-int init() {
-    system_manager_t system_manager;
-    texture_container_t *texture_container = malloc(sizeof(texture_container_t));
-    SDL_Surface* surfaceGrass = IMG_Load("./assets/images/grass1.png");
-    if (surfaceGrass == NULL) {
-      printf("ERROR : FAILED TO LEAD THE IMAGE");
+game_t* init() {
+  game_t *game = initStructs();
+  
+  if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+    fprintf(stderr, SDL_GetError());
+    gameDestroy(game);
+    return NULL;
+  }
+  game->pWindow = SDL_CreateWindow("Bombergirl", SDL_WINDOWPOS_UNDEFINED,
+				   SDL_WINDOWPOS_UNDEFINED,
+				   game->screenSize.x,
+				   game->screenSize.y,
+				   SDL_WINDOW_SHOWN);
+  if (game->pWindow) {
+    game->renderer = SDL_CreateRenderer(game->pWindow, -1, SDL_RENDERER_ACCELERATED);
+    if (!game->renderer) {
+      fprintf(stderr, SDL_GetError());
+      gameDestroy(game);
+      return NULL;
+    }
+  } else {
+    fprintf(stderr, SDL_GetError());
+    gameDestroy(game);
+    return NULL;
+  }
+  initTextures(game);
+  return game;
+}
+
+game_t	*initStructs()
+{
+  game_t *game = NULL;
+  game = malloc(sizeof(game_t));
+  game->renderer = NULL;
+  game->player = NULL;
+  game->pWindow = NULL;
+  game->screenSize.x = 640;
+  game->screenSize.y = 480;
+  game->playerPosition.x = 40;
+  game->playerPosition.y = 40;
+  game->playerPosition.w = 40;
+  game->playerPosition.h = 40;
+  game->bombePosition.x = game->playerPosition.x;
+  game->bombePosition.y = game->playerPosition.y;
+  game->bombePosition.w = 40;
+  game->bombePosition.h = 40;
+  return (game);
+}
+
+void	initTextures(game_t *game)
+{
+ SDL_Surface* grassSurface = IMG_Load("./assets/images/grass.png");
+  if (grassSurface == NULL) {
+    fprintf(stderr, SDL_GetError());
+    gameDestroy(game);
+  } else {
+    game->grass = SDL_CreateTextureFromSurface(game->renderer, grassSurface);
+    if (!game->grass) {
+      fprintf(stderr, SDL_GetError());
+      gameDestroy(game);
+    }
+    SDL_FreeSurface(grassSurface);
+  }
+
+  SDL_Surface* playerSurface = IMG_Load("./assets/images/bombergirl.png");
+  if (playerSurface == NULL) {
+    fprintf(stderr, SDL_GetError());
+    gameDestroy(game);
+  } else {
+    game->player = SDL_CreateTextureFromSurface(game->renderer, playerSurface);
+    if (!game->player) {
+      fprintf(stderr, SDL_GetError());
+      gameDestroy(game);
+    }
+    SDL_FreeSurface(playerSurface);
+  }
+
+  SDL_Surface* bombeSurface = IMG_Load("./assets/images/bombe.png");
+  if (bombeSurface == NULL) {
+    fprintf(stderr, SDL_GetError());
+    gameDestroy(game);
+  } else {
+    game->bombe = SDL_CreateTextureFromSurface(game->renderer, bombeSurface);
+    if (!game->bombe) {
+      fprintf(stderr, SDL_GetError());
+      gameDestroy(game);
+    }
+    SDL_FreeSurface(bombeSurface);
+  }  
+}
+
+void	gameDestroy(game_t *game)
+{
+  if (game) {
+    if (game->player) {
+      SDL_DestroyTexture(game->player);
+    }
+    if (game->grass) {
+      SDL_DestroyTexture(game->grass);
+    }
+    if (game->bombe) {
+      SDL_DestroyTexture(game->bombe);
     }
     
-    game_t *game = malloc(sizeof(game_t));
-    game->renderer = NULL;
-    
-    /* Initialisation simple */
-    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-        fprintf(stdout, SDL_GetError());
-	// game_destroy();
-        return -1;
+    if (game->renderer) {
+      SDL_DestroyRenderer(game->renderer);
     }
 
-    /* Création de la fenêtre */
-    SDL_Window *pWindow = NULL;
-    pWindow = SDL_CreateWindow("Bombergirl", SDL_WINDOWPOS_UNDEFINED,
-                               SDL_WINDOWPOS_UNDEFINED,
-                               640,
-                               480,
-                               SDL_WINDOW_SHOWN);
-
-    if (pWindow != NULL) {
-        system_manager.running = 1;
-    } else {
-        system_manager.running = 0;
+    if (game->pWindow) {
+      SDL_DestroyWindow(game->pWindow);
     }
-    
-    //Creation du renderer une fois la windows genere
-    game->renderer = SDL_CreateRenderer(pWindow, -1, SDL_RENDERER_ACCELERATED);
-
-    //Chargement d'une texture
-    texture_container->grass = SDL_CreateTextureFromSurface(game->renderer, surfaceGrass);
-    /* SDL_FreeSurface(surfaceGrass); */
-    
-    mapDraw(game, texture_container);
-    playerDraw(game, texture_container);
-    while(system_manager.running) {
-	checkEvents(game, texture_container, &system_manager);
-    }
-    SDL_DestroyTexture(texture_container->grass);
-    SDL_DestroyRenderer(game->renderer);
-    SDL_DestroyWindow(pWindow);
     SDL_Quit();
-    return 0;
+    free(game);
+  }
 }
 
 int main()
 {
-  init();
-
-  return 0;
+  int	quit = 1;
+  game_t *game = init();
+  
+  while (quit != 0)
+    {
+      quit = gameDraw(game);
+    }
+  gameDestroy(game);
+  return (EXIT_SUCCESS);
 }

@@ -1,25 +1,38 @@
 #include "../includes/main.h"
 
-void    checkEvents(game_t *game, texture_container_t *texture_container, system_manager_t *system_manager)
+
+int    checkEvents(game_t *game)
 {
   SDL_Event event;
-  while (SDL_PollEvent(&event) != 0) {
-
-    switch (event.type) {
-    case SDL_QUIT:
-      system_manager->running = 0;
-      printf("Vous quittez le jeu");
-      break;
-    }    
-    switch (event.key.keysym.sym) {
-    case SDLK_SPACE:
-      bombeDraw(game, texture_container);
-      break;
-    case SDLK_UP:
-      movePlayer(game, texture_container, system_manager, "up");
-      break;
+  int	quit = 1;
+  
+  if (SDL_PollEvent(&event)) {
+    if (event.type == SDL_QUIT) {
+      printf("Vous quittez le jeu\n");
+      quit = 0;
+    }
+    if (event.type == SDL_KEYDOWN) {
+      switch (event.key.keysym.sym) {
+      case SDLK_SPACE:
+	printf("BOMBE\n");
+	bombeDraw(game);
+	break;
+      case SDLK_ESCAPE:
+	quit = 0;
+	printf("Vous quittez le jeu\n");
+	break;
+      case SDLK_UP:
+      case SDLK_DOWN:
+      case SDLK_LEFT:
+      case SDLK_RIGHT:
+	movePlayer(game, event.key.keysym.sym);
+	break;
+      default:
+	fprintf(stderr, "Touche inconnue\n");
+	break;
+      }
     }
 
   }
-
+  return (quit);
 }
