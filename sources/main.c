@@ -3,6 +3,11 @@
 int init() {
     system_manager_t system_manager;
     texture_container_t *texture_container = malloc(sizeof(texture_container_t));
+    SDL_Surface* surfaceGrass = IMG_Load("./assets/images/grass1.png");
+    if (surfaceGrass == NULL) {
+      printf("ERROR : FAILED TO LEAD THE IMAGE");
+    }
+    
     game_t *game = malloc(sizeof(game_t));
     game->renderer = NULL;
     
@@ -31,13 +36,12 @@ int init() {
     game->renderer = SDL_CreateRenderer(pWindow, -1, SDL_RENDERER_ACCELERATED);
 
     //Chargement d'une texture
-    SDL_Surface* surfaceGrass = IMG_Load("./assets/images/grass1.png");
     texture_container->grass = SDL_CreateTextureFromSurface(game->renderer, surfaceGrass);
-    SDL_FreeSurface(surfaceGrass);
+    /* SDL_FreeSurface(surfaceGrass); */
     
+    mapDraw(game, texture_container);
+    playerDraw(game, texture_container);
     while(system_manager.running) {
-        mapDraw(game, texture_container);
-        playerDraw(game, texture_container);
 	checkEvents(game, texture_container, &system_manager);
     }
     SDL_DestroyTexture(texture_container->grass);
