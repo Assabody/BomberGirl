@@ -5,7 +5,9 @@
 ##      Makefile
 ##
 
-SRC		=	sources/events.c \
+SRC		=	sources/moves.c \
+			sources/drawing.c \
+			sources/events.c \
 			sources/main.c
 
 GCC		=	gcc
