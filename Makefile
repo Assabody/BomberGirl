@@ -9,7 +9,7 @@ SRC		=	sources/main.c
 
 GCC		=	gcc
 
-CFLAGS	=	-Wall -Wextra -g
+CFLAGS		=	-Wall -Wextra -g
 
 SDL		=   -L./lib -lSDL2 -lSDL2_image
 
@@ -17,21 +17,21 @@ RM		=	rm -rf
 
 MV		=	mv
 
-NAME	=	bomberman
+NAME		=	bomberman
 
 OBJ		=	$(SRC:%.c=%.o)
 
-$(NAME)	:	$(OBJ)
+$(NAME)		:	$(OBJ)
 			$(GCC) $(CFLAGS) $(SDL) $(SRC) -o $(NAME)
 
 all		:	$(NAME)
 
-clean	:
+clean		:
 			$(RM) $(OBJ)
 
-fclean	:	clean
+fclean		:	clean
 			$(RM) $(NAME)
 
 re		:	fclean all
 
-.PHONY	: 	all clean fclean re
+.PHONY		: 	all clean fclean re
