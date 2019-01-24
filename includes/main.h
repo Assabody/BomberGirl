@@ -17,19 +17,25 @@
 typedef struct  game_s
 {
   
-  int running;
-  SDL_Point screenSize;
-  SDL_Window *pWindow;
-  SDL_Renderer *renderer;
+  int		running;
+  SDL_Point	screenSize;
+  SDL_Window	*pWindow;
+  SDL_Renderer	*renderer;
 
-  SDL_Texture* grass;
-  SDL_Rect grassPosition;
+  SDL_Texture	*grass;
+  SDL_Rect	grassPosition;
 
-  SDL_Texture* player;
-  SDL_Rect playerPosition;
+  SDL_Texture	*player;
+  SDL_Rect	playerPosition;
+  SDL_Rect	oldPlayerPosition;
+  
+  SDL_Texture*	bombe;
+  SDL_Rect	bombePosition;
 
-  SDL_Texture* bombe;
-  SDL_Rect bombePosition;
+  int		bombeActive;
+  int		bombeDelay;
+
+  int		speed;
 }		game_t;
 
 void    mapDraw(game_t *);
@@ -41,7 +47,7 @@ void    initTextures(game_t *);
 void	gameDestroy(game_t *);
 
 int	checkEvents(game_t *);
-int	gameDraw(game_t *);
+void	gameDraw(game_t *);
 
 game_t* init();
 game_t*	initStructs();

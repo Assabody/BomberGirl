@@ -5,7 +5,7 @@ int    checkEvents(game_t *game)
 {
   SDL_Event event;
   int	quit = 1;
-  
+
   if (SDL_PollEvent(&event)) {
     if (event.type == SDL_QUIT) {
       printf("Vous quittez le jeu\n");
@@ -15,7 +15,9 @@ int    checkEvents(game_t *game)
       switch (event.key.keysym.sym) {
       case SDLK_SPACE:
 	printf("BOMBE\n");
-	bombeDraw(game);
+	game->bombeActive = 1;
+	game->oldPlayerPosition.x = game->playerPosition.x;
+	game->oldPlayerPosition.y = game->playerPosition.y;
 	break;
       case SDLK_ESCAPE:
 	quit = 0;

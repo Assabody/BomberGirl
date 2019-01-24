@@ -6,7 +6,9 @@ void    playerDraw(game_t *game) {
 
 
 void    bombeDraw(game_t *game) {
-  SDL_RenderCopy(game->renderer, game->bombe, NULL, &game->bombePosition);
+  game->bombePosition.x = game->oldPlayerPosition.x;
+  game->bombePosition.y = game->oldPlayerPosition.y;
+    SDL_RenderCopy(game->renderer, game->bombe, NULL, &game->bombePosition);
 }
 
 void mapDraw(game_t *game)
@@ -26,16 +28,16 @@ void mapDraw(game_t *game)
   }
 }
 
-int	gameDraw(game_t *game)
+void	gameDraw(game_t *game)
 {
-  int	quit = 0;
-  SDL_SetRenderDrawColor(game->renderer, 50, 50, 50, 255);
   SDL_RenderClear(game->renderer);
-
   mapDraw(game);
   playerDraw(game);
-  quit = checkEvents(game);
-  
+  if (game->bombeActive == 1) {
+    bombeDraw(game);
+  }
+  if (game->bombeDelay == 0) {
+    game->bombeActive = 0;
+  }
   SDL_RenderPresent(game->renderer);
-  return (quit);
 }

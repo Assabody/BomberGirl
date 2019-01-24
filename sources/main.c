@@ -35,17 +35,18 @@ game_t	*initStructs()
   game = malloc(sizeof(game_t));
   game->renderer = NULL;
   game->player = NULL;
+  game->bombe = NULL;
   game->pWindow = NULL;
+  game->speed = 40;
   game->screenSize.x = 640;
   game->screenSize.y = 480;
   game->playerPosition.x = 40;
   game->playerPosition.y = 40;
   game->playerPosition.w = 40;
   game->playerPosition.h = 40;
-  game->bombePosition.x = game->playerPosition.x;
-  game->bombePosition.y = game->playerPosition.y;
   game->bombePosition.w = 40;
   game->bombePosition.h = 40;
+  game->bombeDelay = 5;
   return (game);
 }
 
@@ -121,9 +122,12 @@ int main()
   int	quit = 1;
   game_t *game = init();
   
+  SDL_SetRenderDrawColor(game->renderer, 50, 50, 50, 255);
   while (quit != 0)
     {
-      quit = gameDraw(game);
+      gameDraw(game);
+      quit = checkEvents(game);
+      game->bombeDelay--;
     }
   gameDestroy(game);
   return (EXIT_SUCCESS);
