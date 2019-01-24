@@ -15,7 +15,7 @@ int init() {
 
     /* Création de la fenêtre */
     SDL_Window *pWindow = NULL;
-    pWindow = SDL_CreateWindow("Bomberman", SDL_WINDOWPOS_UNDEFINED,
+    pWindow = SDL_CreateWindow("Bombergirl", SDL_WINDOWPOS_UNDEFINED,
                                SDL_WINDOWPOS_UNDEFINED,
                                640,
                                480,
@@ -37,7 +37,8 @@ int init() {
     
     while(system_manager.running) {
         mapDraw(game, texture_container);
-        playerDraw(game, texture_container, &system_manager);
+        playerDraw(game, texture_container);
+	checkEvents(game, texture_container, &system_manager);
     }
     SDL_DestroyTexture(texture_container->grass);
     SDL_DestroyRenderer(game->renderer);
@@ -46,33 +47,28 @@ int init() {
     return 0;
 }
 
-void    playerDraw(game_t *game, texture_container_t *texture_container, system_manager_t *system_manager) {
-    SDL_Event event;
-    SDL_Rect dstrect = { 40, 40, 40, 40 };
+void    playerDraw(game_t *game, texture_container_t *texture_container) {
+     SDL_Rect dstrect = { 40, 40, 40, 40 };
     SDL_Surface* image = IMG_Load("./assets/images/bombergirl.png");
 
     if (image == NULL) {
         printf("ERROR : FAILED TO LEAD THE IMAGE");
     }
     texture_container->player = SDL_CreateTextureFromSurface(game->renderer, image);
-    SDL_FreeSurface(image);
-    while (system_manager->running) {
-        SDL_RenderCopy(game->renderer, texture_container->player, NULL, &dstrect);
-        SDL_RenderPresent(game->renderer);
+    /* SDL_FreeSurface(image); */
+    SDL_RenderCopy(game->renderer, texture_container->player, NULL, &dstrect);
+    SDL_RenderPresent(game->renderer);
+}
 
-        SDL_WaitEvent(&event);
-        switch (event.key.keysym.sym) {
-        case SDLK_SPACE:
-            bombeDraw(game, texture_container, system_manager);
-            break;
-        }
-        
-    }
+void	movePlayer(game_t *game, texture_container_t *texture_container, system_manager_t *system_manager, char *direction) {
+  (void) system_manager;
+  (void) game;
+  (void) texture_container;
+  printf(direction);
 }
 
 
-void    bombeDraw(game_t *game, texture_container_t *texture_container, system_manager_t *system_manager) {
-    SDL_Event event;
+void    bombeDraw(game_t *game, texture_container_t *texture_container) {
     SDL_Rect dstrect = { 40, 40, 40, 40 };
     SDL_Surface* image = IMG_Load("./assets/images/bombe.png");
     
@@ -80,20 +76,10 @@ void    bombeDraw(game_t *game, texture_container_t *texture_container, system_m
         printf("ERROR : FAILED TO LEAD THE IMAGE");
     }
     texture_container->bombe = SDL_CreateTextureFromSurface(game->renderer, image);
-    SDL_FreeSurface(image);   
-    while (system_manager->running) {
-        SDL_RenderCopy(game->renderer, texture_container->bombe, NULL, &dstrect);
-        SDL_RenderPresent(game->renderer);
-        SDL_WaitEvent(&event);
-        switch (event.type) {
-        case SDL_QUIT:
-            system_manager->running = 0;
-            printf("Vous quittez le jeu");
-            break;
-        }
-        
-    }
-}
+    /* SDL_FreeSurface(image);    */
+    SDL_RenderCopy(game->renderer, texture_container->bombe, NULL, &dstrect);
+    SDL_RenderPresent(game->renderer);
+ }
 
 void mapDraw(game_t *game, texture_container_t *texture_container)
 {

@@ -5,7 +5,8 @@
 ##      Makefile
 ##
 
-SRC		=	sources/main.c
+SRC		=	sources/events.c \
+			sources/main.c
 
 GCC		=	gcc
 

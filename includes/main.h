@@ -37,8 +37,13 @@ typedef struct  game_s
 }   game_t;
 
 void    mapDraw(game_t *game, texture_container_t *texture_container);
-void    playerDraw(game_t *game, texture_container_t *texture_container, system_manager_t *manager);
-void    bombeDraw(game_t *game, texture_container_t *texture_container, system_manager_t *manager);
+void    playerDraw(game_t *game, texture_container_t *texture_container);
+void	movePlayer(game_t *game, texture_container_t *texture_container, system_manager_t * system_manager, char* direction);
+
+void    bombeDraw(game_t *game, texture_container_t *texture_container);
+
+void	checkEvents(game_t *game, texture_container_t *texture_container, system_manager_t *system_manager);
+
 
 int     init();
 
