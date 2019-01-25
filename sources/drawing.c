@@ -35,16 +35,15 @@ void mapDraw(game_t *game)
 void    drawBombs(game_t *game)
 {
     if (game->bomb != NULL) {
-        SDL_RenderCopy(game->renderer, game->bombTexture, NULL, &game->bomb->position);
-        printf("printing bomb\n");
-    } else {
-        printf("no bombs\n");
+        SDL_RenderCopy(game->renderer, game->bombTexture, &game->bomb->position, &game->bomb->position);
+        printf("printing bomb %d\n", game->bomb->position.x);
     }
 }
 
 void	gameDraw(game_t *game)
 {
   SDL_RenderClear(game->renderer);
+
   mapDraw(game);
   if (game->bomb != NULL && game->bomb->duration > 0) {
     game->bomb->duration--;
