@@ -37,7 +37,7 @@ game_t	*initStructs()
   game->player = NULL;
   game->bombe = NULL;
   game->pWindow = NULL;
-  game->speed = 40;
+  game->speed = 5;
   game->screenSize.x = 640;
   game->screenSize.y = 480;
   game->playerPosition.x = 40;

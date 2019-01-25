@@ -52,7 +52,7 @@ void	initBombe(game_t *game)
     SDL_FreeSurface(bombeSurface);
   }
   game->bombeActive = 1;
-  game->bombeDuration = 180;
+  game->bombeDuration = 260;
   game->oldPlayerPosition.x = game->playerPosition.x;
   game->oldPlayerPosition.y = game->playerPosition.y;
 }
