@@ -1,32 +1,32 @@
 #include "../includes/main.h"
 
-game_t *init() {
-    game_t *game = initStructs();
-
-    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-        fprintf(stderr, SDL_GetError());
-        gameDestroy(game);
-        return NULL;
+game_t* init() {
+  game_t *game = initStructs();
+  
+  if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+    fprintf(stderr, SDL_GetError());
+    gameDestroy(game);
+    return NULL;
+  }
+  game->pWindow = SDL_CreateWindow("Bombergirl", SDL_WINDOWPOS_UNDEFINED,
+				   SDL_WINDOWPOS_UNDEFINED,
+				   game->screenSize.x,
+				   game->screenSize.y,
+				   SDL_WINDOW_SHOWN);
+  if (game->pWindow) {
+    game->renderer = SDL_CreateRenderer(game->pWindow, -1, SDL_RENDERER_ACCELERATED);
+    if (!game->renderer) {
+      fprintf(stderr, SDL_GetError());
+      gameDestroy(game);
+      return NULL;
     }
-    game->pWindow = SDL_CreateWindow("Bombergirl", SDL_WINDOWPOS_UNDEFINED,
-                                     SDL_WINDOWPOS_UNDEFINED,
-                                     game->screenSize.x,
-                                     game->screenSize.y,
-                                     SDL_WINDOW_SHOWN);
-    if (game->pWindow) {
-        game->renderer = SDL_CreateRenderer(game->pWindow, -1, SDL_RENDERER_ACCELERATED);
-        if (!game->renderer) {
-            fprintf(stderr, SDL_GetError());
-            gameDestroy(game);
-            return NULL;
-        }
-    } else {
-        fprintf(stderr, SDL_GetError());
-        gameDestroy(game);
-        return NULL;
-    }
-    initTextures(game);
-    return game;
+  } else {
+    fprintf(stderr, SDL_GetError());
+    gameDestroy(game);
+    return NULL;
+  }
+  initTextures(game);
+  return game;
 }
 
 game_t *initStructs() {
@@ -36,7 +36,7 @@ game_t *initStructs() {
     game->player = NULL;
     game->bomb = NULL;
     game->pWindow = NULL;
-    game->speed = 40;
+    game->speed = 5;
     game->screenSize.x = 640;
     game->screenSize.y = 480;
     game->playerPosition.x = 40;
