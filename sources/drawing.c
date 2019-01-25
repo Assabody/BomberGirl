@@ -6,9 +6,7 @@ void    playerDraw(game_t *game) {
 
 
 void    bombeDraw(game_t *game) {
-  game->bombePosition.x = game->oldPlayerPosition.x;
-  game->bombePosition.y = game->oldPlayerPosition.y;    
-  SDL_RenderCopy(game->renderer, game->bombe, NULL, &game->bombePosition);
+  SDL_RenderCopy(game->renderer, game->bombTexture, NULL, &game->bomb->position);
 }
 
 void mapDraw(game_t *game)
@@ -34,16 +32,26 @@ void mapDraw(game_t *game)
   }
 }
 
+void    drawBombs(game_t *game)
+{
+    if (game->bomb != NULL) {
+        SDL_RenderCopy(game->renderer, game->bombTexture, NULL, &game->bomb->position);
+        printf("printing bomb\n");
+    } else {
+        printf("no bombs\n");
+    }
+}
+
 void	gameDraw(game_t *game)
 {
   SDL_RenderClear(game->renderer);
   mapDraw(game);
-  if (game->bombeActive == 1)
-    bombeDraw(game);
-  if (game->bombeDuration >= 0)
-    game->bombeDuration--;
-  if (game->bombeDuration == 0)
-    SDL_DestroyTexture(game->bombe);
+  if (game->bomb != NULL && game->bomb->duration > 0) {
+    game->bomb->duration--;
+  } else {
+    game->bomb = NULL;
+  }
+  drawBombs(game);
   playerDraw(game);
   SDL_RenderPresent(game->renderer);
 }

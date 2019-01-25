@@ -14,45 +14,60 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-typedef struct  game_s
-{
-  
-  int		running;
-  SDL_Point	screenSize;
-  SDL_Window	*pWindow;
-  SDL_Renderer	*renderer;
+#define FPS 60
+#define TICKS_PER_FRAME 1000 / FPS
 
-  SDL_Texture	*grass;
-  SDL_Rect	grassPosition;
+typedef struct bomb_s {
+    SDL_Rect position;
+    int duration;
+} bomb_t;
 
-  SDL_Texture	*stone;
-  SDL_Rect      stonePosition;
+typedef struct game_s {
+    SDL_Point screenSize;
+    SDL_Window *pWindow;
+    SDL_Renderer *renderer;
 
-  SDL_Texture	*player;
-  SDL_Rect	playerPosition;
-  SDL_Rect	oldPlayerPosition;
-  
-  SDL_Texture*	bombe;
-  SDL_Rect	bombePosition;
+    SDL_Texture *grass;
+    SDL_Rect grassPosition;
 
-  int		bombeActive;
-  int		speed;
-  int		bombeDuration;
-}		game_t;
+    SDL_Texture *stone;
+    SDL_Rect stonePosition;
 
-void    mapDraw(game_t *);
-void    playerDraw(game_t *);
-void    bombeDraw(game_t *);
-void	movePlayer(game_t*, SDL_Keycode);
-void	quitGame(game_t *);
-void    initTextures(game_t *);
-void	gameDestroy(game_t *);
-void    initBombe(game_t *);
+    SDL_Texture *player;
+    SDL_Rect playerPosition;
+    SDL_Rect oldPlayerPosition;
 
-int	checkEvents(game_t *);
-void	gameDraw(game_t *);
+    SDL_Texture *bombTexture;
 
-game_t* init();
-game_t*	initStructs();
+    struct bomb_s* bomb;
+    int speed;
+
+    int running;
+    Uint32 frameCount;
+} game_t;
+
+void mapDraw(game_t *);
+
+void playerDraw(game_t *);
+
+void bombeDraw(game_t *);
+
+void movePlayer(game_t *, SDL_Keycode);
+
+void quitGame(game_t *);
+
+void initTextures(game_t *);
+
+void gameDestroy(game_t *);
+
+void initBombe(game_t *);
+
+void checkEvents(game_t *);
+
+void gameDraw(game_t *);
+
+game_t *init();
+
+game_t *initStructs();
 
 #endif
