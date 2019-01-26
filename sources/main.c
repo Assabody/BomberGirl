@@ -20,6 +20,7 @@ game_t* init() {
       gameDestroy(game);
       return NULL;
     }
+    SDL_SetRenderDrawColor(game->renderer, 0, 0, 0, 255);
   } else {
     fprintf(stderr, SDL_GetError());
     gameDestroy(game);

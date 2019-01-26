@@ -60,7 +60,7 @@ void initTextures(game_t *);
 
 void gameDestroy(game_t *);
 
-void initBombe(game_t *);
+void initBombe(game_t *, int);
 
 void checkEvents(game_t *);
 
