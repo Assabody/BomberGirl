@@ -33,6 +33,9 @@ typedef struct game_s {
     SDL_Texture *stone;
     SDL_Rect stonePosition;
 
+  SDL_Texture *wall;
+    SDL_Rect wallPosition;
+
     SDL_Texture *player;
     SDL_Rect playerPosition;
     SDL_Rect oldPlayerPosition;
@@ -47,6 +50,8 @@ typedef struct game_s {
 } game_t;
 
 void mapDraw(game_t *);
+
+void wallDraw(game_t *);
 
 void playerDraw(game_t *);
 

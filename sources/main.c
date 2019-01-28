@@ -38,8 +38,8 @@ game_t *initStructs() {
     game->bomb = NULL;
     game->pWindow = NULL;
     game->speed = 40;
-    game->screenSize.x = 640;
-    game->screenSize.y = 480;
+    game->screenSize.x = 680;
+    game->screenSize.y = 440;
     game->playerPosition.x = 80;
     game->playerPosition.y = 80;
     game->playerPosition.w = 40;
@@ -77,13 +77,27 @@ void initTextures(game_t *game) {
        SDL_FreeSurface(stoneSurface);
     }
 
+     SDL_Surface* wallSurface = IMG_Load("./assets/images/stone.png");
+     if (wallSurface == NULL) {
+       fprintf(stderr, SDL_GetError());
+       gameDestroy(game);
+     } else {
+       game->wall = SDL_CreateTextureFromSurface(game->renderer, wallSurface);
+       if (!game->wall) { 
+         fprintf(stderr, SDL_GetError()); 
+         gameDestroy(game); 
+       } 
+       SDL_FreeSurface(wallSurface);
+    }
+
+
     SDL_Surface *playerSurface = IMG_Load("./assets/images/bombergirl.png");
     if (playerSurface == NULL) {
         fprintf(stderr, SDL_GetError());
         gameDestroy(game);
     } else {
-        game->player = SDL_CreateTextureFromSurface(game->renderer, playerSurface);
-        if (!game->player) {
+      game->player = SDL_CreateTextureFromSurface(game->renderer, playerSurface);
+      if (!game->player) {
             fprintf(stderr, SDL_GetError());
             gameDestroy(game);
         }
