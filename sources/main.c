@@ -37,11 +37,11 @@ game_t *initStructs() {
     game->player = NULL;
     game->bomb = NULL;
     game->pWindow = NULL;
-    game->speed = 5;
+    game->speed = 40;
     game->screenSize.x = 640;
     game->screenSize.y = 480;
-    game->playerPosition.x = 40;
-    game->playerPosition.y = 40;
+    game->playerPosition.x = 80;
+    game->playerPosition.y = 80;
     game->playerPosition.w = 40;
     game->playerPosition.h = 40;
     game->running = 1;
@@ -64,18 +64,18 @@ void initTextures(game_t *game) {
         SDL_FreeSurface(grassSurface);
     }
 
-    /* SDL_Surface* stoneSurface = IMG_Load("./assets/images/stone.png"); */
-    /* if (stoneSurface == NULL) { */
-    /*   fprintf(stderr, SDL_GetError()); */
-    /*   gameDestroy(game); */
-    /* } else { */
-    /*   game->stone = SDL_CreateTextureFromSurface(game->renderer, stoneSurface); */
-    /*   if (!game->stone) { */
-    /*     fprintf(stderr, SDL_GetError()); */
-    /*     gameDestroy(game); */
-    /*   } */
-    /*   SDL_FreeSurface(stoneSurface); */
-    /* } */
+     SDL_Surface* stoneSurface = IMG_Load("./assets/images/stone.png");
+     if (stoneSurface == NULL) {
+       fprintf(stderr, SDL_GetError());
+       gameDestroy(game);
+     } else {
+       game->stone = SDL_CreateTextureFromSurface(game->renderer, stoneSurface);
+       if (!game->stone) { 
+         fprintf(stderr, SDL_GetError()); 
+         gameDestroy(game); 
+       } 
+       SDL_FreeSurface(stoneSurface);
+    }
 
     SDL_Surface *playerSurface = IMG_Load("./assets/images/bombergirl.png");
     if (playerSurface == NULL) {
@@ -118,11 +118,9 @@ void gameDestroy(game_t *game) {
         if (game->bombTexture) {
             SDL_DestroyTexture(game->bombTexture);
         }
-
         if (game->renderer) {
             SDL_DestroyRenderer(game->renderer);
         }
-
         if (game->pWindow) {
             SDL_DestroyWindow(game->pWindow);
         }
@@ -136,7 +134,7 @@ int main() {
     Uint32 frameStart;
     int frameTime;
     SDL_SetRenderDrawColor(game->renderer, 50, 50, 50, 255);
-
+   
     while (game->running) {
         frameStart = SDL_GetTicks();
         // check events()

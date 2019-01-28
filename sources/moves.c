@@ -1,10 +1,14 @@
 #include "../includes/main.h"
 
 void    movePlayer(game_t *game, SDL_Keycode direction) {
+  SDL_Rect *playerPosition = &game->playerPosition;
+  SDL_Rect *stonePosition = &game->stonePosition;
+  SDL_Rect* result = malloc(sizeof(SDL_Rect*));
+  
   if (direction == SDLK_UP) {
     printf("keyUp\n");
     printf("PosY: %i\n", game->playerPosition.y);
-    if (game->playerPosition.y > 0) {
+    if (game->playerPosition.y > 0 && SDL_IntersectRect(playerPosition, stonePosition, result) == SDL_FALSE) {
       game->playerPosition.y -= game->speed;
     printf("PosY: %i\n", game->playerPosition.y);
     }
