@@ -1,21 +1,4 @@
-/**
- * \file recv.c
- * \brief simple TCP receiver
- * \author Emmanuel VALETTE
- * \date 04 May 2018
- */
-
-
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <errno.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <sys/select.h>
-#include <sys/time.h>
+#include "network.h"
 
 int read_client(int client)
 {
@@ -40,12 +23,6 @@ int read_client(int client)
   return 0;
 }
 
-/**
- * \fn main
- * \brief main function for our program
- *
- * \return int
- */
 int main()
 {
   int sock;
@@ -54,10 +31,9 @@ int main()
   int client_addr_len;
   struct sockaddr_in server;
   struct sockaddr_in client_addr;
-
-  fd_set readfs;
+  int i;
+  fd_set active_fd_set, read_fd_set;
   struct timeval timeout;
-  char buff[10];
 
   sock = socket(AF_INET, SOCK_STREAM, 0);
   if (sock == -1)
@@ -77,54 +53,46 @@ int main()
   }
             
   listen(sock, 5);
-  memset(buff, '\0', 10);
-
-  puts("waiting clients...");
-  puts("waiting for accept");
-  client_addr_len = sizeof(client_addr);
-  client1 = accept(sock, (struct sockaddr *)&client_addr, &client_addr_len);
-  client2 = accept(sock, (struct sockaddr *)&client_addr, &client_addr_len);
-
-  if (client1 < 0 || client2 < 0)
-  {
-    perror("accept()");
-    return 1;
-  }
-  puts("new clients");
+  FD_ZERO(&active_fd_set);
+  FD_SET(sock, &active_fd_set);
   while (1)
   {
-    timeout.tv_sec = 1;
-    timeout.tv_usec = 0;
-    FD_ZERO(&readfs);
-    FD_SET(client1, &readfs);
-    FD_SET(client2, &readfs);
-
-    select(client2 + 1, &readfs, NULL, NULL, &timeout);
-      //int client_len = sizeof(client_addr);
-      //client_sock = accept(sock, (struct sockaddr *)&client_addr, &client_addr_len);
-    if (FD_ISSET(client1, &readfs))
+    read_fd_set = active_fd_set;
+    if (select (FD_SETSIZE, &read_fd_set, NULL, NULL, NULL) < 0)
     {
-      if (read_client(client1) == -1)
-      {
-        puts("client 1 disconnected");
-        close(client1);
-        client1 = -1;
-      }
-    } else if (FD_ISSET(client2, &readfs)) {
-      if (read_client(client2) == -1)
-      {
-        puts("client 2 disconnected");
-        close(client2);
-        client2 = -1;
-      }
+      perror ("select");
+      exit (-1);
     }
 
-    if (client1 == -1 && client2 == -1)
+    for (i = 0; i < FD_SETSIZE; ++i)
     {
-      break;
+      if (FD_ISSET (i, &read_fd_set))
+      {
+        if (i == sock) {
+          int new;
+          int client_len = sizeof(client_addr);
+          new = accept(sock, (struct sockaddr *)&client_addr, &client_addr_len);
+          if (new < 0)
+          {
+            perror ("accept");
+            exit (EXIT_FAILURE);
+          }
+          printf ("Server: connect from host %s, port %hd.\n",
+                  inet_ntoa (client_addr.sin_addr),
+                  ntohs (client_addr.sin_port));
+          FD_SET (new, &active_fd_set);
+        } else {
+          if (read_client(i) == -1)
+          {
+            printf("client %s disconnected\n", inet_ntoa(client_addr.sin_addr));
+            close(i);
+            FD_CLR(i, &active_fd_set);
+          }
+        }
+      }
     }
-    puts("looping");  
-  }
+    puts("Looping");
+  }    
   close(sock);
   return 0;
 }

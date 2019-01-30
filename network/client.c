@@ -1,5 +1,4 @@
-#include "client.h"
-
+#include "network.h"
 
 int    sendMessage(int sock)
 {
