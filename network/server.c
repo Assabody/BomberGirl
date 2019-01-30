@@ -48,48 +48,83 @@ int read_client(int client)
  */
 int main()
 {
-  int n;
   int sock;
-  int client_sock;
-  socklen_t client_addr_len;
+  int client1;
+  int client2;
+  int client_addr_len;
   struct sockaddr_in server;
   struct sockaddr_in client_addr;
+
+  fd_set readfs;
+  struct timeval timeout;
   char buff[10];
 
   sock = socket(AF_INET, SOCK_STREAM, 0);
   if (sock == -1)
-    {
-      perror("socket()");
-      return 1;
-    }
+  {
+    perror("socket()");
+    return 1;
+  }
 
-  server.sin_addr.s_addr = INADDR_ANY;
+  server.sin_addr.s_addr = htonl(INADDR_ANY);
   server.sin_family = AF_INET;
   server.sin_port = htons(1234);
 
   if (bind(sock, (struct sockaddr *)&server, sizeof(server)) < 0)
-    {
-      perror("bind()");
-      return 1;
-    }
+  {
+    perror("bind()");
+    return 1;
+  }
             
   listen(sock, 5);
   memset(buff, '\0', 10);
 
   puts("waiting clients...");
+  puts("waiting for accept");
+  client_addr_len = sizeof(client_addr);
+  client1 = accept(sock, (struct sockaddr *)&client_addr, &client_addr_len);
+  client2 = accept(sock, (struct sockaddr *)&client_addr, &client_addr_len);
+
+  if (client1 < 0 || client2 < 0)
+  {
+    perror("accept()");
+    return 1;
+  }
+  puts("new clients");
   while (1)
-    {
-      puts("waiting for accept");
+  {
+    timeout.tv_sec = 1;
+    timeout.tv_usec = 0;
+    FD_ZERO(&readfs);
+    FD_SET(client1, &readfs);
+    FD_SET(client2, &readfs);
+
+    select(client2 + 1, &readfs, NULL, NULL, &timeout);
       //int client_len = sizeof(client_addr);
-      client_sock = accept(sock, (struct sockaddr *)&client_addr, &client_addr_len);
-      if (client_sock < 0)
-        {
-          perror("accept()");
-          return 1;
-        }
-      puts("new client");
-      read_client(client_sock);
+      //client_sock = accept(sock, (struct sockaddr *)&client_addr, &client_addr_len);
+    if (FD_ISSET(client1, &readfs))
+    {
+      if (read_client(client1) == -1)
+      {
+        puts("client 1 disconnected");
+        close(client1);
+        client1 = -1;
+      }
+    } else if (FD_ISSET(client2, &readfs)) {
+      if (read_client(client2) == -1)
+      {
+        puts("client 2 disconnected");
+        close(client2);
+        client2 = -1;
+      }
     }
+
+    if (client1 == -1 && client2 == -1)
+    {
+      break;
+    }
+    puts("looping");  
+  }
   close(sock);
   return 0;
 }
