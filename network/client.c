@@ -1,22 +1,23 @@
-#include "send.h"
+#include "client.h"
 
 
 int    sendMessage(int sock)
 {
-    char message[128];
+    char message[10];
 
     while (1) {
-        memset(message, '\0', 128);
+        memset(message, '\0', 10);
         puts("message to send:");
-        fgets(message, 128, stdin);
+        fgets(message, 10, stdin);
         if (strncmp("exit", message, 4) == 0) {
             puts("end of program");
             return 0;
-        } else if (send(sock, message, strlen(message), 0) < 0) {
+        } else if (send(sock, message, strlen(message), MSG_NOSIGNAL) < 0) {
             puts("send failed");
             return 1;
+        } else {
+            printf("message sent: '%s'\n", message);
         }
-        printf("sended %s\n", message);
     }
 }
 
@@ -36,13 +37,11 @@ int   main()
         exit(errno);
     }
 
-    puts("enter server IP");
+    puts("enter server address");
     fgets(ip, 22, stdin);
     puts("enter server Port");
     fgets(port, 6, stdin);
-    puts("tape exit to quit program");
-
-
+    puts("type exit to quit program");
 
     server.sin_addr.s_addr = inet_addr(ip);
     server.sin_family = AF_INET;
