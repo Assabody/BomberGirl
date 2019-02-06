@@ -27,13 +27,15 @@ typedef struct game_s {
     SDL_Window *pWindow;
     SDL_Renderer *renderer;
 
+    char **map;
+  
     SDL_Texture *grass;
     SDL_Rect grassPosition;
 
     SDL_Texture *stone;
     SDL_Rect stonePosition;
 
-  SDL_Texture *wall;
+    SDL_Texture *wall;
     SDL_Rect wallPosition;
 
     SDL_Texture *player;
@@ -51,7 +53,9 @@ typedef struct game_s {
 
 void mapDraw(game_t *);
 
-void wallDraw(game_t *);
+char** mapInit();
+
+//void wallDraw(game_t *);
 
 void playerDraw(game_t *);
 

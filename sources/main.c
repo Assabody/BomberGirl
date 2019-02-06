@@ -47,6 +47,7 @@ game_t *initStructs() {
     game->running = 1;
     game->frameCount = 0;
     game->bomb = NULL;
+    game->map = mapInit();
     return (game);
 }
 
