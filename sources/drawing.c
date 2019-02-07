@@ -76,45 +76,6 @@ void mapDraw(game_t *game)
     }
 }
 
-/*
-void	wallDraw(game_t *game)
-{
-  game->wallPosition.x = 0;
-  game->wallPosition.y = 0;
-  game->wallPosition.w = 40;
-  game->wallPosition.h = 40;
-  
-  int texPosX = 0;
-  int texPosY = 0;
-  while (texPosY < 480) {
-    while (texPosX < 680) {
-      // DRAW LEFT - RIGHT BORDER
-      SDL_RenderCopy(game->renderer, game->wall, NULL, &game->wallPosition);
-      game->wallPosition.x = 640;
-      SDL_RenderCopy(game->renderer, game->wall, NULL, &game->wallPosition);
-
-      // DRAW TOP - BOTTOM BORDER
-      if (game->wallPosition.x == 640) {
-	game->wallPosition.x = 0;
-	while (game->wallPosition.x <= 600) {
-	  game->wallPosition.x += 40;
-	  game->wallPosition.y = 0;
-	  SDL_RenderCopy(game->renderer, game->wall, NULL, &game->wallPosition);
-	  game->wallPosition.y = 400;
-	  SDL_RenderCopy(game->renderer, game->wall, NULL, &game->wallPosition);
-	}
-      }
-      texPosX += 40;
-    }
-    texPosY += 40;
-    texPosX = 0;
-    game->wallPosition.x = texPosX;
-    game->wallPosition.y = texPosY;
-  }
-} 
-*/
-
-
 
 void    drawBombs(game_t *game)
 {
