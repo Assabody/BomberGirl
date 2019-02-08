@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <SDL2/SDL.h>
+#include <SDL/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
 
 #define FPS 60
