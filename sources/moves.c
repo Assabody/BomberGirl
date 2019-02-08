@@ -9,27 +9,31 @@ void    movePlayer(game_t *game, SDL_Keycode direction) {
       printf("%i", game->playerPosition.y);
       game->playerPosition.y -= game->speed;
       printf("PosY: %i\n", game->playerPosition.y);
-      printf("MAP position: %c\n", game->map[0][2]);
     }
+    game->useClip = 2;
   }  else if (direction == SDLK_DOWN) {
     printf("keyDown\n");
     printf("PosY: %i\n", game->playerPosition.y);
     if (game->playerPosition.y < (game->screenSize.y - game->playerPosition.w) && game->map[(game->playerPosition.y / 40) + 1][game->playerPosition.x / 40] != 's') {
       game->playerPosition.y += game->speed;
     }
+    game->useClip = 0;
   }  else if (direction == SDLK_LEFT) {
     printf("keyLeft\n");
     printf("PosX: %i\n", game->playerPosition.x);
     if (game->playerPosition.x > 0 && game->map[game->playerPosition.y / 40][(game->playerPosition.x / 40) - 1] != 's') {
       game->playerPosition.x -= game->speed;
     }
+    game->useClip = 3;
   }  else  if (direction == SDLK_RIGHT) {
     printf("keyRight\n");
     printf("PosX: %i\n", game->playerPosition.x);
     if (game->playerPosition.x < (game->screenSize.x - game->playerPosition.h) && game->map[game->playerPosition.y / 40][(game->playerPosition.x / 40) + 1] != 's') {
       game->playerPosition.x += game->speed;
     }
+    game->useClip = 1;
   } else {
     fprintf(stderr, "Direction inconnue\n /");
+    game->useClip = 0;
   }
 }
