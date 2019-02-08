@@ -19,37 +19,38 @@
 #define TICKS_PER_FRAME 1000 / FPS
 
 typedef struct bomb_s {
-    SDL_Rect position;
-    int duration;
+  SDL_Rect position;
+  int duration;
 } bomb_t;
 
 typedef struct game_s {
-    SDL_Point screenSize;
-    SDL_Window *pWindow;
-    SDL_Renderer *renderer;
-
-    char **map;
+  SDL_Point screenSize;
+  SDL_Window *pWindow;
+  SDL_Renderer *renderer;
   
-    SDL_Texture *grass;
-    SDL_Rect grassPosition;
-
-    SDL_Texture *stone;
-    SDL_Rect stonePosition;
-
-    SDL_Texture *wall;
-    SDL_Rect wallPosition;
-
-    SDL_Texture *player;
-    SDL_Rect playerPosition;
-    SDL_Rect oldPlayerPosition;
-
-    SDL_Texture *bombTexture;
-
-    struct bomb_s* bomb;
-    int speed;
-
-    int running;
-    Uint32 frameCount;
+  char **map;
+  
+  SDL_Texture *grass;
+  SDL_Rect grassPosition;
+  
+  SDL_Texture *stone;
+  SDL_Rect stonePosition;
+  
+  SDL_Texture *wall;
+  SDL_Rect wallPosition;
+  
+  SDL_Texture *player;
+  SDL_Rect playerPosition;
+  SDL_Rect oldPlayerPosition;
+  int useClip;
+  
+  SDL_Texture *bombTexture;
+  
+  struct bomb_s* bomb;
+  int speed;
+  
+  int running;
+  Uint32 frameCount;
 } game_t;
 
 void mapDraw(game_t *);
@@ -79,5 +80,7 @@ void gameDraw(game_t *);
 game_t *init();
 
 game_t *initStructs();
+
+void renderTexture(SDL_Texture *, game_t *, int, int, SDL_Rect *);
 
 #endif

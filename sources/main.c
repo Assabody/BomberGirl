@@ -92,18 +92,19 @@ void initTextures(game_t *game) {
     }
 
 
-    SDL_Surface *playerSurface = IMG_Load("./assets/images/bombergirl.png");
-    if (playerSurface == NULL) {
-        fprintf(stderr, SDL_GetError());
-        gameDestroy(game);
-    } else {
-      game->player = SDL_CreateTextureFromSurface(game->renderer, playerSurface);
-      if (!game->player) {
-            fprintf(stderr, SDL_GetError());
-            gameDestroy(game);
-        }
-        SDL_FreeSurface(playerSurface);
-    }
+    /* SDL_Surface *playerSurface = IMG_Load("./assets/images/bombergirl.png"); */
+    
+    /* if (playerSurface == NULL) { */
+    /*     fprintf(stderr, SDL_GetError()); */
+    /*     gameDestroy(game); */
+    /* } else { */
+    /*   game->player = SDL_CreateTextureFromSurface(game->renderer, playerSurface); */
+    /*   if (!game->player) { */
+    /*         fprintf(stderr, SDL_GetError()); */
+    /*         gameDestroy(game); */
+    /*     } */
+    /*   SDL_FreeSurface(playerSurface); */
+    /* } */
 
     SDL_Surface *bombeSurface = IMG_Load("./assets/images/bombe.png");
     if (bombeSurface == NULL) {
@@ -149,15 +150,12 @@ int main() {
     Uint32 frameStart;
     int frameTime;
     SDL_SetRenderDrawColor(game->renderer, 50, 50, 50, 255);
-   
+    game->useClip = 0;
     while (game->running) {
         frameStart = SDL_GetTicks();
-        // check events()
-        checkEvents(game);
-        // update()
-
-        // render()
         gameDraw(game);
+        checkEvents(game);
+	SDL_RenderPresent(game->renderer);
         frameTime = SDL_GetTicks() - frameStart;
         if (TICKS_PER_FRAME > frameTime)
             SDL_Delay(TICKS_PER_FRAME - frameTime);
