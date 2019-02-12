@@ -11,7 +11,7 @@ void checkEvents(game_t *game) {
       if (event.type == SDL_KEYDOWN) {
 	switch (event.key.keysym.sym) {
 	case SDLK_SPACE:
-	  initBombe(game, 2);
+	  bombeDraw(game);
 	  printf("BOMBE %d %d\n", game->bomb->position.x, game->bomb->position.y);
 	  break;
 	case SDLK_ESCAPE:
@@ -33,13 +33,13 @@ void checkEvents(game_t *game) {
     playerDraw(game);
 }
 
-void initBombe(game_t *game, int seconds) {
-    bomb_t *bomb;
-    bomb = malloc(sizeof(bomb_t));
-    bomb->position.x = game->playerPosition.x;
-    bomb->position.y = game->playerPosition.y;
-    bomb->position.w = 32;
-    bomb->position.h = 32;
-    bomb->duration = seconds * FPS;
-    game->bomb = bomb;
-}
+/* void initBombe(game_t *game, int seconds) { */
+/*     bomb_t *bomb; */
+/*     bomb = malloc(sizeof(bomb_t)); */
+/*     bomb->position.x = game->playerPosition.x; */
+/*     bomb->position.y = game->playerPosition.y; */
+/*     bomb->position.w = 32; */
+/*     bomb->position.h = 32; */
+/*     bomb->duration = seconds * FPS; */
+/*     game->bomb = bomb; */
+/* } */

@@ -20,6 +20,9 @@
 typedef struct bomb_s {
   SDL_Rect position;
   int duration;
+  SDL_Texture *bombTexture;
+  SDL_Rect clips[4];
+  int	useClips;
 } bomb_t;
 
 typedef struct game_s {
@@ -43,7 +46,6 @@ typedef struct game_s {
   SDL_Rect oldPlayerPosition;
   int useClip;
   
-  SDL_Texture *bombTexture;
   
   struct bomb_s* bomb;
   int speed;
@@ -61,7 +63,7 @@ char** mapInit();
 void playerDraw(game_t *);
 
 void bombeDraw(game_t *);
-
+void drawBombs(game_t *);
 void movePlayer(game_t *, SDL_Keycode);
 
 void quitGame(game_t *);
@@ -70,11 +72,12 @@ void initTextures(game_t *);
 
 void gameDestroy(game_t *);
 
+void gameDraw(game_t *);
+
 void initBombe(game_t *, int);
 
 void checkEvents(game_t *);
 
-void gameDraw(game_t *);
 
 game_t *init();
 
@@ -82,4 +85,5 @@ game_t *initStructs();
 
 void renderTexture(SDL_Texture *, game_t *, int, int, SDL_Rect *);
 
+void	initGrass(game_t *);
 #endif
