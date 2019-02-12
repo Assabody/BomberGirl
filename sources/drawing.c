@@ -1,6 +1,6 @@
 #include "../includes/main.h"
 void    playerDraw(game_t *game) {
-  SDL_Surface *playerSurface = IMG_Load("./assets/images/sprite.png");
+  SDL_Surface *playerSurface = IMG_Load("./assets/images/sprite_player2.png");
   SDL_Texture* pTexture = SDL_CreateTextureFromSurface(game->renderer,playerSurface);
   int iW = 40, iH = 60;
   SDL_Rect clips[4];
