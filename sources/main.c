@@ -46,7 +46,6 @@ game_t *initStructs() {
     game->playerPosition.h = 40;
     game->running = 1;
     game->frameCount = 0;
-    game->bomb = NULL;
     game->map = mapInit();
     return (game);
 }
@@ -90,50 +89,22 @@ void initTextures(game_t *game) {
        } 
        SDL_FreeSurface(wallSurface);
     }
-
-
-    /* SDL_Surface *playerSurface = IMG_Load("./assets/images/bombergirl.png"); */
-    
-    /* if (playerSurface == NULL) { */
-    /*     fprintf(stderr, SDL_GetError()); */
-    /*     gameDestroy(game); */
-    /* } else { */
-    /*   game->player = SDL_CreateTextureFromSurface(game->renderer, playerSurface); */
-    /*   if (!game->player) { */
-    /*         fprintf(stderr, SDL_GetError()); */
-    /*         gameDestroy(game); */
-    /*     } */
-    /*   SDL_FreeSurface(playerSurface); */
-    /* } */
-
-    SDL_Surface *bombeSurface = IMG_Load("./assets/images/bombe.png");
-    if (bombeSurface == NULL) {
-        fprintf(stderr, SDL_GetError());
-        gameDestroy(game);
-    } else {
-        game->bombTexture = SDL_CreateTextureFromSurface(game->renderer, bombeSurface);
-        if (!game->bombTexture) {
-            fprintf(stderr, SDL_GetError());
-            gameDestroy(game);
-        }
-        SDL_FreeSurface(bombeSurface);
-    }
 }
 
 void gameDestroy(game_t *game) {
     if (game) {
-        if (game->player) {
-            SDL_DestroyTexture(game->player);
-        }
+        /* if (game->player) { */
+        /*     SDL_DestroyTexture(game->player); */
+        /* } */
         if (game->grass) {
             SDL_DestroyTexture(game->grass);
         }
         if (game->stone) {
             SDL_DestroyTexture(game->stone);
         }
-        if (game->bombTexture) {
-            SDL_DestroyTexture(game->bombTexture);
-        }
+        /* if (game->bomb->bombTexture) { */
+        /*     SDL_DestroyTexture(game->bomb->bombTexture); */
+        /* } */
         if (game->renderer) {
             SDL_DestroyRenderer(game->renderer);
         }

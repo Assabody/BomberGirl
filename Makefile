@@ -8,6 +8,10 @@
 SRC		=	sources/moves.c \
 			sources/drawing.c \
 			sources/events.c \
+			sources/player.c \
+			sources/bombe.c \
+			sources/game.c \
+			sources/renderTexture.c \
 			sources/main.c
 
 GCC		=	gcc
