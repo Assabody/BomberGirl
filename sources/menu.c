@@ -49,6 +49,7 @@ int showMenu(SDL_Surface *screen, TTF_Font *font)
                             }
                         }
                     }
+                    break;
                 case SDL_MOUSEBUTTONDOWN:
                     x = event.button.x;
                     y = event.button.y;
@@ -60,6 +61,7 @@ int showMenu(SDL_Surface *screen, TTF_Font *font)
                         }
                             return i;
                         }
+                    break;
             }
         }
         for (int i = 0; i < menuSize; i++)
