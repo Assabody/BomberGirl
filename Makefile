@@ -12,8 +12,8 @@ SRC		=	sources/moves.c \
 			sources/bombe.c \
 			sources/renderTexture.c \
 			sources/main.c \
-			sources/game.c
-			##sources/menu.c
+			sources/game.c \
+			sources/menu.c
 
 GCC		=	gcc
 
