@@ -70,10 +70,10 @@ void initTextures(game_t *game) {
        gameDestroy(game);
      } else {
        game->stone = SDL_CreateTextureFromSurface(game->renderer, stoneSurface);
-       if (!game->stone) { 
-         fprintf(stderr, SDL_GetError()); 
-         gameDestroy(game); 
-       } 
+       if (!game->stone) {
+         fprintf(stderr, SDL_GetError());
+         gameDestroy(game);
+       }
        SDL_FreeSurface(stoneSurface);
     }
 
@@ -83,10 +83,10 @@ void initTextures(game_t *game) {
        gameDestroy(game);
      } else {
        game->wall = SDL_CreateTextureFromSurface(game->renderer, wallSurface);
-       if (!game->wall) { 
-         fprintf(stderr, SDL_GetError()); 
-         gameDestroy(game); 
-       } 
+       if (!game->wall) {
+         fprintf(stderr, SDL_GetError());
+         gameDestroy(game);
+       }
        SDL_FreeSurface(wallSurface);
     }
 }

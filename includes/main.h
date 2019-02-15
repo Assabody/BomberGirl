@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <SDL2/SDL.h>
-#include <SDL/SDL_ttf.h>
+#include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
 
 #define FPS 60
@@ -47,6 +47,7 @@ typedef struct game_s {
   SDL_Rect oldPlayerPosition;
   int useClip;
   
+  SDL_Texture *bombTexture;
   
   struct bomb_s* bomb;
   int speed;
@@ -73,12 +74,13 @@ void initTextures(game_t *);
 
 void gameDestroy(game_t *);
 
-void gameDraw(game_t *);
-
 void initBombe(game_t *, int);
 
 void checkEvents(game_t *);
 
+void gameDraw(game_t *);
+
+void gameUpdate(game_t *game);
 
 game_t *init();
 
@@ -87,4 +89,7 @@ game_t *initStructs();
 void renderTexture(SDL_Texture *, game_t *, int, int, SDL_Rect *);
 
 void	initGrass(game_t *);
+int beginGame();
+
+int showMenu(SDL_Surface *screen, TTF_Font *font);
 #endif

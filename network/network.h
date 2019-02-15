@@ -12,4 +12,7 @@
 #include <sys/select.h>
 #include <sys/time.h>
 
+int send_message(int sock, const char *message);
+int read_message(int sock);
+int connect_client(int sock, struct sockaddr_in *client_addr);
 #endif //_NETWORK_H_

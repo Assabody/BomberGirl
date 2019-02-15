@@ -10,9 +10,10 @@ SRC		=	sources/moves.c \
 			sources/events.c \
 			sources/player.c \
 			sources/bombe.c \
-			sources/game.c \
 			sources/renderTexture.c \
-			sources/main.c
+			sources/main.c \
+			sources/game.c
+			##sources/menu.c
 
 GCC		=	gcc
 
