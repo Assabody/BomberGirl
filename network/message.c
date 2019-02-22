@@ -18,7 +18,8 @@ int read_message(int sock) {
         if (n == 0) {
             return -1;
         }
-        printf("'%s'\n", buff);
+        printf("Client: %s",buff);
+        send_message(sock, "OK");
         if (buff[n - 1] == '\n') {
             memset(buff, '\0', 128);
             break;
@@ -34,7 +35,7 @@ int read_message(int sock) {
  * @return 1 = OK
  */
 int send_message(int sock, const char *message) {
-    if (send(sock, message, strlen(message), MSG_NOSIGNAL) < 0) {
+    if (send(sock, message, strlen(message), 0) < 0) {
         return 1;
     } else {
         return 0;

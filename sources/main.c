@@ -131,7 +131,6 @@ int main() {
         if (TICKS_PER_FRAME > frameTime)
             SDL_Delay(TICKS_PER_FRAME - frameTime);
         game->frameCount++;
-        //printf("FPS %d\n", game->frameCount);
     }
     gameDestroy(game);
     return (EXIT_SUCCESS);

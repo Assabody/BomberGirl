@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
+#include <SDL/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
 
 #define FPS 60
@@ -91,5 +91,6 @@ void renderTexture(SDL_Texture *, game_t *, int, int, SDL_Rect *);
 void	initGrass(game_t *);
 int beginGame();
 
-int showMenu(SDL_Surface *screen, TTF_Font *font);
+int showMenu(game_t *, TTF_Font *);
+
 #endif
