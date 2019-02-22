@@ -14,6 +14,7 @@
 #include <SDL2/SDL.h>
 #include <SDL/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
+#include "../network/network.h"
 
 #define FPS 60
 #define TICKS_PER_FRAME 1000 / FPS
@@ -54,6 +55,8 @@ typedef struct game_s {
   
   int running;
   Uint32 frameCount;
+
+  int client_sock;
 } game_t;
 
 void mapDraw(game_t *);

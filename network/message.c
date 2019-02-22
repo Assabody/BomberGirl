@@ -14,7 +14,7 @@ int read_message(int sock) {
 
     n = 0;
     memset(buff, '\0', 128);
-    if ((n = recv(sock, buff, 128, 0)) >= 0) {
+    if ((n = recv(sock, buff, 128, MSG_NOSIGNAL)) >= 0) {
         if (n == 0) {
             return -1;
         }
@@ -30,6 +30,8 @@ int read_message(int sock) {
  * @return 1 = OK
  */
 int send_message(int sock, const char *message) {
+    if (sock < 0)
+        return 0;
     if (send(sock, message, strlen(message), 0) < 0) {
         return 1;
     } else {

@@ -13,7 +13,9 @@ SRC		=	sources/moves.c \
 			sources/renderTexture.c \
 			sources/main.c \
 			sources/game.c \
-			sources/menu.c
+			sources/menu.c \
+			network/client.c \
+			network/message.c
 
 GCC		=	gcc
 
