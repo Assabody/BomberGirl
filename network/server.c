@@ -75,13 +75,10 @@ int main() {
                         printf("client %s disconnected\n", inet_ntoa(client_addr.sin_addr));
                         close(i);
                         FD_CLR(i, &active_fd_set);
-                    } /*else if (result == 1) {
-                        printf("sendMessage() : %d", send_message(sock, "OK"));
-                    }*/
+                    }
                 }
             }
         }
-        puts("Looping");
     }
     close(sock);
     return 0;
