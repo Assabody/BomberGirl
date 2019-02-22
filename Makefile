@@ -19,7 +19,7 @@ GCC		=	gcc
 
 CFLAGS		=	-Wall -Wextra -g
 
-SDL		=   -L./lib -lSDL2 -lSDL2_image
+SDL		=   -L./lib -lSDL2 -lSDL2_image -lSDL_ttf
 
 RM		=	rm -rf
 

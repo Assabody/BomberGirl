@@ -28,6 +28,8 @@ int main() {
     int client1;
     int client2;
     int client_addr_len;
+    int number_of_clients;
+    int max_number_of_clients;
     struct sockaddr_in server;
     struct sockaddr_in client_addr;
     int i;
@@ -52,6 +54,9 @@ int main() {
     listen(sock, 2);
     FD_ZERO(&active_fd_set);
     FD_SET(sock, &active_fd_set);
+    number_of_clients = 0;
+    max_number_of_clients = 4;
+    printf("Number of clients : %d/%d\n", number_of_clients, max_number_of_clients);
     while (1) {
         read_fd_set = active_fd_set;
         if (select(FD_SETSIZE, &read_fd_set, NULL, NULL, NULL) < 0) {
@@ -62,17 +67,23 @@ int main() {
             if (FD_ISSET(i, &read_fd_set)) {
                 if (i == sock) {
                     int new;
-                    if ((new = connect_client(sock, &client_addr)) < 0) {
-                        perror("accept");
-                        exit(EXIT_FAILURE);
-                    } else {
-                        printf("Client connected\n");
+                    if (number_of_clients < max_number_of_clients) {
+                        if ((new = connect_client(sock, &client_addr)) < 0) {
+                            perror("accept");
+                            exit(EXIT_FAILURE);
+                        } else {
+                            printf("Client connected\n");
+                            number_of_clients++;
+                            printf("Number of clients : %d/%d\n", number_of_clients, max_number_of_clients);
+                        }
+                        FD_SET(new, &active_fd_set);
                     }
-                    FD_SET(new, &active_fd_set);
                 } else {
                     int result = read_message(i);
                     if (result == -1) {
-                        printf("client %s disconnected\n", inet_ntoa(client_addr.sin_addr));
+                        printf("Client disconnected\n");
+                        number_of_clients--;
+                        printf("Number of clients : %d/%d\n", number_of_clients, max_number_of_clients);
                         close(i);
                         FD_CLR(i, &active_fd_set);
                     }
