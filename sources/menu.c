@@ -16,10 +16,10 @@ int showMenu(game_t *game, TTF_Font *font)
     menus[1] = TTF_RenderText_Solid(font, labels[1], color[0]);
 
     SDL_Rect pos[menuSize];
-    pos[0].x = game->screenSize.x / 2 - menus[0]->clip_rect.w / 2;
-    pos[0].y = game->screenSize.y / 2 - menus[0]->clip_rect.h;
-    pos[1].x = game->screenSize.x / 2 - menus[1]->clip_rect.w / 2;
-    pos[1].y = game->screenSize.y / 2 + menus[1]->clip_rect.h;
+    pos[0].x = game->screenSize.x / 2;
+    pos[0].y = game->screenSize.y / 2;
+    pos[1].x = game->screenSize.x / 2;
+    pos[1].y = game->screenSize.y / 2;
 
     //SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGB(screen->format, 0x00, 0x00, 0x00));
     SDL_Event event;

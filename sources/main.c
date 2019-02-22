@@ -119,12 +119,15 @@ void gameDestroy(game_t *game) {
 int main() {
     game_t *game = init();
     Uint32 frameStart;
+    TTF_Font *font;
     int frameTime;
+    font = TTF_OpenFont("../assets/Gameplay.ttf", 20);
     SDL_SetRenderDrawColor(game->renderer, 50, 50, 50, 255);
     game->useClip = 0;
     while (game->running) {
         frameStart = SDL_GetTicks();
-        gameDraw(game);
+        showMenu(game, font);
+        //gameDraw(game);
         checkEvents(game);
 	SDL_RenderPresent(game->renderer);
         frameTime = SDL_GetTicks() - frameStart;

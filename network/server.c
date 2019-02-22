@@ -67,16 +67,18 @@ int main() {
             if (FD_ISSET(i, &read_fd_set)) {
                 if (i == sock) {
                     int new;
-                    if (number_of_clients < max_number_of_clients) {
-                        if ((new = connect_client(sock, &client_addr)) < 0) {
-                            perror("accept");
-                            exit(EXIT_FAILURE);
+                    if ((new = connect_client(sock, &client_addr)) < 0) {
+                        perror("accept");
+                        exit(EXIT_FAILURE);
+                    } else {
+                        if (number_of_clients >= max_number_of_clients) {
+                            close(new);
                         } else {
                             printf("Client connected\n");
                             number_of_clients++;
                             printf("Number of clients : %d/%d\n", number_of_clients, max_number_of_clients);
+                            FD_SET(new, &active_fd_set);
                         }
-                        FD_SET(new, &active_fd_set);
                     }
                 } else {
                     int result = read_message(i);
