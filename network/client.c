@@ -1,11 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h> 
+#include "network.h"
 
 void error(const char *msg)
 {
@@ -41,22 +34,15 @@ int main(int argc, char *argv[])
     serv_addr.sin_port = htons(portno);
     if (connect(sockfd,(struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0) 
         error("ERROR connecting");
-    printf("Client: ");
     while(1)
     {
+        printf("Client: ");
         bzero(buffer,256);
         fgets(buffer,255,stdin);
         n = write(sockfd,buffer,strlen(buffer));
         if (n < 0) 
              error("ERROR writing to socket");
-        bzero(buffer,256);
-        n = read(sockfd,buffer,255);
-        if (n < 0) 
-             error("ERROR reading from socket");
-        printf("Server : %s\n",buffer);
-        int i = strncmp("Bye" , buffer , 3);
-        if(i == 0)
-               break;
+        read_message(sockfd);
     }
     close(sockfd);
     return 0;

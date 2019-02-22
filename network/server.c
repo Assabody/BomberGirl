@@ -87,6 +87,7 @@ int main() {
                         close(i);
                         FD_CLR(i, &active_fd_set);
                     }
+                    send_message(i, "OK");
                 }
             }
         }

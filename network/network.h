@@ -11,6 +11,8 @@
 #include <arpa/inet.h>
 #include <sys/select.h>
 #include <sys/time.h>
+#include <netinet/in.h>
+#include <netdb.h>
 
 int send_message(int sock, const char *message);
 int read_message(int sock);

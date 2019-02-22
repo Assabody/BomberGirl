@@ -14,16 +14,11 @@ int read_message(int sock) {
 
     n = 0;
     memset(buff, '\0', 128);
-    while ((n = recv(sock, buff, 128, 0)) >= 0) {
+    if ((n = recv(sock, buff, 128, 0)) >= 0) {
         if (n == 0) {
             return -1;
         }
-        printf("Client: %s",buff);
-        send_message(sock, "OK");
-        if (buff[n - 1] == '\n') {
-            memset(buff, '\0', 128);
-            break;
-        }
+        printf("Message received: %s\n",buff);
     }
     return 1;
 }
