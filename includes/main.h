@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <SDL2/SDL.h>
-#include <SDL/SDL_ttf.h>
+#include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
 #include "../network/network.h"
 
@@ -27,11 +27,16 @@ typedef struct bomb_s {
   int	useClips;
 } bomb_t;
 
+typedef struct window_s {
+    SDL_Point screenSize;
+    SDL_Window *pWindow;
+    SDL_Renderer *renderer;
+} window_t;
+
 typedef struct game_s {
   SDL_Point screenSize;
   SDL_Window *pWindow;
   SDL_Renderer *renderer;
-  
   char **map;
   
   SDL_Texture *grass;

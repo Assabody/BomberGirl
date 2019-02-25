@@ -26,7 +26,7 @@ game_t* init() {
     gameDestroy(game);
     return NULL;
   }
-  game->client_sock = initClient("localhost", "1234");
+  game->client_sock = initClient("127.0.0.1", "1234");
   if (game->client_sock < 0)
     return NULL;
   initTextures(game);
@@ -135,7 +135,7 @@ int main() {
         //showMenu(game, font);
         gameDraw(game);
         checkEvents(game);
-	SDL_RenderPresent(game->renderer);
+	    SDL_RenderPresent(game->renderer);
         frameTime = SDL_GetTicks() - frameStart;
         if (TICKS_PER_FRAME > frameTime)
             SDL_Delay(TICKS_PER_FRAME - frameTime);
