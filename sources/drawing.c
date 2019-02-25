@@ -52,12 +52,12 @@ void mapDraw(game_t *game)
 	  if (game->map[y][x] == 'g')
 	    {
 	      game->grassPosition.x = texPosX;
-	      SDL_RenderCopy(game->renderer, game->grass, NULL, &game->grassPosition);
+	      SDL_RenderCopy(game->sdl->renderer, game->grass, NULL, &game->grassPosition);
 	    }
 	  else
 	    {
 	      game->stonePosition.x = texPosX;
-	      SDL_RenderCopy(game->renderer, game->stone, NULL, &game->stonePosition);
+	      SDL_RenderCopy(game->sdl->renderer, game->stone, NULL, &game->stonePosition);
 	    }
 	  x++;
 	  texPosX += 40;

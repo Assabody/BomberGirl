@@ -1,79 +1,179 @@
 #include "../includes/main.h"
 
-int showMenu(game_t *game, TTF_Font *font)
+int menuWindow(game_t *game)
 {
-    Uint32 time;
-    int x, y;
-    int menuSize = 2;
-    char* labels[menuSize];
-    labels[0] = strdup("New Game");
-    labels[1] = strdup("Exit Game");
-    SDL_Surface* menus[menuSize];
-    int selected[] = {0, 0};
-    SDL_Color color[] = {{255, 255, 255, 0}, {255, 0, 0, 0}};
-
-    menus[0] = TTF_RenderText_Solid(font, labels[0], color[0]);
-    menus[1] = TTF_RenderText_Solid(font, labels[1], color[0]);
-
-    SDL_Rect pos[menuSize];
-    pos[0].x = game->screenSize.x / 2;
-    pos[0].y = game->screenSize.y / 2;
-    pos[1].x = game->screenSize.x / 2;
-    pos[1].y = game->screenSize.y / 2;
-
-    //SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGB(screen->format, 0x00, 0x00, 0x00));
+    int quit = 0;
+    int counter = 0;
     SDL_Event event;
-    while (1) {
-        time=SDL_GetTicks();
-        while (SDL_PollEvent(&event)) {
-            switch (event.type)
+    int menu_size = 3;
+    char *menus[menu_size];
+
+    char *address = NULL;
+    char *port = NULL;
+    menus[0] = strdup("Se connecter a une partie");
+    menus[1] = strdup("Heberger une partie");
+    menus[2] = strdup("Quitter");
+
+    showMenu(game, menus, menu_size, counter);
+    do
+    {
+        int update = 0;
+        SDL_WaitEvent(&event);
+        if(event.type == SDL_KEYDOWN)
+        {
+            if(event.key.keysym.scancode == SDL_SCANCODE_DOWN && counter < menu_size - 1)
             {
-                case SDL_QUIT:
-                    for (int i = 0; i < menuSize; i++) {
-                        SDL_FreeSurface(menus[i]);
-                    }
-                    return 1;
-                case SDL_MOUSEMOTION:
-                    x = event.motion.x;
-                    y = event.motion.y;
-                    for (int i = 0; i < menuSize; i++) {
-                        if (x >= pos[i].x && x <= pos[i].x + pos[i].w && y >= pos[i].y && y <= pos[i].y + pos[i].h) {
-                            if (!selected[i]) {
-                                selected[i] = 1;
-                                SDL_FreeSurface(menus[i]);
-                                menus[i] = TTF_RenderText_Solid(font, labels[i], color[1]);
-                            }
-                        } else {
-                            if (selected[i]) {
-                                selected[i] = 0;
-                                SDL_FreeSurface(menus[i]);
-                                menus[i] = TTF_RenderText_Solid(font, labels[i], color[0]);
-                            }
-                        }
-                    }
-                    break;
-                case SDL_MOUSEBUTTONDOWN:
-                    x = event.button.x;
-                    y = event.button.y;
-                    for (int i = 0; i < menuSize; i++) {
-                        if (x >= pos[i].x && x <= pos[i].x + pos[i].w && y >= pos[i].y && y <= pos[i].y + pos[i].h) {
-                            for (int j = 0; j < menuSize; j++) {
-                                SDL_FreeSurface(menus[i]);
-                            }
-                        }
-                            return i;
-                        }
-                    break;
+                update = 1;
+                counter++;
+            }
+            else if(event.key.keysym.scancode == SDL_SCANCODE_UP && counter > 0)
+            {
+                update = 1;
+                counter--;
+            }
+            else if(event.key.keysym.scancode == SDL_SCANCODE_SPACE) {
+                update = 1;
+                switch (counter) {
+                    case 0:
+                        address = showInputMenu(game, "addresse ip");
+                        printf("addresse ip %s\n", address);
+                        port = showInputMenu(game, "port");
+                        printf("port %s\n", port);
+                        break;
+                    case 2:
+                        quit = 1;
+                        break;
+                }
             }
         }
-        for (int i = 0; i < menuSize; i++) {
-            SDL_Texture *text_texture = SDL_CreateTextureFromSurface(game->renderer, menus[i]);
-            SDL_RenderCopy(game->renderer, text_texture, NULL, &pos[i]);
-            SDL_DestroyTexture(text_texture);
+        if (event.type == SDL_QUIT)
+            quit = 1;
+        if(update) {
+            showMenu(game, menus, menu_size, counter);
         }
-        SDL_RenderPresent(game->renderer);
-        if (1000 / 30> (SDL_GetTicks() - time)) {
-            SDL_Delay(1000 / 30 - (SDL_GetTicks() - time));
-        }
+    } while(!quit);
+    game->running = 0;
+    free(menus[0]);
+    free(menus[1]);
+    free(menus[2]);
+    return 1;
+}
+
+
+void    showMenu(game_t *game, char **menus_text, int menu_number, int current_menu)
+{
+    int width;
+    int height;
+    int texW = 0;
+    int texH = 0;
+    int menuHeight = 30;
+
+    SDL_Color color = { 255, 255, 255, 255 };
+    SDL_GetRendererOutputSize(game->sdl->renderer, &width, &height);
+
+    SDL_RenderClear(game->sdl->renderer);
+    SDL_Texture *texture;
+    SDL_Surface *surface;
+    SDL_Rect text_pos;
+    for (int i = menu_number - 1; i >= 0; i--) {
+        text_pos.y = height / 2 - menu_number * menuHeight / 2 + menuHeight * i;
+        text_pos.x = 80;
+        surface = TTF_RenderText_Solid(game->sdl->font, menus_text[i], color);
+        texture = SDL_CreateTextureFromSurface(game->sdl->renderer, surface);
+        SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
+        SDL_Rect dstrect = { text_pos.x, text_pos.y, texW, texH };
+        SDL_RenderCopy(game->sdl->renderer, texture, NULL, &dstrect);
+        SDL_DestroyTexture(texture);
+        SDL_FreeSurface(surface);
     }
+    showSelection(game, current_menu);
+    SDL_RenderPresent(game->sdl->renderer);
+}
+
+void    showSelection(game_t *game, int menu_selected_number)
+{
+    int width;
+    int height;
+    SDL_Rect selection_pos;
+
+    SDL_GetRendererOutputSize(game->sdl->renderer, &width, &height);
+    selection_pos.x = 40;
+    selection_pos.y = height / 2 - 3 * 30 / 2 + 30 * menu_selected_number;
+    selection_pos.w = 30;
+    selection_pos.h = 30;
+
+    SDL_Rect texture_pos;
+
+    texture_pos.x = 0;
+    texture_pos.y = 0;
+    texture_pos.w = 40;
+    texture_pos.h = 40;
+    SDL_Surface *surface = IMG_Load("./assets/images/bombeSprite.png");
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(game->sdl->renderer,surface);
+
+    SDL_RenderCopy(game->sdl->renderer, texture, &texture_pos, &selection_pos);
+    SDL_DestroyTexture(texture);
+    SDL_FreeSurface(surface);
+}
+
+char    *showInputMenu(game_t *game, const char *placeholder)
+{
+    int width;
+    int height;
+    int texW = 0;
+    int texH = 0;
+
+    SDL_Color color = { 255, 255, 255, 255 };
+    SDL_Color gray_color = { 170, 170, 170, 255 };
+
+    char *text = NULL;
+
+    if ((text = malloc(sizeof(*text) * 20)) ==  NULL)
+        return NULL;
+    text = strdup("");
+    int done = 0;
+    SDL_GetRendererOutputSize(game->sdl->renderer, &width, &height);
+    SDL_StartTextInput();
+    while (!done) {
+        SDL_RenderClear(game->sdl->renderer);
+        SDL_Event event;
+        SDL_WaitEvent(&event);
+        switch (event.type) {
+            case SDL_QUIT:
+                done = 1;
+                break;
+            case SDL_TEXTINPUT:
+                if (strlen(text) / sizeof(*text) < 20)
+                    strcat(text, event.text.text);
+                break;
+            case SDL_KEYDOWN:
+                if(event.key.keysym.scancode == SDL_SCANCODE_BACKSPACE) {
+                    if (strlen(text) > 1)
+                        text[strlen(text) - 1] = '\0';
+                    else
+                        text = strdup("");
+                }
+                else if(event.key.keysym.scancode == SDL_SCANCODE_RETURN) {
+                    done = 1;
+                }
+                break;
+        }
+        SDL_Rect text_pos;
+        text_pos.y = 80;
+        text_pos.x = 80;
+        SDL_Surface *surface;
+        if(strlen(text) > 1)
+            surface = TTF_RenderText_Solid(game->sdl->font, text, color);
+        else
+            surface = TTF_RenderText_Solid(game->sdl->font, placeholder, gray_color);
+        SDL_Texture *texture = SDL_CreateTextureFromSurface(game->sdl->renderer, surface);
+        SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
+        SDL_Rect dstrect = { text_pos.x, text_pos.y, texW, texH };
+        SDL_RenderCopy(game->sdl->renderer, texture, NULL, &dstrect);
+        SDL_DestroyTexture(texture);
+        SDL_FreeSurface(surface);
+        SDL_RenderPresent(game->sdl->renderer);
+    }
+    SDL_StopTextInput();
+    return text;
 }

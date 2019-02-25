@@ -27,16 +27,15 @@ typedef struct bomb_s {
   int	useClips;
 } bomb_t;
 
-typedef struct window_s {
+typedef struct sdl_s {
     SDL_Point screenSize;
-    SDL_Window *pWindow;
+    SDL_Window *window;
     SDL_Renderer *renderer;
-} window_t;
+    TTF_Font *font;
+} sdl_t;
 
 typedef struct game_s {
-  SDL_Point screenSize;
-  SDL_Window *pWindow;
-  SDL_Renderer *renderer;
+  struct sdl_s* sdl;
   char **map;
   
   SDL_Texture *grass;
@@ -99,6 +98,8 @@ void renderTexture(SDL_Texture *, game_t *, int, int, SDL_Rect *);
 void	initGrass(game_t *);
 int beginGame();
 
-int showMenu(game_t *, TTF_Font *);
-
+int menuWindow(game_t *);
+void    showMenu(game_t *, char **, int, int);
+void    showSelection(game_t *, int);
+char    *showInputMenu(game_t *, const char *);
 #endif

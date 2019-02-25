@@ -24,7 +24,7 @@ void gameUpdate(game_t *game)
 
 void    gameDraw(game_t *game)
 {
-  SDL_RenderClear(game->renderer);
+  SDL_RenderClear(game->sdl->renderer);
   gameUpdate(game);
   mapDraw(game);
   drawBombs(game);
