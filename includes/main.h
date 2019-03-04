@@ -22,9 +22,7 @@
 typedef struct bomb_s {
   SDL_Rect position;
   int duration;
-  SDL_Texture *bombTexture;
-  SDL_Rect clips[4];
-  int	useClips;
+  int clip;
 } bomb_t;
 
 typedef struct sdl_s {
@@ -32,7 +30,22 @@ typedef struct sdl_s {
     SDL_Window *window;
     SDL_Renderer *renderer;
     TTF_Font *font;
+    SDL_Texture *bombTexture;
+    SDL_Rect bomb_clips[4];
 } sdl_t;
+
+typedef struct          bomb_node_s
+{
+    bomb_t*             bomb;
+    struct bomb_node_s*   next;
+    struct bomb_node_s*   prev;
+}                       bomb_node_t;
+
+typedef struct          bombs_s
+{
+    struct bomb_node_s*   first;
+    struct bomb_node_s*   last;
+}                       bombs_t;
 
 typedef struct game_s {
   struct sdl_s* sdl;
@@ -52,9 +65,9 @@ typedef struct game_s {
   SDL_Rect oldPlayerPosition;
   int useClip;
   
-  SDL_Texture *bombTexture;
-  
-  struct bomb_s* bomb;
+  SDL_Texture *bomb;
+
+  bombs_t* bombs;
   int speed;
   
   int running;
@@ -103,5 +116,7 @@ void    showMenu(game_t *, char **, int, int);
 void    showSelection(game_t *, int);
 char    *showInputMenu(game_t *, const char *);
 void showText(game_t *, const char *);
+void  placeBomb(game_t *, int, int);
+void removeBomb(game_t *, bomb_t *);
 
 #endif

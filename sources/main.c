@@ -36,18 +36,29 @@ game_t* init() {
   return game;
 }
 
+bombs_t *new_bombs(void)
+{
+    bombs_t* bombs = malloc(sizeof *bombs);
+
+    if (bombs != NULL) {
+        bombs->first = NULL;
+        bombs->last = NULL;
+    }
+    return (bombs);
+}
+
 game_t *initStructs() {
     game_t *game = NULL;
-    game = malloc(sizeof(game_t));
+    game = malloc(sizeof *game);
     sdl_t *sdl = NULL;
-    sdl = malloc(sizeof(sdl_t));
+    sdl = malloc(sizeof *sdl);
     sdl->screenSize.x = 680;
     sdl->screenSize.y = 440;
     sdl->renderer = NULL;
     game->sdl = sdl;
 
     game->player = NULL;
-    game->bomb = NULL;
+    game->bombs = new_bombs();
     game->speed = 40;
     game->playerPosition.x = 80;
     game->playerPosition.y = 80;
@@ -99,6 +110,27 @@ void initTextures(game_t *game) {
          gameDestroy(game);
        }
     }
+
+    SDL_Surface *bombSurface = IMG_Load("./assets/images/bombeSprite.png");
+    if (bombSurface == NULL) {
+        fprintf(stderr, SDL_GetError());
+        gameDestroy(game);
+    } else {
+        game->bomb = SDL_CreateTextureFromSurface(game->sdl->renderer, bombSurface);
+        SDL_Rect dest = { 640/2 - bombSurface->w/2,480/2 - bombSurface->h/2, bombSurface->w, bombSurface->h};
+        SDL_BlitSurface(bombSurface,NULL,SDL_GetWindowSurface(game->sdl->window),&dest);
+        for (int i = 0; i < 4; ++i){
+            game->sdl->bomb_clips[i].x = i / 2 * 40;
+            game->sdl->bomb_clips[i].y = i % 2 * 40;
+            game->sdl->bomb_clips[i].w = 40;
+            game->sdl->bomb_clips[i].h = 40;
+        }
+        SDL_FreeSurface(bombSurface);
+        if (!game->bomb) {
+            fprintf(stderr, SDL_GetError());
+            gameDestroy(game);
+        }
+    }
 }
 
 void gameDestroy(game_t *game) {
@@ -112,9 +144,9 @@ void gameDestroy(game_t *game) {
         if (game->stone) {
             SDL_DestroyTexture(game->stone);
         }
-        /* if (game->bomb->bombTexture) {
-             SDL_DestroyTexture(game->bomb->bombTexture);
-         } */
+        if (game->bomb) {
+             SDL_DestroyTexture(game->bomb);
+        }
         if (game->sdl) {
             if (game->sdl->renderer) {
                 SDL_DestroyRenderer(game->sdl->renderer);

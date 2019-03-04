@@ -22,6 +22,7 @@ char** mapInit()
     x = 0;
     y++;
   }
+  map[y] = NULL;
   return map;
 }
 
@@ -70,5 +71,19 @@ void mapDraw(game_t *game)
       game->stonePosition.x = texPosX;
       game->grassPosition.y = texPosY;
       game->stonePosition.y = texPosY;
+    }
+}
+
+void    drawBombs(game_t *game)
+{
+    bomb_node_t* bomb_node = game->bombs->first;
+    while (bomb_node != NULL) {
+        if (bomb_node->bomb->duration <= 0) {
+            removeBomb(game, bomb_node->bomb);
+            break;
+        }
+        renderTexture(game->bomb, game, bomb_node->bomb->position.x, bomb_node->bomb->position.y, &game->sdl->bomb_clips[bomb_node->bomb->clip]);
+        //renderTexture(game->sdl->bombTexture, game, bomb_node->bomb->position.x, bomb_node->bomb->position.y, &game->sdl->bomb_clips[bomb_node->bomb->clip]);
+        bomb_node = bomb_node->next;
     }
 }

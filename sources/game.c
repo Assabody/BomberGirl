@@ -2,23 +2,30 @@
 
 void gameUpdate(game_t *game)
 {
-  if (game->bomb != NULL) {
-    if (game->bomb->duration > 0) {
-      if (game->bomb->duration > 80 && game->bomb->duration < 110) {
-	game->bomb->useClips = 2;
-      }
-      if (game->bomb->duration > 15 && game->bomb->duration < 50) {
-	game->bomb->useClips = 1;
-      }
-      if (game->bomb->duration > 0 && game->bomb->duration < 15) {
-	game->bomb->useClips = 3;
-      }
-
-      game->bomb->duration--;
-    } else {
-      game->bomb = NULL;
+    int bombs_count = 0;
+    int count = 0;
+    bomb_node_t* bomb_node = game->bombs->first;
+    while (bomb_node != NULL) {
+        count++;
+        if (bomb_node->bomb != NULL) {
+            bombs_count++;
+            if (bomb_node->bomb->duration > 0) {
+                if (bomb_node->bomb->duration > 80 && bomb_node->bomb->duration < 110) {
+                    bomb_node->bomb->clip = 2;
+                }
+                if (bomb_node->bomb->duration > 15 && bomb_node->bomb->duration < 50) {
+                    bomb_node->bomb->clip = 1;
+                }
+                if (bomb_node->bomb->duration > 0 && bomb_node->bomb->duration < 15) {
+                    bomb_node->bomb->clip = 3;
+                }
+                bomb_node->bomb->duration--;
+            } else {
+                bomb_node->bomb = NULL;
+            }
+        }
+        bomb_node = bomb_node->next;
     }
-  }
 }
 
 

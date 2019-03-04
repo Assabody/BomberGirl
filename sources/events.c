@@ -11,8 +11,8 @@ void checkEvents(game_t *game) {
       if (event.type == SDL_KEYDOWN) {
 	switch (event.key.keysym.sym) {
 	case SDLK_SPACE:
-	  bombeDraw(game);
-	  printf("BOMBE %d %d\n", game->bomb->position.x, game->bomb->position.y);
+		placeBomb(game, game->playerPosition.x, game->playerPosition.y);
+		puts("bomb placed");
 	  break;
 	case SDLK_ESCAPE:
 	  game->running = 0;
