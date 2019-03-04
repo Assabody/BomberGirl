@@ -39,6 +39,13 @@ int menuWindow(game_t *game)
                         printf("addresse ip %s\n", address);
                         port = showInputMenu(game, "port");
                         printf("port %s\n", port);
+                        game->client_sock = initClient(address, port);
+                        if (game->client_sock <= 0) {
+                            showText(game, "Error while connecting to the server");
+                        } else {
+                            showText(game, "Connected!");
+                        }
+
                         break;
                     case 2:
                         quit = 1;
@@ -176,4 +183,43 @@ char    *showInputMenu(game_t *game, const char *placeholder)
     }
     SDL_StopTextInput();
     return text;
+}
+
+void showText(game_t *game, const char* text)
+{
+    int width;
+    int height;
+    int texW = 0;
+    int texH = 0;
+
+    SDL_Color color = { 170, 170, 170, 255 };
+    int done = 0;
+    SDL_GetRendererOutputSize(game->sdl->renderer, &width, &height);
+    while (!done) {
+        SDL_RenderClear(game->sdl->renderer);
+        SDL_Event event;
+        SDL_WaitEvent(&event);
+        switch (event.type) {
+            case SDL_QUIT:
+                done = 1;
+                break;
+            case SDL_KEYDOWN:
+                if(event.key.keysym.scancode == SDL_SCANCODE_RETURN) {
+                    done = 1;
+                }
+                break;
+        }
+        SDL_Rect text_pos;
+        text_pos.y = 80;
+        text_pos.x = 80;
+        SDL_Surface *surface;
+        surface = TTF_RenderText_Solid(game->sdl->font, text, color);
+        SDL_Texture *texture = SDL_CreateTextureFromSurface(game->sdl->renderer, surface);
+        SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
+        SDL_Rect dstrect = { text_pos.x, text_pos.y, texW, texH };
+        SDL_RenderCopy(game->sdl->renderer, texture, NULL, &dstrect);
+        SDL_DestroyTexture(texture);
+        SDL_FreeSurface(surface);
+        SDL_RenderPresent(game->sdl->renderer);
+    }
 }

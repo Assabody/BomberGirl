@@ -102,4 +102,6 @@ int menuWindow(game_t *);
 void    showMenu(game_t *, char **, int, int);
 void    showSelection(game_t *, int);
 char    *showInputMenu(game_t *, const char *);
+void showText(game_t *, const char *);
+
 #endif

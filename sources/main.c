@@ -32,9 +32,6 @@ game_t* init() {
     gameDestroy(game);
     return NULL;
   }
-  game->client_sock = initClient("127.0.0.1", "1234");
-  if (game->client_sock < 0)
-    return NULL;
   initTextures(game);
   return game;
 }
@@ -143,8 +140,6 @@ int main() {
     Uint32 frameStart;
     int frameTime;
     game->useClip = 0;
-    send_message(game->client_sock,"Window started");
-    read_message(game->client_sock);
     SDL_SetRenderDrawColor(game->sdl->renderer, 50, 50, 50, 255);
     while (game->running) {
         frameStart = SDL_GetTicks();
