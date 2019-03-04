@@ -6,7 +6,7 @@ void    bombeDraw(game_t *game) {
   SDL_Surface *bombeSurface = IMG_Load("./assets/images/bombeSprite.png");
 
   bomb = malloc(sizeof(bomb_t));
-  bomb->bombTexture = SDL_CreateTextureFromSurface(game->renderer,bombeSurface);
+  bomb->bombTexture = SDL_CreateTextureFromSurface(game->sdl->renderer,bombeSurface);
   bomb->position.x = game->playerPosition.x;
   bomb->position.y = game->playerPosition.y;
   bomb->duration = 2 * FPS;
@@ -17,7 +17,7 @@ void    bombeDraw(game_t *game) {
   if ( game->bomb->bombTexture )
     {
       SDL_Rect dest = { 640/2 - bombeSurface->w/2,480/2 - bombeSurface->h/2, bombeSurface->w, bombeSurface->h};
-      SDL_BlitSurface(bombeSurface,NULL,SDL_GetWindowSurface(game->pWindow),&dest);
+      SDL_BlitSurface(bombeSurface,NULL,SDL_GetWindowSurface(game->sdl->window),&dest);
       for (int i = 0; i < 4; ++i){
 	game->bomb->clips[i].x = i / 2 * iW;
 	game->bomb->clips[i].y = i % 2 * iH;
