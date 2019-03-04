@@ -22,11 +22,25 @@ void gameUpdate(game_t *game)
 }
 
 
-void    gameDraw(game_t *game)
+int    gameDraw(game_t *game)
 {
-  SDL_RenderClear(game->sdl->renderer);
-  gameUpdate(game);
-  mapDraw(game);
-  drawBombs(game);
+    if (game == NULL)
+      return (EXIT_FAILURE);
+    Uint32 frameStart;
+    int frameTime;
+    SDL_SetRenderDrawColor(game->sdl->renderer, 50, 50, 50, 255);
+    while (game->running) {
+      frameStart = SDL_GetTicks();
+      SDL_RenderClear(game->sdl->renderer);
+      gameUpdate(game);
+      mapDraw(game);
+      drawBombs(game);
+      checkEvents(game);
+      SDL_RenderPresent(game->sdl->renderer);
+      frameTime = SDL_GetTicks() - frameStart;
+      if (TICKS_PER_FRAME > frameTime)
+        SDL_Delay(TICKS_PER_FRAME - frameTime);
+      game->frameCount++;
+    }
+    return (EXIT_SUCCESS);
 }
-

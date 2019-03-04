@@ -112,9 +112,9 @@ void gameDestroy(game_t *game) {
         if (game->stone) {
             SDL_DestroyTexture(game->stone);
         }
-        /* if (game->bomb->bombTexture) { */
-        /*     SDL_DestroyTexture(game->bomb->bombTexture); */
-        /* } */
+        /* if (game->bomb->bombTexture) {
+             SDL_DestroyTexture(game->bomb->bombTexture);
+         } */
         if (game->sdl) {
             if (game->sdl->renderer) {
                 SDL_DestroyRenderer(game->sdl->renderer);
@@ -137,20 +137,8 @@ int main() {
     game_t *game = init();
     if (game == NULL)
         return (EXIT_FAILURE);
-    Uint32 frameStart;
-    int frameTime;
-    game->useClip = 0;
-    SDL_SetRenderDrawColor(game->sdl->renderer, 50, 50, 50, 255);
     while (game->running) {
-        frameStart = SDL_GetTicks();
         menuWindow(game);
-//        gameDraw(game);
-//        checkEvents(game);
-	    SDL_RenderPresent(game->sdl->renderer);
-        frameTime = SDL_GetTicks() - frameStart;
-        if (TICKS_PER_FRAME > frameTime)
-            SDL_Delay(TICKS_PER_FRAME - frameTime);
-        game->frameCount++;
     }
     gameDestroy(game);
     return (EXIT_SUCCESS);

@@ -17,6 +17,7 @@ int menuWindow(game_t *game) {
     showMenu(game, menus, menu_size, counter);
     do {
         int update = 0;
+        game->running = 1;
         SDL_WaitEvent(&event);
         if (event.type == SDL_KEYDOWN) {
             if (event.key.keysym.scancode == SDL_SCANCODE_DOWN && counter < menu_size - 1) {

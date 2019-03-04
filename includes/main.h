@@ -85,7 +85,7 @@ void initBombe(game_t *, int);
 
 void checkEvents(game_t *);
 
-void gameDraw(game_t *);
+int gameDraw(game_t *);
 
 void gameUpdate(game_t *game);
 
