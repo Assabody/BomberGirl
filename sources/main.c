@@ -144,6 +144,8 @@ int main() {
     while (game->running) {
         frameStart = SDL_GetTicks();
         menuWindow(game);
+//        gameDraw(game);
+//        checkEvents(game);
 	    SDL_RenderPresent(game->sdl->renderer);
         frameTime = SDL_GetTicks() - frameStart;
         if (TICKS_PER_FRAME > frameTime)

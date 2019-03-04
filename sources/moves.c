@@ -14,7 +14,7 @@ void    movePlayer(game_t *game, SDL_Keycode direction) {
   }  else if (direction == SDLK_DOWN) {
     printf("keyDown\n");
     printf("PosY: %i\n", game->playerPosition.y);
-    if (game->playerPosition.y < (game->screenSize.y - game->playerPosition.w) && game->map[(game->playerPosition.y / 40) + 1][game->playerPosition.x / 40] != 's') {
+    if (game->playerPosition.y < (game->sdl->screenSize.y - game->playerPosition.w) && game->map[(game->playerPosition.y / 40) + 1][game->playerPosition.x / 40] != 's') {
       game->playerPosition.y += game->speed;
     }
     game->useClip = 0;
@@ -28,7 +28,7 @@ void    movePlayer(game_t *game, SDL_Keycode direction) {
   }  else  if (direction == SDLK_RIGHT) {
     printf("keyRight\n");
     printf("PosX: %i\n", game->playerPosition.x);
-    if (game->playerPosition.x < (game->screenSize.x - game->playerPosition.h) && game->map[game->playerPosition.y / 40][(game->playerPosition.x / 40) + 1] != 's') {
+    if (game->playerPosition.x < (game->sdl->screenSize.x - game->playerPosition.h) && game->map[game->playerPosition.y / 40][(game->playerPosition.x / 40) + 1] != 's') {
       game->playerPosition.x += game->speed;
     }
     game->useClip = 1;
