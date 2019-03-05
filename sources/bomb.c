@@ -8,7 +8,7 @@ bombs_t *initBombs(void)
         bombs->first = NULL;
         bombs->last = NULL;
     }
-    return (bombs);
+    return bombs;
 }
 
 void  placeBomb(game_t *game, int x, int y)
@@ -94,4 +94,20 @@ void updateBombs(game_t *game)
         }
         bomb_node = bomb_node->next;
     }
+}
+
+void clearBombs(bombs_t *bombs)
+{
+    bomb_node_t *tmp_node;
+
+    if (bombs && bombs->first && bombs->last) {
+        tmp_node = bombs->first;
+        while (tmp_node != NULL) {
+            bomb_node_t *tmp_delete = tmp_node;
+            tmp_node = tmp_node->next;
+            free(tmp_delete);
+        }
+        free(bombs);
+    }
+    bombs = NULL;
 }

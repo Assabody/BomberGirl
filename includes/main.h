@@ -49,7 +49,6 @@ typedef struct player_s {
     SDL_Rect oldPosition;
     int speed;
     int clip;
-
 } player_t;
 
 typedef struct textures_s {
@@ -83,9 +82,7 @@ textures_t* initTextures(sdl_t *);
 
 void gameDestroy(game_t *);
 
-game_t *init();
-
-game_t *initStructs();
+game_t *init(void);
 
 /**
  * Events.c
@@ -96,9 +93,13 @@ void checkEvents(game_t *);
 /**
  * Sdl.c
  */
-void renderTexture(SDL_Texture *, game_t *, int, int, SDL_Rect *);
-void destroyTextures(textures_t *);
+sdl_t *initSdl(int, int);
 
+void clearTextures(textures_t *);
+
+void clearSdl(sdl_t *);
+
+void renderTexture(SDL_Texture *, game_t *, int, int, SDL_Rect *);
 /**
  * Menu.c
  */
@@ -125,17 +126,27 @@ void drawMap(game_t *);
 int drawGame(game_t *);
 
 
+
 /**
  * Bomb.c
  */
-void placeBomb(game_t *, int, int);
-
 bombs_t *initBombs(void);
+
+void clearBombs(bombs_t *);
+
+void placeBomb(game_t *, int, int);
 
 void removeBomb(game_t *, bomb_t *);
 
 void removeBombNode(bombs_t *, bomb_node_t *);
 
 void updateBombs(game_t *);
+
+/**
+ * Player.c
+ */
+player_t *initPlayer(void);
+
+void clearPlayer(player_t *);
 
 #endif
