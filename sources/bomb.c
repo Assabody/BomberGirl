@@ -98,6 +98,8 @@ void updateBombs(game_t *game)
 
 void clearBombs(bombs_t *bombs)
 {
+    puts("Clearing Bombs");
+
     bomb_node_t *tmp_node;
 
     if (bombs && bombs->first && bombs->last) {
@@ -110,4 +112,5 @@ void clearBombs(bombs_t *bombs)
         free(bombs);
     }
     bombs = NULL;
+    puts("Bombs cleared");
 }

@@ -42,6 +42,7 @@ sdl_t *initSdl(int width, int height) {
 
 void clearSdl(sdl_t *sdl)
 {
+    puts("Clearing sdl");
     if (sdl) {
         if (sdl->renderer) {
             SDL_DestroyRenderer(sdl->renderer);
@@ -55,6 +56,7 @@ void clearSdl(sdl_t *sdl)
         free(sdl);
     }
     sdl = NULL;
+    puts("Sdl cleared");
 }
 
 void renderTexture(SDL_Texture *tex, game_t *game, int x, int y, SDL_Rect *clip) {
@@ -71,6 +73,7 @@ void renderTexture(SDL_Texture *tex, game_t *game, int x, int y, SDL_Rect *clip)
 }
 
 void clearTextures(textures_t *textures) {
+    puts("Clearing textures");
     if (textures) {
         if (textures->player)
             SDL_DestroyTexture(textures->player);
@@ -83,6 +86,7 @@ void clearTextures(textures_t *textures) {
     }
     free(textures);
     textures = NULL;
+    puts("Textures cleared");
 }
 
 textures_t *initTextures(sdl_t *sdl) {

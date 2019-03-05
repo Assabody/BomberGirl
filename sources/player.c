@@ -19,8 +19,10 @@ player_t *initPlayer(void)
 
 void clearPlayer(player_t *player)
 {
+    puts("Clearing Player");
     if (player) {
         free(player);
     }
     player = NULL;
+    puts("Player cleared");
 }

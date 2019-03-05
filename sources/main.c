@@ -34,10 +34,13 @@ game_t *init() {
 
 
 void gameDestroy(game_t *game) {
+    puts("Cleaning everything...");
     if (game) {
         clearTextures(game->textures);
+        // TO DO: Fix Clear bombs (memory leak)
         clearBombs(game->bombs);
         clearPlayer(game->player);
+        clearSdl(game->sdl);
         // TO DO: Clear Map
         TTF_Quit();
         SDL_Quit();
