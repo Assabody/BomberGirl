@@ -43,7 +43,7 @@ int menuWindow(game_t *game) {
 
                         break;
                     case 2:
-                        gameDraw(game);
+                        drawGame(game);
                         break;
                     case 3:
                         quit = 1;
