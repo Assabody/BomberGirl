@@ -43,7 +43,7 @@ int menuWindow(game_t *game) {
 
                         break;
                     case 2:
-                        gameDraw(game);
+                        drawGame(game);
                         break;
                     case 3:
                         quit = 1;
@@ -113,12 +113,8 @@ void    showSelection(game_t *game, int menu_selected_number)
     texture_pos.y = 0;
     texture_pos.w = 40;
     texture_pos.h = 40;
-    SDL_Surface *surface = IMG_Load("./assets/images/bombeSprite.png");
-    SDL_Texture *texture = SDL_CreateTextureFromSurface(game->sdl->renderer,surface);
 
-    SDL_RenderCopy(game->sdl->renderer, texture, &texture_pos, &selection_pos);
-    SDL_DestroyTexture(texture);
-    SDL_FreeSurface(surface);
+    SDL_RenderCopy(game->sdl->renderer, game->textures->bomb, &texture_pos, &selection_pos);
 }
 
 char    *showInputMenu(game_t *game, const char *placeholder)

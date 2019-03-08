@@ -20,11 +20,10 @@
 #define TICKS_PER_FRAME 1000 / FPS
 
 typedef struct bomb_s {
-  SDL_Rect position;
-  int duration;
-  SDL_Texture *bombTexture;
-  SDL_Rect clips[4];
-  int	useClips;
+    int x;
+    int y;
+    int duration;
+    int clip;
 } bomb_t;
 
 typedef struct sdl_s {
@@ -34,74 +33,120 @@ typedef struct sdl_s {
     TTF_Font *font;
 } sdl_t;
 
-typedef struct game_s {
-  struct sdl_s* sdl;
-  char **map;
-  
-  SDL_Texture *grass;
-  SDL_Rect grassPosition;
-  
-  SDL_Texture *stone;
-  SDL_Rect stonePosition;
-  
-  SDL_Texture *wall;
-  SDL_Rect wallPosition;
-  
-  SDL_Texture *player;
-  SDL_Rect playerPosition;
-  SDL_Rect oldPlayerPosition;
-  int useClip;
-  
-  SDL_Texture *bombTexture;
-  
-  struct bomb_s* bomb;
-  int speed;
-  
-  int running;
-  Uint32 frameCount;
+typedef struct bomb_node_s {
+    bomb_t *bomb;
+    struct bomb_node_s *next;
+    struct bomb_node_s *prev;
+} bomb_node_t;
 
-  int client_sock;
+typedef struct bombs_s {
+    struct bomb_node_s *first;
+    struct bomb_node_s *last;
+} bombs_t;
+
+typedef struct player_s {
+    SDL_Rect position;
+    SDL_Rect oldPosition;
+    int speed;
+    int clip;
+} player_t;
+
+typedef struct textures_s {
+    SDL_Texture *player;
+    SDL_Texture *grass;
+    SDL_Texture *stone;
+    SDL_Texture *bomb;
+    SDL_Rect bomb_clips[4];
+    SDL_Rect player_clips[4];
+} textures_t;
+
+typedef struct game_s {
+    sdl_t *sdl;
+    bombs_t *bombs;
+    player_t *player;
+    textures_t *textures;
+
+    char **map;
+
+    int running;
+    int client_sock;
 } game_t;
 
-void mapDraw(game_t *);
+char **mapInit();
 
-char** mapInit();
-
-//void wallDraw(game_t *);
-
-void playerDraw(game_t *);
-
-void bombeDraw(game_t *);
-void drawBombs(game_t *);
 void movePlayer(game_t *, SDL_Keycode);
 
 void quitGame(game_t *);
 
-void initTextures(game_t *);
+textures_t* initTextures(sdl_t *);
 
 void gameDestroy(game_t *);
 
-void initBombe(game_t *, int);
+game_t *init(void);
 
+/**
+ * Events.c
+ */
 void checkEvents(game_t *);
 
-int gameDraw(game_t *);
 
-void gameUpdate(game_t *game);
+/**
+ * Sdl.c
+ */
+sdl_t *initSdl(int, int);
 
-game_t *init();
+void clearTextures(textures_t *);
 
-game_t *initStructs();
+void clearSdl(sdl_t *);
 
 void renderTexture(SDL_Texture *, game_t *, int, int, SDL_Rect *);
-
-void	initGrass(game_t *);
-int beginGame();
-
+/**
+ * Menu.c
+ */
 int menuWindow(game_t *);
-void    showMenu(game_t *, char **, int, int);
-void    showSelection(game_t *, int);
-char    *showInputMenu(game_t *, const char *);
+
+void showMenu(game_t *, char **, int, int);
+
+void showSelection(game_t *, int);
+
+char *showInputMenu(game_t *, const char *);
+
 void showText(game_t *, const char *);
+
+
+/**
+ * Drawing.c
+ */
+void drawBombs(game_t *);
+
+void drawPlayer(game_t *game);
+
+void drawMap(game_t *);
+
+int drawGame(game_t *);
+
+
+
+/**
+ * Bomb.c
+ */
+bombs_t *initBombs(void);
+
+void clearBombs(bombs_t *);
+
+void placeBomb(game_t *, int, int);
+
+void removeBomb(game_t *, bomb_t *);
+
+void removeBombNode(bombs_t *, bomb_node_t *);
+
+void updateBombs(game_t *);
+
+/**
+ * Player.c
+ */
+player_t *initPlayer(void);
+
+void clearPlayer(player_t *);
 
 #endif

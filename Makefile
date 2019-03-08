@@ -7,10 +7,11 @@
 
 SRC		=	sources/moves.c \
 			sources/drawing.c \
+			sources/map.c \
 			sources/events.c \
 			sources/player.c \
-			sources/bombe.c \
-			sources/renderTexture.c \
+			sources/bomb.c \
+			sources/sdl.c \
 			sources/main.c \
 			sources/game.c \
 			sources/menu.c \
