@@ -50,6 +50,8 @@ void gameDestroy(game_t *game) {
 
 int main() {
     game_t *game = init();
+
+    srandom(time(0));
     if (game == NULL)
         return (EXIT_FAILURE);
     while (game->running) {

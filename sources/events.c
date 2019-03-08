@@ -11,7 +11,7 @@ void checkEvents(game_t *game) {
         if (event.type == SDL_KEYDOWN) {
             switch (event.key.keysym.sym) {
                 case SDLK_SPACE:
-                    placeBomb(game, game->player->position.x, game->player->position.y);
+                    placeBomb(game, game->player->x_pos, game->player->y_pos);
                     puts("bomb placed");
                     break;
                 case SDLK_ESCAPE:

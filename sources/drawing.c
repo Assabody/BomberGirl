@@ -46,10 +46,11 @@ void drawBombs(game_t *game) {
 }
 
 void drawPlayer(game_t *game) {
+    printf("clip %d", game->player->current_dir);
     renderTexture(
             game->textures->player,
             game,
-            game->player->position.x,
-            game->player->position.y - 20,
-            &game->textures->player_clips[game->player->clip]);
+            game->player->x_pos,
+            game->player->y_pos - 20,
+            &game->textures->player_clips[game->player->current_dir]);
 }

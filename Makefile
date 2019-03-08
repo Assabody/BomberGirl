@@ -16,6 +16,7 @@ SRC		=	sources/moves.c \
 			sources/game.c \
 			sources/menu.c \
 			network/client.c \
+			network/checksum.c \
 			network/message.c
 
 GCC		=	gcc

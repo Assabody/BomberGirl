@@ -7,13 +7,16 @@ player_t *initPlayer(void)
         return NULL;
     }
 
-    player->clip = 0;
-    player->speed = 1;
-    player->position.x = 80;
-    player->position.y = 80;
-    player->position.w = 40;
-    player->position.h = 40;
-
+    player->alive = 1;
+    player->bombs_capacity = 1;
+    player->bombs_left = 1;
+    player->current_dir = UP;
+    player->token = randomNumber(0, 65536);
+    player->current_speed = SPEED;
+    player->max_speed = MAX_SPEED;
+    player->frags = 0;
+    player->x_pos = 80;
+    player->y_pos = 80;
     return player;
 }
 

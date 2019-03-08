@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <time.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
@@ -18,6 +19,16 @@
 
 #define FPS 60
 #define TICKS_PER_FRAME 1000 / FPS
+
+// constants for players
+#define SPEED 2
+#define MAX_SPEED 10
+
+// same as the player clips
+#define UP 2
+#define DOWN 0
+#define RIGHT 1
+#define LEFT 3
 
 typedef struct bomb_s {
     int x;
@@ -44,11 +55,18 @@ typedef struct bombs_s {
     struct bomb_node_s *last;
 } bombs_t;
 
-typedef struct player_s {
-    SDL_Rect position;
-    SDL_Rect oldPosition;
-    int speed;
-    int clip;
+typedef struct player_s
+{
+    unsigned int token;
+    int alive;
+    int x_pos;
+    int y_pos;
+    int current_dir;
+    int current_speed;
+    int max_speed;
+    int bombs_left;
+    int bombs_capacity;
+    int frags;
 } player_t;
 
 typedef struct textures_s {
@@ -71,6 +89,32 @@ typedef struct game_s {
     int running;
     int client_sock;
 } game_t;
+
+/*
+** Bit 0 : Indique si la case est en flammes (1) ou non (0)
+** Bits [1..2] : Indique le type de terrain ( 00 : Terrain vide, 10 : Brique indestructible, 11 : Brique destructible). Note : Combinaison 01 inutilisée.
+** Bit 3 : Présence d’une bombe (0 : Pas de bombe, 1 : Bombe)
+** Bit 4 : Présence d’un bonus / malus (0 : Pas de bonus / malus, 1 : Bonus / malus présent)
+** Bits [5..7] : Type de bonus / malus.
+**
+** Pour l’exemple, liste des bonus / malus
+** 000 : Bonus portée bombes
+** 001 : Malus portée bombes
+** 010 : Bonus nombre bombes
+** 011 : Malus nombre bombes
+** 100 : Bonus vitesse
+** 101 : Malus vitesse
+** 110 : Rien
+** 111 : Rien
+*/
+typedef char map_t[MAP_SIZE];
+
+typedef struct game_infos_s
+{
+    player_t players[MAX_PLAYERS];
+    map_t map;
+} game_infos_t;
+
 
 char **mapInit();
 

@@ -4,27 +4,27 @@
 void    movePlayer(game_t *game, SDL_Keycode direction) {
   if (direction == SDLK_UP) {
     printf("keyUp\n");
-    if (game->player->position.y > 0 && game->map[(game->player->position.y / 40) - 1][game->player->position.x / 40] != 's') {
-      game->player->position.y -= game->player->speed;
+    if (game->player->y_pos > 0 && game->map[(game->player->y_pos / 40) - 1][game->player->x_pos / 40] != 's') {
+      game->player->y_pos -= game->player->current_speed;
     }
-    game->player->clip = 2;
+    game->player->current_dir = UP;
   }  else if (direction == SDLK_DOWN) {
     printf("keyDown\n");
-    if (game->player->position.y < (game->sdl->screenSize.y - game->player->position.w) && game->map[(game->player->position.y / 40) + 1][game->player->position.x / 40] != 's') {
-      game->player->position.y += game->player->speed;
+    if (game->player->y_pos < (game->sdl->screenSize.y - 40/*game->player->position.w*/) && game->map[(game->player->y_pos / 40) + 1][game->player->x_pos / 40] != 's') {
+      game->player->y_pos += game->player->current_speed;
     }
-    game->player->clip = 0;
+    game->player->current_dir = DOWN;
   }  else if (direction == SDLK_LEFT) {
     printf("keyLeft\n");
-    if (game->player->position.x > 0 && game->map[game->player->position.y / 40][(game->player->position.x / 40) - 1] != 's') {
-      game->player->position.x -= game->player->speed;
+    if (game->player->x_pos > 0 && game->map[game->player->y_pos / 40][(game->player->x_pos / 40) - 1] != 's') {
+      game->player->x_pos -= game->player->current_speed;
     }
-    game->player->clip = 3;
+    game->player->current_dir = LEFT;
   }  else  if (direction == SDLK_RIGHT) {
     printf("keyRight\n");
-    if (game->player->position.x < (game->sdl->screenSize.x - game->player->position.h) && game->map[game->player->position.y / 40][(game->player->position.x / 40) + 1] != 's') {
-      game->player->position.x += game->player->speed;
+    if (game->player->x_pos < (game->sdl->screenSize.x - 40/*game->player->position.h*/) && game->map[game->player->y_pos / 40][(game->player->x_pos / 40) + 1] != 's') {
+      game->player->x_pos += game->player->current_speed;
     }
-    game->player->clip = 1;
+    game->player->current_dir = RIGHT;
   }
 }
