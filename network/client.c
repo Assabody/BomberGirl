@@ -16,7 +16,7 @@ int initClient(char *address, char *port)
     portno = atoi(port);
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0)
-        error("ERROR opening socket");
+        puts("ERROR opening socket");
     server = gethostbyname(address);
     if (server == NULL) {
         fprintf(stderr,"ERROR, no such host\n");
@@ -29,13 +29,14 @@ int initClient(char *address, char *port)
           server->h_length);
     serv_addr.sin_port = htons(portno);
     if (connect(sockfd,(struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0) {
-        error("ERROR connecting");
+        puts("ERROR connecting");
         close(sockfd);
         return -1;
     }
     send_message(sockfd, "ping");
-    char *result = read_message(sockfd);
-    if (!result || strcmp(result, "pong") != 0 ) {
+    char *result = read_message(sockfd, 4);
+    puts(result);
+    if (!result || strncmp(result, "pong", 4) != 0 ) {
         return -1;
     }
 

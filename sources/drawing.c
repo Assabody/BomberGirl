@@ -11,9 +11,9 @@ void drawMap(game_t *game) {
 
     while (game->map[y]) {
         while (game->map[y][x]) {
-            if (game->map[y][x] == 'g') {
+            if (game->map[y][x] == MAP_GRASS) {
                 SDL_RenderCopy(game->sdl->renderer, game->textures->grass, NULL, &position);
-            } else if (game->map[y][x] == 'b') {
+            } else if (game->map[y][x] == MAP_BOMB) {
                 SDL_RenderCopy(game->sdl->renderer, game->textures->bomb, NULL, &position);
             } else {
                 SDL_RenderCopy(game->sdl->renderer, game->textures->stone, NULL, &position);
@@ -46,7 +46,6 @@ void drawBombs(game_t *game) {
 }
 
 void drawPlayer(game_t *game) {
-    printf("clip %d", game->player->current_dir);
     renderTexture(
             game->textures->player,
             game,

@@ -50,6 +50,7 @@ void gameDestroy(game_t *game) {
 
 int main() {
     game_t *game = init();
+    print_map(game->map);
 
     srandom(time(0));
     if (game == NULL)

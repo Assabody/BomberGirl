@@ -58,7 +58,7 @@ typedef struct bombs_s {
 
 typedef struct player_s
 {
-    unsigned int token;
+    int token;
     int alive;
     int x_pos;
     int y_pos;
@@ -108,16 +108,22 @@ typedef struct game_s {
 ** 110 : Rien
 ** 111 : Rien
 */
-typedef char map_t[MAP_SIZE];
 
 typedef struct game_infos_s
 {
     player_t players[MAX_PLAYERS];
-    map_t map;
+    char **map;
 } game_infos_t;
 
-
+/**
+ * Map.c
+ */
 char **mapInit();
+
+void print_map(char **);
+
+
+
 
 void movePlayer(game_t *, SDL_Keycode);
 
@@ -145,6 +151,7 @@ void clearTextures(textures_t *);
 void clearSdl(sdl_t *);
 
 void renderTexture(SDL_Texture *, game_t *, int, int, SDL_Rect *);
+
 /**
  * Menu.c
  */
@@ -157,6 +164,9 @@ void showSelection(game_t *, int);
 char *showInputMenu(game_t *, const char *);
 
 void showText(game_t *, const char *);
+
+int getClientToken(int);
+
 
 
 /**
@@ -193,5 +203,13 @@ void updateBombs(game_t *);
 player_t *initPlayer(void);
 
 void clearPlayer(player_t *);
+
+void printPlayerStruct(player_t *);
+
+/**
+ * Game.c
+ */
+int fetchDataFromServer(game_t *game);
+
 
 #endif

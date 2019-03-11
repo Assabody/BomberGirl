@@ -77,6 +77,9 @@ int main() {
                         } else {
                             printf("Client connected\n");
                             send_message(new, "pong");
+                            char checksum[5];
+                            sprintf(checksum, "%d", randomNumber(1000, 9999));
+                            send_message(new, checksum);
                             number_of_clients++;
                             printf("Number of clients : %d/%d\n", number_of_clients, max_number_of_clients);
                             FD_SET(new, &active_fd_set);
@@ -84,15 +87,16 @@ int main() {
                     }
                 }
                 else {
-                    char *result = read_message(i);
+                    char *result = read_message(i, 4);
                     if (result == NULL) {
                         printf("Client disconnected\n");
                         number_of_clients--;
                         printf("Number of clients : %d/%d\n", number_of_clients, max_number_of_clients);
                         close(i);
                         FD_CLR(i, &active_fd_set);
+                    } else {
+                        send_message(i, "fetching");
                     }
-                    send_message(i, "OK");
                 }
             }
         }

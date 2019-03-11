@@ -7,7 +7,7 @@ unsigned char checksum (unsigned char *ptr, size_t sz) {
     return chk;
 }
 
-unsigned int randomNumber(unsigned int lower, unsigned int upper)
+int randomNumber(int lower, int upper)
 {
     return (random() % (upper - lower + 1)) + lower;
 }

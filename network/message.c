@@ -5,22 +5,24 @@
  * @param sock
  * @return 1 = OK
  */
-char* read_message(int sock) {
+char* read_message(int sock, int length) {
     int n;
     char *buff;
-    buff = malloc(sizeof(char) * 128);
+    buff = malloc(sizeof(char) * (length + 1));
     if (sock == -1) {
         return NULL;
     }
 
     n = 0;
-    memset(buff, '\0', 128);
-    if ((n = recv(sock, buff, 128, MSG_NOSIGNAL)) >= 0) {
+    memset(buff, '\0', length + 1);
+    if ((n = recv(sock, buff, length, MSG_NOSIGNAL)) >= 0) {
         if (n == 0) {
             return NULL;
         }
         printf("Message received: %s\n",buff);
     }
+    printf("Message returned: %s\n",buff);
+
     return buff;
 }
 
@@ -38,19 +40,4 @@ int send_message(int sock, const char *message) {
     } else {
         return 0;
     }
-}
-
-int wait_for_answer(int sock, const char *expected_message) {
-    int try = 1;
-    while (try) {
-        char *received_message = read_message(sock);
-        if (received_message != NULL) {
-            puts(received_message);
-            if (strcmp(received_message, expected_message) == 0) {
-                free(received_message);
-                return 1;
-            }
-        }
-    }
-    return 0;
 }
