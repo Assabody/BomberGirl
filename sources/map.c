@@ -1,6 +1,7 @@
 #include "../includes/main.h"
 
-char **mapInit() {
+char **mapInit()
+{
     int x = 0;
     int y = 0;
     char **map;
@@ -34,19 +35,52 @@ char **mapInit() {
     return map;
 }
 
-void print_map(char **map) {
-    for (int y = 0; y < Y_MAP_SIZE; y++) {
-        for (int x = 0; x < X_MAP_SIZE; x++) {
-            putchar(map[y][x]);
-            putchar(' ');
+void print_map(char **map)
+{
+    if (map != NULL) {
+        for (int y = 0; y < Y_MAP_SIZE; y++) {
+            for (int x = 0; x < X_MAP_SIZE; x++) {
+                putchar(map[y][x]);
+                putchar(' ');
+            }
+            putchar('\n');
         }
-        putchar('\n');
     }
 }
 
-void clear_map(game_t *game) {
+void clear_map(game_t *game)
+{
     for (int y = 0; y < Y_MAP_SIZE; y++) {
         free(game->map[y]);
     }
     free(game->map);
+}
+
+char *serialize_map(char **map)
+{
+    int i = 0;
+    char *serialized_map = malloc(sizeof(* serialized_map) * (X_MAP_SIZE * Y_MAP_SIZE));
+    if (map != NULL) {
+        for (int y = 0; y < Y_MAP_SIZE; y++) {
+            for (int x = 0; x < X_MAP_SIZE; x++) {
+                serialized_map[i++] = map[y][x];
+            }
+        }
+    }
+    return serialized_map;
+}
+
+char **deserialize_map(char *serialized_map)
+{
+    char **map;
+    int i = 0;
+
+    map = malloc(sizeof(char *) * Y_MAP_SIZE);
+    for (int y = 0 ; y < Y_MAP_SIZE; y++) {
+        map[y] = malloc(sizeof(char) * X_MAP_SIZE);
+        for (int x = 0 ; x < X_MAP_SIZE; x++) {
+            map[y][x] = serialized_map[i++];
+        }
+    }
+    return map;
 }

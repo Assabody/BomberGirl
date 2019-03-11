@@ -112,12 +112,6 @@ typedef struct game_s {
 ** 111 : Rien
 */
 
-typedef struct game_infos_s
-{
-    player_t players[MAX_PLAYERS];
-    char **map;
-} game_infos_t;
-
 /**
  * Map.c
  */
@@ -126,6 +120,10 @@ char **mapInit();
 void print_map(char **);
 
 void clear_map(game_t *);
+
+char *serialize_map(char **);
+
+char **deserialize_map(char *);
 
 
 void movePlayer(game_t *, SDL_Keycode);
@@ -208,6 +206,9 @@ player_t *initPlayer(void);
 void clearPlayer(player_t *);
 
 void printPlayerStruct(player_t *);
+
+int initClient(char *, char *, game_t *);
+
 
 /**
  * Game.c

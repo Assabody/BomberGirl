@@ -1,4 +1,4 @@
-#include "network.h"
+#include "server.h"
 
 int create_server(struct sockaddr_in *server) {
     int sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -15,6 +15,8 @@ int create_server(struct sockaddr_in *server) {
         perror("bind()");
         return -1;
     }
+
+
     return sock;
 }
 
@@ -56,6 +58,7 @@ int main() {
     FD_SET(sock, &active_fd_set);
     number_of_clients = 0;
     max_number_of_clients = 4;
+    game_infos_t *game_infos = init_game_infos();
     printf("Number of clients : %d/%d\n", number_of_clients, max_number_of_clients);
     while (1) {
         read_fd_set = active_fd_set;
@@ -77,11 +80,13 @@ int main() {
                         } else {
                             printf("Client connected\n");
                             send_message(new, "pong");
-                            char checksum[5];
+                            /*char checksum[5];
                             sprintf(checksum, "%d", randomNumber(1000, 9999));
-                            send_message(new, checksum);
+                            send_message(new, checksum);*/
                             number_of_clients++;
                             printf("Number of clients : %d/%d\n", number_of_clients, max_number_of_clients);
+                            printf("%s\n", serialize_map(game_infos->map));
+                            send_message(new, serialize_map(game_infos->map));
                             FD_SET(new, &active_fd_set);
                         }
                     }
@@ -103,4 +108,11 @@ int main() {
     }
     close(sock);
     return 0;
+}
+
+game_infos_t *init_game_infos()
+{
+    game_infos_t *game_infos = malloc(sizeof(* game_infos));
+    game_infos->map = mapInit();
+    return game_infos;
 }

@@ -26,7 +26,6 @@
 int send_message(int, const char *);
 char *read_message(int, int);
 int connect_client(int, struct sockaddr_in *);
-int initClient(char *, char *);
 
 // Checksum.c
 int randomNumber(int, int);

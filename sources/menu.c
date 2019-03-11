@@ -35,7 +35,7 @@ int menuWindow(game_t *game) {
                         printf("addresse ip %s\n", address);
                         port = showInputMenu(game, "port");
                         printf("port %s\n", port);
-                        game->client_sock = initClient(address, port);
+                        game->client_sock = initClient(address, port, game);
                         if (game->client_sock <= 0) {
                             showText(game, "Error while connecting to the server");
                         } else {

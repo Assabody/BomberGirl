@@ -28,7 +28,7 @@ game_t *init() {
 
     game->running = 1;
     game->client_sock = -1;
-    game->map = mapInit();
+    game->map = NULL; //mapInit();
     return game;
 }
 

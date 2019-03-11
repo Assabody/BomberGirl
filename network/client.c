@@ -1,4 +1,5 @@
 #include "network.h"
+#include "../includes/main.h"
 
 void error(const char *msg)
 {
@@ -6,7 +7,7 @@ void error(const char *msg)
     exit(0);
 }
 
-int initClient(char *address, char *port)
+int initClient(char *address, char *port, game_t *game)
 {
     int sockfd, portno;
     struct sockaddr_in serv_addr;
@@ -39,6 +40,8 @@ int initClient(char *address, char *port)
     if (!result || strncmp(result, "pong", 4) != 0 ) {
         return -1;
     }
-
+    char *map = read_message(sockfd, X_MAP_SIZE * Y_MAP_SIZE);
+    printf(" Received map is: '%s'\n", map);
+    game->map = deserialize_map(map);
     return sockfd;
 }
