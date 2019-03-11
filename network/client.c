@@ -33,5 +33,11 @@ int initClient(char *address, char *port)
         close(sockfd);
         return -1;
     }
+    send_message(sockfd, "ping");
+    char *result = read_message(sockfd);
+    if (!result || strcmp(result, "pong") != 0 ) {
+        return -1;
+    }
+
     return sockfd;
 }

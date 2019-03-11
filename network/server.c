@@ -70,19 +70,22 @@ int main() {
                     if ((new = connect_client(sock, &client_addr)) < 0) {
                         perror("accept");
                         exit(EXIT_FAILURE);
-                    } else {
+                    }
+                    else {
                         if (number_of_clients >= max_number_of_clients) {
                             close(new);
                         } else {
                             printf("Client connected\n");
+                            send_message(new, "pong");
                             number_of_clients++;
                             printf("Number of clients : %d/%d\n", number_of_clients, max_number_of_clients);
                             FD_SET(new, &active_fd_set);
                         }
                     }
-                } else {
-                    int result = read_message(i);
-                    if (result == -1) {
+                }
+                else {
+                    char *result = read_message(i);
+                    if (result == NULL) {
                         printf("Client disconnected\n");
                         number_of_clients--;
                         printf("Number of clients : %d/%d\n", number_of_clients, max_number_of_clients);

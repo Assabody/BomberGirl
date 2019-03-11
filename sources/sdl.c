@@ -5,6 +5,7 @@ sdl_t *initSdl(int width, int height) {
 
     sdl->screenSize.x = width;
     sdl->screenSize.y = height;
+    sdl->frameCount = 0;
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         fprintf(stderr, SDL_GetError());
         return NULL;

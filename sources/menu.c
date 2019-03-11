@@ -40,7 +40,6 @@ int menuWindow(game_t *game) {
                         } else {
                             showText(game, "Connected!");
                         }
-
                         break;
                     case 2:
                         drawGame(game);

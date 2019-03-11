@@ -18,7 +18,7 @@
 #define MAX_PLAYERS 4
 
 int send_message(int sock, const char *message);
-int read_message(int sock);
+char *read_message(int sock);
 int connect_client(int sock, struct sockaddr_in *client_addr);
 int initClient(char *address, char *port);
 

@@ -41,6 +41,7 @@ typedef struct sdl_s {
     SDL_Point screenSize;
     SDL_Window *window;
     SDL_Renderer *renderer;
+    long int frameCount;
     TTF_Font *font;
 } sdl_t;
 
