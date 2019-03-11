@@ -6,7 +6,7 @@ char **mapInit() {
     char **map;
 
     map = malloc(sizeof(char *) * (Y_MAP_SIZE));
-    while (y <=Y_MAP_SIZE) {
+    while (y < Y_MAP_SIZE) {
         map[y] = malloc(sizeof(char) * (X_MAP_SIZE));
         while (x < X_MAP_SIZE) {
             if (x == X_MAP_SIZE - 1 || y == Y_MAP_SIZE - 1 || x == 0 || y == 0) {
@@ -28,15 +28,13 @@ char **mapInit() {
             }
             x++;
         }
-        map[y][x] = '\0';
         x = 0;
         y++;
     }
-    map[y] = NULL;
     return map;
 }
 
-void print_map(char ** map) {
+void print_map(char **map) {
     for (int y = 0; y < Y_MAP_SIZE; y++) {
         for (int x = 0; x < X_MAP_SIZE; x++) {
             putchar(map[y][x]);
@@ -44,4 +42,11 @@ void print_map(char ** map) {
         }
         putchar('\n');
     }
+}
+
+void clear_map(game_t *game) {
+    for (int y = 0; y < Y_MAP_SIZE; y++) {
+        free(game->map[y]);
+    }
+    free(game->map);
 }

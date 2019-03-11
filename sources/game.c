@@ -24,12 +24,13 @@ int drawGame(game_t *game)
     return (EXIT_SUCCESS);
 }
 
-int sendDataToServer(game_t *game)
+/*int sendDataToServer(game_t *game)
 {
     puts("sending data to server");
     return 1;
-}
+}*/
 
+/*
 int fetchDataFromServer(game_t *game)
 {
     puts("fetching data from server");
@@ -38,4 +39,4 @@ int fetchDataFromServer(game_t *game)
         puts(msg);
     }
     return 1;
-}
+}*/

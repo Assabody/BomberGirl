@@ -34,6 +34,7 @@ void  placeBomb(game_t *game, int x, int y)
       game->bombs->last = bomb_node;
     }
   } else {
+      free(bomb);
     free(bomb_node);
   }
 }
@@ -45,14 +46,17 @@ void removeBomb(game_t *game, bomb_t *bomb)
   while (tmp_node != NULL) {
     if (tmp_node->bomb->x == bomb->x && tmp_node->bomb->y == bomb->y) {
       removeBombNode(game->bombs, tmp_node);
-      free(tmp_node);
       break;
     }
     tmp_node = tmp_node->next;
   }
+  free(tmp_node->bomb);
+  free(tmp_node);
 }
 
 void removeBombNode(bombs_t *bombs, bomb_node_t *bomb_node) {
+    bomb_node_t *tmp_bomb = NULL;
+    tmp_bomb = bomb_node;
     if (bomb_node->next == NULL && bomb_node->prev == NULL) { // element unique
         bombs->last = NULL;
         bombs->first = NULL;
@@ -66,6 +70,8 @@ void removeBombNode(bombs_t *bombs, bomb_node_t *bomb_node) {
         bomb_node->next->prev = bomb_node->prev;
         bomb_node->prev->next = bomb_node->next;
     }
+    free(tmp_bomb->bomb);
+    free(tmp_bomb);
 }
 
 void updateBombs(game_t *game)
@@ -107,8 +113,10 @@ void clearBombs(bombs_t *bombs)
         while (tmp_node != NULL) {
             bomb_node_t *tmp_delete = tmp_node;
             tmp_node = tmp_node->next;
+            free(tmp_delete->bomb);
             free(tmp_delete);
         }
+        free(tmp_node->bomb);
         free(bombs);
     }
     bombs = NULL;

@@ -13,12 +13,12 @@ typedef struct s_client_request
     int checksum; /* Un checksum simple */
 } t_client_request;
 
-unsigned char *serialize_int(unsigned char *, int);
-unsigned char *serialize_char(unsigned char *, char);
-unsigned char *serialize_request(unsigned char *, t_client_request *);
+char *serialize_int(char *, int);
+char *serialize_char(char *, char);
+char *serialize_request(char *, t_client_request *);
 
-int deserialize_int(unsigned char *);
-unsigned char *deserialize_char(unsigned char *, char *);
-t_client_request *deserialize_request(unsigned char *, t_client_request *);
+int deserialize_int(char *);
+char *deserialize_char(char *, char *);
+t_client_request *deserialize_request(char *, t_client_request *);
 
 #endif

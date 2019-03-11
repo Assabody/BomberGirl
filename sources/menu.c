@@ -223,7 +223,7 @@ void showText(game_t *game, const char* text)
 
 int getClientToken(int sock)
 {
-    const char *tmp_token = read_message(sock, 4);
+    char *tmp_token = read_message(sock, 4);
     int token = 0;
     if (tmp_token != NULL) {
         token = deserialize_int(tmp_token);

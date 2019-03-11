@@ -5,7 +5,7 @@ game_t *init() {
     if (!game) {
         return NULL;
     }
-    game->sdl = initSdl(680, 440);
+    game->sdl = initSdl();
     if (!game->sdl) {
         gameDestroy(game);
         return NULL;
@@ -41,7 +41,7 @@ void gameDestroy(game_t *game) {
         clearBombs(game->bombs);
         clearPlayer(game->player);
         clearSdl(game->sdl);
-        // TO DO: Clear Map
+        clear_map(game);
         TTF_Quit();
         SDL_Quit();
         free(game);

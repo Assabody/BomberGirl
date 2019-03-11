@@ -24,6 +24,9 @@
 #define SPEED 2
 #define MAX_SPEED 10
 
+#define SCREEN_SIZE_X 600
+#define SCREEN_SIZE_Y 520
+
 // same as the player clips
 #define UP 2
 #define DOWN 0
@@ -38,7 +41,6 @@ typedef struct bomb_s {
 } bomb_t;
 
 typedef struct sdl_s {
-    SDL_Point screenSize;
     SDL_Window *window;
     SDL_Renderer *renderer;
     long int frameCount;
@@ -74,6 +76,7 @@ typedef struct textures_s {
     SDL_Texture *player;
     SDL_Texture *grass;
     SDL_Texture *stone;
+    SDL_Texture *brick;
     SDL_Texture *bomb;
     SDL_Rect bomb_clips[4];
     SDL_Rect player_clips[4];
@@ -122,7 +125,7 @@ char **mapInit();
 
 void print_map(char **);
 
-
+void clear_map(game_t *);
 
 
 void movePlayer(game_t *, SDL_Keycode);
@@ -144,7 +147,7 @@ void checkEvents(game_t *);
 /**
  * Sdl.c
  */
-sdl_t *initSdl(int, int);
+sdl_t *initSdl();
 
 void clearTextures(textures_t *);
 
