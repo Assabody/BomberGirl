@@ -30,7 +30,7 @@
 
 typedef struct game_infos_s
 {
-    player_t players[MAX_PLAYERS - 1];
+    player_t **players;
     char **map;
 } game_infos_t;
 

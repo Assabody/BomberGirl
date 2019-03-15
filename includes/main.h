@@ -16,12 +16,13 @@
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
 #include "../network/network.h"
+#include "../network/request.h"
 
 #define FPS 60
 #define TICKS_PER_FRAME 1000 / FPS
 
 // constants for players
-#define SPEED 2
+#define SPEED 40
 #define MAX_SPEED 10
 
 #define SCREEN_SIZE_X 600
@@ -201,7 +202,7 @@ void updateBombs(game_t *);
 /**
  * Player.c
  */
-player_t *initPlayer(void);
+player_t *initPlayer(int);
 
 void clearPlayer(player_t *);
 

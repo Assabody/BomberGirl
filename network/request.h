@@ -13,7 +13,7 @@ typedef struct s_client_request
     int checksum; /* Un checksum simple */
 } t_client_request;
 
-char *serialize_int(char *, int);
+char *serialize_int(int);
 char *serialize_char(char *, char);
 char *serialize_request(char *, t_client_request *);
 

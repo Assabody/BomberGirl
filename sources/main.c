@@ -20,7 +20,7 @@ game_t *init() {
         gameDestroy(game);
         return NULL;
     }
-    game->player = initPlayer();
+    game->player = initPlayer(1);
     if (!game->player) {
         gameDestroy(game);
         return NULL;

@@ -50,13 +50,10 @@ void removeBomb(game_t *game, bomb_t *bomb)
     }
     tmp_node = tmp_node->next;
   }
-  free(tmp_node->bomb);
-  free(tmp_node);
 }
 
 void removeBombNode(bombs_t *bombs, bomb_node_t *bomb_node) {
-    bomb_node_t *tmp_bomb = NULL;
-    tmp_bomb = bomb_node;
+    bomb_node_t *tmp_bomb = bomb_node;
     if (bomb_node->next == NULL && bomb_node->prev == NULL) { // element unique
         bombs->last = NULL;
         bombs->first = NULL;

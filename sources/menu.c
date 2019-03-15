@@ -40,11 +40,11 @@ int menuWindow(game_t *game) {
                             showText(game, "Error while connecting to the server");
                         } else {
                             showText(game, "Connected!");
-                            game->player->token = getClientToken(game->client_sock);
+                            //game->player->token = getClientToken(game->client_sock);
                         }
                         break;
                     case 2:
-                        printf("Player token is %d\n", game->player->token);
+                        //printf("Player token is %d\n", game->player->token);
                         drawGame(game);
                         break;
                     case 3:
@@ -56,7 +56,7 @@ int menuWindow(game_t *game) {
         if (event.type == SDL_QUIT)
             quit = 1;
         if (update) {
-            printPlayerStruct(game->player);
+            //printPlayerStruct(game->player);
             showMenu(game, menus, menu_size, counter);
         }
     } while (!quit);
@@ -221,6 +221,7 @@ void showText(game_t *game, const char* text)
     }
 }
 
+/*
 int getClientToken(int sock)
 {
     char *tmp_token = read_message(sock, 4);
@@ -230,4 +231,4 @@ int getClientToken(int sock)
         free(tmp_token);
     }
     return token;
-}
+}*/
