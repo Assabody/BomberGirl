@@ -23,8 +23,8 @@ void checkEvents(game_t *game) {
                 case SDLK_LEFT:
                 case SDLK_RIGHT:
                     movePlayer(game, event.key.keysym.sym);
-                    send_message(game->client_sock, SDL_GetKeyName(event.key.keysym.sym));
-                    read_message(game->client_sock);
+                    //send_message(game->client_sock, SDL_GetKeyName(event.key.keysym.sym));
+                    //read_message(game->client_sock);
                     break;
                 default:
                     fprintf(stderr, "Touche inconnue\n");

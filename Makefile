@@ -17,7 +17,8 @@ SRC		=	sources/moves.c \
 			sources/menu.c \
 			network/client.c \
 			network/checksum.c \
-			network/message.c
+			network/message.c \
+			network/request.c
 
 GCC		=	gcc
 

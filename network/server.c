@@ -1,22 +1,4 @@
-#include "network.h"
-
-int create_server(struct sockaddr_in *server) {
-    int sock = socket(AF_INET, SOCK_STREAM, 0);
-    if (sock == -1) {
-        perror("socket()");
-        return -1;
-    }
-
-    server->sin_addr.s_addr = htonl(INADDR_ANY);
-    server->sin_family = AF_INET;
-    server->sin_port = htons(1234);
-
-    if (bind(sock, (struct sockaddr *) server, sizeof(*server)) < 0) {
-        perror("bind()");
-        return -1;
-    }
-    return sock;
-}
+#include "server.h"
 
 int connect_client(int sock, struct sockaddr_in *client_addr) {
     int len = sizeof(client_addr);
@@ -56,6 +38,7 @@ int main() {
     FD_SET(sock, &active_fd_set);
     number_of_clients = 0;
     max_number_of_clients = 4;
+    game_infos_t *game_infos = init_game_infos();
     printf("Number of clients : %d/%d\n", number_of_clients, max_number_of_clients);
     while (1) {
         read_fd_set = active_fd_set;
@@ -79,24 +62,39 @@ int main() {
                             send_message(new, "pong");
                             number_of_clients++;
                             printf("Number of clients : %d/%d\n", number_of_clients, max_number_of_clients);
+                            send_message(new, serialize_map(game_infos->map));
                             FD_SET(new, &active_fd_set);
                         }
                     }
                 }
                 else {
-                    char *result = read_message(i);
+                    char *result = read_message(i, 4);
                     if (result == NULL) {
                         printf("Client disconnected\n");
                         number_of_clients--;
                         printf("Number of clients : %d/%d\n", number_of_clients, max_number_of_clients);
                         close(i);
                         FD_CLR(i, &active_fd_set);
-                    }
-                    send_message(i, "OK");
+                    }/* else {
+                        send_message(i, "fetching");
+                    }*/
                 }
             }
         }
     }
     close(sock);
     return 0;
+}
+
+game_infos_t *init_game_infos()
+{
+    game_infos_t *game_infos = malloc(sizeof(* game_infos));
+    game_infos->map = mapInit();
+
+    game_infos->players = malloc(sizeof(player_t *) * MAX_PLAYERS);
+    /*game_infos->players[0] = initPlayer(1);
+    game_infos->players[1] = initPlayer(2);
+    game_infos->players[2] = initPlayer(3);
+    game_infos->players[3] = initPlayer(4);*/
+    return game_infos;
 }

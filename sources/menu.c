@@ -1,4 +1,5 @@
 #include "../includes/main.h"
+#include "../network/request.h"
 
 int menuWindow(game_t *game) {
     int quit = 0;
@@ -34,14 +35,16 @@ int menuWindow(game_t *game) {
                         printf("addresse ip %s\n", address);
                         port = showInputMenu(game, "port");
                         printf("port %s\n", port);
-                        game->client_sock = initClient(address, port);
+                        game->client_sock = initClient(address, port, game);
                         if (game->client_sock <= 0) {
                             showText(game, "Error while connecting to the server");
                         } else {
                             showText(game, "Connected!");
+                            //game->player->token = getClientToken(game->client_sock);
                         }
                         break;
                     case 2:
+                        //printf("Player token is %d\n", game->player->token);
                         drawGame(game);
                         break;
                     case 3:
@@ -53,6 +56,7 @@ int menuWindow(game_t *game) {
         if (event.type == SDL_QUIT)
             quit = 1;
         if (update) {
+            //printPlayerStruct(game->player);
             showMenu(game, menus, menu_size, counter);
         }
     } while (!quit);
@@ -216,3 +220,15 @@ void showText(game_t *game, const char* text)
         SDL_RenderPresent(game->sdl->renderer);
     }
 }
+
+/*
+int getClientToken(int sock)
+{
+    char *tmp_token = read_message(sock, 4);
+    int token = 0;
+    if (tmp_token != NULL) {
+        token = deserialize_int(tmp_token);
+        free(tmp_token);
+    }
+    return token;
+}*/

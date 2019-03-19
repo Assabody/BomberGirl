@@ -5,7 +5,7 @@ game_t *init() {
     if (!game) {
         return NULL;
     }
-    game->sdl = initSdl(680, 440);
+    game->sdl = initSdl();
     if (!game->sdl) {
         gameDestroy(game);
         return NULL;
@@ -20,7 +20,7 @@ game_t *init() {
         gameDestroy(game);
         return NULL;
     }
-    game->player = initPlayer();
+    game->player = initPlayer(1);
     if (!game->player) {
         gameDestroy(game);
         return NULL;
@@ -28,7 +28,7 @@ game_t *init() {
 
     game->running = 1;
     game->client_sock = -1;
-    game->map = mapInit();
+    game->map = NULL; //mapInit();
     return game;
 }
 
@@ -41,7 +41,7 @@ void gameDestroy(game_t *game) {
         clearBombs(game->bombs);
         clearPlayer(game->player);
         clearSdl(game->sdl);
-        // TO DO: Clear Map
+        clear_map(game);
         TTF_Quit();
         SDL_Quit();
         free(game);
@@ -50,6 +50,7 @@ void gameDestroy(game_t *game) {
 
 int main() {
     game_t *game = init();
+    print_map(game->map);
 
     srandom(time(0));
     if (game == NULL)

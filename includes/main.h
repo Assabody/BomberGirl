@@ -16,13 +16,17 @@
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
 #include "../network/network.h"
+#include "../network/request.h"
 
 #define FPS 60
 #define TICKS_PER_FRAME 1000 / FPS
 
 // constants for players
-#define SPEED 2
+#define SPEED 40
 #define MAX_SPEED 10
+
+#define SCREEN_SIZE_X 600
+#define SCREEN_SIZE_Y 520
 
 // same as the player clips
 #define UP 2
@@ -38,7 +42,6 @@ typedef struct bomb_s {
 } bomb_t;
 
 typedef struct sdl_s {
-    SDL_Point screenSize;
     SDL_Window *window;
     SDL_Renderer *renderer;
     long int frameCount;
@@ -58,7 +61,7 @@ typedef struct bombs_s {
 
 typedef struct player_s
 {
-    unsigned int token;
+    int token;
     int alive;
     int x_pos;
     int y_pos;
@@ -74,6 +77,7 @@ typedef struct textures_s {
     SDL_Texture *player;
     SDL_Texture *grass;
     SDL_Texture *stone;
+    SDL_Texture *brick;
     SDL_Texture *bomb;
     SDL_Rect bomb_clips[4];
     SDL_Rect player_clips[4];
@@ -108,16 +112,20 @@ typedef struct game_s {
 ** 110 : Rien
 ** 111 : Rien
 */
-typedef char map_t[MAP_SIZE];
 
-typedef struct game_infos_s
-{
-    player_t players[MAX_PLAYERS];
-    map_t map;
-} game_infos_t;
-
-
+/**
+ * Map.c
+ */
 char **mapInit();
+
+void print_map(char **);
+
+void clear_map(game_t *);
+
+char *serialize_map(char **);
+
+char **deserialize_map(char *);
+
 
 void movePlayer(game_t *, SDL_Keycode);
 
@@ -138,13 +146,14 @@ void checkEvents(game_t *);
 /**
  * Sdl.c
  */
-sdl_t *initSdl(int, int);
+sdl_t *initSdl();
 
 void clearTextures(textures_t *);
 
 void clearSdl(sdl_t *);
 
 void renderTexture(SDL_Texture *, game_t *, int, int, SDL_Rect *);
+
 /**
  * Menu.c
  */
@@ -157,6 +166,9 @@ void showSelection(game_t *, int);
 char *showInputMenu(game_t *, const char *);
 
 void showText(game_t *, const char *);
+
+int getClientToken(int);
+
 
 
 /**
@@ -190,8 +202,19 @@ void updateBombs(game_t *);
 /**
  * Player.c
  */
-player_t *initPlayer(void);
+player_t *initPlayer(int);
 
 void clearPlayer(player_t *);
+
+void printPlayerStruct(player_t *);
+
+int initClient(char *, char *, game_t *);
+
+
+/**
+ * Game.c
+ */
+int fetchDataFromServer(game_t *game);
+
 
 #endif

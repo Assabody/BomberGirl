@@ -1,10 +1,7 @@
 #include "../includes/main.h"
 
-sdl_t *initSdl(int width, int height) {
+sdl_t *initSdl() {
     sdl_t *sdl = malloc(sizeof *sdl);
-
-    sdl->screenSize.x = width;
-    sdl->screenSize.y = height;
     sdl->frameCount = 0;
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         fprintf(stderr, SDL_GetError());
@@ -13,8 +10,8 @@ sdl_t *initSdl(int width, int height) {
     sdl->window = SDL_CreateWindow(
             "Bombergirl", SDL_WINDOWPOS_UNDEFINED,
             SDL_WINDOWPOS_UNDEFINED,
-            sdl->screenSize.x,
-            sdl->screenSize.y,
+            SCREEN_SIZE_X,
+            SCREEN_SIZE_Y,
             SDL_WINDOW_SHOWN);
 
     if (sdl->window) {
@@ -82,6 +79,8 @@ void clearTextures(textures_t *textures) {
             SDL_DestroyTexture(textures->grass);
         if (textures->stone)
             SDL_DestroyTexture(textures->stone);
+        if (textures->brick)
+            SDL_DestroyTexture(textures->brick);
         if (textures->bomb)
             SDL_DestroyTexture(textures->bomb);
     }
@@ -95,7 +94,7 @@ textures_t *initTextures(sdl_t *sdl) {
     if (!textures) {
         return NULL;
     }
-    SDL_Surface *grassSurface = IMG_Load("./assets/images/grass.png");
+    SDL_Surface *grassSurface = IMG_Load("./assets/images/grass.jpg");
     if (!grassSurface) {
         fprintf(stderr, SDL_GetError());
     } else {
@@ -106,13 +105,24 @@ textures_t *initTextures(sdl_t *sdl) {
         }
     }
 
-    SDL_Surface *stoneSurface = IMG_Load("./assets/images/stone.png");
+    SDL_Surface *stoneSurface = IMG_Load("./assets/images/stone.jpg");
     if (!stoneSurface) {
         fprintf(stderr, SDL_GetError());
     } else {
         textures->stone = SDL_CreateTextureFromSurface(sdl->renderer, stoneSurface);
         SDL_FreeSurface(stoneSurface);
         if (!textures->stone) {
+            fprintf(stderr, SDL_GetError());
+        }
+    }
+
+    SDL_Surface *brickSurface = IMG_Load("./assets/images/brick.jpg");
+    if (!stoneSurface) {
+        fprintf(stderr, SDL_GetError());
+    } else {
+        textures->brick = SDL_CreateTextureFromSurface(sdl->renderer, brickSurface);
+        SDL_FreeSurface(brickSurface);
+        if (!textures->brick) {
             fprintf(stderr, SDL_GetError());
         }
     }

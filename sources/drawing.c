@@ -9,14 +9,16 @@ void drawMap(game_t *game) {
     position.w = 40;
     position.h = 40;
 
-    while (game->map[y]) {
-        while (game->map[y][x]) {
-            if (game->map[y][x] == 'g') {
-                SDL_RenderCopy(game->sdl->renderer, game->textures->grass, NULL, &position);
-            } else if (game->map[y][x] == 'b') {
+    while (y < Y_MAP_SIZE) {
+        while (x < X_MAP_SIZE) {
+            if (game->map[y][x] == MAP_BOMB) {
                 SDL_RenderCopy(game->sdl->renderer, game->textures->bomb, NULL, &position);
-            } else {
+            } else if (game->map[y][x] == MAP_WALL_UNBREAKABLE) {
                 SDL_RenderCopy(game->sdl->renderer, game->textures->stone, NULL, &position);
+            } else if (game->map[y][x] == MAP_WALL_BREAKABLE) {
+                SDL_RenderCopy(game->sdl->renderer, game->textures->brick, NULL, &position);
+            } else {
+                SDL_RenderCopy(game->sdl->renderer, game->textures->grass, NULL, &position);
             }
             x++;
             position.x += 40;
@@ -46,7 +48,6 @@ void drawBombs(game_t *game) {
 }
 
 void drawPlayer(game_t *game) {
-    printf("clip %d", game->player->current_dir);
     renderTexture(
             game->textures->player,
             game,
