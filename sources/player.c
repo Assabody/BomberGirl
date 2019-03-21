@@ -10,27 +10,29 @@ player_t *initPlayer(int player_position)
     player->alive = 1;
     player->bombs_capacity = 1;
     player->bombs_left = 1;
-    player->current_dir = UP;
+    player->current_dir = RIGHT;
     player->token = 0;
     player->current_speed = SPEED;
     player->max_speed = MAX_SPEED;
     player->frags = 0;
+    printf("X_POS: %i" , player->x_pos);
+    printf("Y_POS: %i" , player->y_pos);
     switch (player_position) {
         case 1:
-            player->x_pos = 80;
-            player->y_pos = 80;
+            player->x_pos = 40;
+            player->y_pos = 40;
             break;
         case 2:
-            player->x_pos = X_MAP_SIZE - 80;
-            player->y_pos = 80;
+            player->x_pos = X_MAP_SIZE - 40;
+            player->y_pos = 40;
             break;
         case 3:
-            player->x_pos = 80;
-            player->y_pos = Y_MAP_SIZE - 80;
+            player->x_pos = 40;
+            player->y_pos = Y_MAP_SIZE - 40;
             break;
         case 4:
-            player->x_pos = X_MAP_SIZE - 80;
-            player->y_pos = Y_MAP_SIZE - 80;
+            player->x_pos = X_MAP_SIZE - 40;
+            player->y_pos = Y_MAP_SIZE - 40;
             break;
     }
     return player;

@@ -8,7 +8,6 @@ void drawMap(game_t *game) {
     position.y = 0;
     position.w = 40;
     position.h = 40;
-
     while (y < Y_MAP_SIZE) {
         while (x < X_MAP_SIZE) {
             if (game->map[y][x] == MAP_BOMB) {
@@ -33,17 +32,18 @@ void drawMap(game_t *game) {
 void drawBombs(game_t *game) {
     bomb_node_t *bomb_node = game->bombs->first;
     while (bomb_node != NULL) {
-        if (bomb_node->bomb->duration <= 0) {
-            removeBomb(game, bomb_node->bomb);
-            break;
-        }
-        renderTexture(
-                game->textures->bomb,
-                game,
-                bomb_node->bomb->x,
-                bomb_node->bomb->y,
-                &game->textures->bomb_clips[bomb_node->bomb->clip]);
-        bomb_node = bomb_node->next;
+      if (bomb_node->bomb->duration <= 0) {
+      	bombExplosion(bomb_node->bomb);
+	removeBomb(game, bomb_node->bomb);
+	break;
+      }
+      renderTexture(
+		    game->textures->bomb,
+		    game,
+		    bomb_node->bomb->x,
+		    bomb_node->bomb->y,
+		    &game->textures->bomb_clips[bomb_node->bomb->clip]);
+      bomb_node = bomb_node->next;
     }
 }
 

@@ -31,7 +31,7 @@ int menuWindow(game_t *game) {
                 update = 1;
                 switch (counter) {
                     case 0:
-                        address = showInputMenu(game, "addresse ip");
+		      address = showInputMenu(game, "addresse ip");
                         printf("addresse ip %s\n", address);
                         port = showInputMenu(game, "port");
                         printf("port %s\n", port);
@@ -45,6 +45,7 @@ int menuWindow(game_t *game) {
                         break;
                     case 2:
                         //printf("Player token is %d\n", game->player->token);
+                        game->client_sock = initClient("127.0.0.1", "1234", game);
                         drawGame(game);
                         break;
                     case 3:
@@ -75,24 +76,24 @@ void    showMenu(game_t *game, char **menus_text, int menu_number, int current_m
     int texW = 0;
     int texH = 0;
     int menuHeight = 30;
-
+    SDL_Rect bgDstrect = { 0, 0, 600, 520 };
     SDL_Color color = { 255, 255, 255, 255 };
     SDL_GetRendererOutputSize(game->sdl->renderer, &width, &height);
-
     SDL_RenderClear(game->sdl->renderer);
+    SDL_RenderCopy(game->sdl->renderer, game->textures->menu, NULL, &bgDstrect);
     SDL_Texture *texture;
     SDL_Surface *surface;
     SDL_Rect text_pos;
     for (int i = menu_number - 1; i >= 0; i--) {
-        text_pos.y = height / 2 - menu_number * menuHeight / 2 + menuHeight * i;
-        text_pos.x = 80;
-        surface = TTF_RenderText_Solid(game->sdl->font, menus_text[i], color);
-        texture = SDL_CreateTextureFromSurface(game->sdl->renderer, surface);
-        SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
-        SDL_Rect dstrect = { text_pos.x, text_pos.y, texW, texH };
-        SDL_RenderCopy(game->sdl->renderer, texture, NULL, &dstrect);
-        SDL_DestroyTexture(texture);
-        SDL_FreeSurface(surface);
+      text_pos.y = height / 2 - menu_number * menuHeight / 2 + menuHeight * i;
+      text_pos.x = 80;
+      surface = TTF_RenderText_Solid(game->sdl->font, menus_text[i], color);
+      texture = SDL_CreateTextureFromSurface(game->sdl->renderer, surface);
+      SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
+      SDL_Rect dstrect = { text_pos.x, text_pos.y, texW, texH };
+      SDL_RenderCopy(game->sdl->renderer, texture, NULL, &dstrect);
+      SDL_DestroyTexture(texture);
+      SDL_FreeSurface(surface);
     }
     showSelection(game, current_menu);
     SDL_RenderPresent(game->sdl->renderer);

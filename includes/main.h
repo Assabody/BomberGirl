@@ -34,65 +34,70 @@
 #define RIGHT 1
 #define LEFT 3
 
+// bombs
+#define DAMAGES 10
+
 typedef struct bomb_s {
-    int x;
-    int y;
-    int duration;
-    int clip;
+  int x;
+  int y;
+  int duration;
+  int	damages;
+  int clip;
 } bomb_t;
 
 typedef struct sdl_s {
-    SDL_Window *window;
-    SDL_Renderer *renderer;
-    long int frameCount;
-    TTF_Font *font;
+  SDL_Window *window;
+  SDL_Renderer *renderer;
+  long int frameCount;
+  TTF_Font *font;
 } sdl_t;
 
 typedef struct bomb_node_s {
-    bomb_t *bomb;
-    struct bomb_node_s *next;
-    struct bomb_node_s *prev;
+  bomb_t *bomb;
+  struct bomb_node_s *next;
+  struct bomb_node_s *prev;
 } bomb_node_t;
 
 typedef struct bombs_s {
-    struct bomb_node_s *first;
-    struct bomb_node_s *last;
+  struct bomb_node_s *first;
+  struct bomb_node_s *last;
 } bombs_t;
 
 typedef struct player_s
 {
-    int token;
-    int alive;
-    int x_pos;
-    int y_pos;
-    int current_dir;
-    int current_speed;
-    int max_speed;
-    int bombs_left;
-    int bombs_capacity;
-    int frags;
+  int token;
+  int alive;
+  int x_pos;
+  int y_pos;
+  int current_dir;
+  int current_speed;
+  int max_speed;
+  int bombs_left;
+  int bombs_capacity;
+  int frags;
 } player_t;
 
 typedef struct textures_s {
-    SDL_Texture *player;
-    SDL_Texture *grass;
-    SDL_Texture *stone;
-    SDL_Texture *brick;
-    SDL_Texture *bomb;
-    SDL_Rect bomb_clips[4];
-    SDL_Rect player_clips[4];
+  SDL_Texture *menu;
+  SDL_Texture *player;
+  SDL_Texture *grass;
+  SDL_Texture *stone;
+  SDL_Texture *brick;
+  SDL_Texture *bomb;
+  SDL_Rect bomb_clips[4];
+  SDL_Rect player_clips[4];
 } textures_t;
 
 typedef struct game_s {
-    sdl_t *sdl;
-    bombs_t *bombs;
-    player_t *player;
-    textures_t *textures;
-
-    char **map;
-
-    int running;
-    int client_sock;
+  sdl_t *sdl;
+  bombs_t *bombs;
+  player_t *player;
+  textures_t *textures;
+  
+  char **map;
+  
+  int running;
+  int client_sock;
 } game_t;
 
 /*
@@ -196,6 +201,8 @@ void placeBomb(game_t *, int, int);
 void removeBomb(game_t *, bomb_t *);
 
 void removeBombNode(bombs_t *, bomb_node_t *);
+
+void bombExplosion(bomb_t *);
 
 void updateBombs(game_t *);
 

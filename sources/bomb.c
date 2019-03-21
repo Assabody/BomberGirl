@@ -19,6 +19,7 @@ void  placeBomb(game_t *game, int x, int y)
   bomb_t* bomb = malloc(sizeof *bomb);
   bomb->x = x;
   bomb->y = y;
+  bomb->damages = DAMAGES;
   bomb->duration = 2 * FPS;
   bomb->clip = 0;
   if (game->bombs != NULL && bomb_node != NULL) {
@@ -34,7 +35,7 @@ void  placeBomb(game_t *game, int x, int y)
       game->bombs->last = bomb_node;
     }
   } else {
-      free(bomb);
+    free(bomb);
     free(bomb_node);
   }
 }
@@ -92,11 +93,15 @@ void updateBombs(game_t *game)
                 }
                 bomb_node->bomb->duration--;
             } else {
-                bomb_node->bomb = NULL;
-            }
+	      bomb_node->bomb = NULL;
+	    }
         }
         bomb_node = bomb_node->next;
     }
+}
+
+void	bombExplosion(bomb_t *bomb) {
+  printf("%i", bomb->duration);
 }
 
 void clearBombs(bombs_t *bombs)
