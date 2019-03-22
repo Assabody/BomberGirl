@@ -36,6 +36,8 @@
 
 // bombs
 #define DAMAGES 10
+#define PLAYER_LIFE 30
+#define WALL_LIFE 10
 
 typedef struct bomb_s {
   int x;
@@ -44,6 +46,10 @@ typedef struct bomb_s {
   int	damages;
   int clip;
 } bomb_t;
+
+typedef struct breakablewall_s {
+  int	life;
+}	       breakablewall_t;
 
 typedef struct sdl_s {
   SDL_Window *window;
@@ -75,6 +81,7 @@ typedef struct player_s
   int bombs_left;
   int bombs_capacity;
   int frags;
+  int life;
 } player_t;
 
 typedef struct textures_s {

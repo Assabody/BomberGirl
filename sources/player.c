@@ -15,8 +15,10 @@ player_t *initPlayer(int player_position)
     player->current_speed = SPEED;
     player->max_speed = MAX_SPEED;
     player->frags = 0;
-    printf("X_POS: %i" , player->x_pos);
-    printf("Y_POS: %i" , player->y_pos);
+    player->life = PLAYER_LIFE;
+    printf("X_POS: %i\n" , player->x_pos);
+    printf("Y_POS: %i\n" , player->y_pos);
+    printf("PLAYER_LIFE: %i\n", player->life);
     switch (player_position) {
         case 1:
             player->x_pos = 40;
