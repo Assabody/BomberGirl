@@ -1,6 +1,7 @@
 #include "network.h"
 #include "../includes/main.h"
 #include "../includes/map.h"
+#include "server.h"
 
 void error(const char *msg)
 {
@@ -30,7 +31,7 @@ int initClient(char *address, char *port, game_t *game)
           (char *)&serv_addr.sin_addr.s_addr,
           server->h_length);
     serv_addr.sin_port = htons(portno);
-    if (connect(sockfd,(struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0) {
+    if (connect(sockfd,(struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
         puts("ERROR connecting");
         close(sockfd);
         return -1;
@@ -41,8 +42,10 @@ int initClient(char *address, char *port, game_t *game)
     if (!result || strncmp(result, "pong", 4) != 0 ) {
         return -1;
     }
-    char *map = read_message(sockfd, X_MAP_SIZE * Y_MAP_SIZE);
-    printf(" Received map is: '%s'\n", map);
-    game->map = deserialize_map(map);
+    socklen_t len = sizeof(serv_addr);
+    game_infos_t *game_infos = malloc(sizeof(* game_infos));
+    game_infos->map = malloc(sizeof(cell_t) * X_MAP_SIZE * Y_MAP_SIZE);
+    recvfrom(sockfd, &game_infos, sizeof(game_infos), 0, (struct sockaddr *) &serv_addr, &len);
+    game->map = game_infos->map;
     return sockfd;
 }

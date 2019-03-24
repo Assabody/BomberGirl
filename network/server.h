@@ -31,7 +31,7 @@
 typedef struct game_infos_s
 {
     player_t **players;
-    char **map;
+    cell_t *map;
 } game_infos_t;
 
 game_infos_t *init_game_infos();

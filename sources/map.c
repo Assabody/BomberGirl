@@ -2,27 +2,26 @@
 #include "../includes/map.h"
 #include "../includes/cell.h"
 
-cell_t **mapInit()
+cell_t *mapInit()
 {
     int i;
-    cell_t **map;
+    cell_t *map;
 
     map = malloc(sizeof(*map) * Y_MAP_SIZE * X_MAP_SIZE);
 
     for (i = 0; i < X_MAP_SIZE * Y_MAP_SIZE; i++) {
-        map[i] = malloc(sizeof(cell_t));
-        map[i]->cell = 0;
-        map[i]->cell = unbreakable_wall_cell(map[i]->cell);
-        map[i]->bomb_timing = 0;
+        map[i].cell = 0;
+        map[i].cell = unbreakable_wall_cell(map[i].cell);
+        map[i].bomb_timing = 0;
     }
     return map;
 }
 
-void print_map(cell_t **map)
+void print_map(cell_t *map)
 {
     if (map != NULL) {
         for (int y = 0; y < Y_MAP_SIZE * X_MAP_SIZE; y++) {
-            switch (get_cell_type(map[y]->cell)) {
+            switch (get_cell_type(map[y].cell)) {
                 case MAP_WALL_UNBREAKABLE:
                     printf("u");
                     break;
@@ -33,7 +32,7 @@ void print_map(cell_t **map)
                     printf("g");
                     break;
                 default:
-                    printf("other: %d\n", get_cell_type(map[y]->cell));
+                    printf("other: %d\n", get_cell_type(map[y].cell));
 
             }
             putchar(' ');
@@ -46,9 +45,6 @@ void print_map(cell_t **map)
 
 void clear_map(game_t *game)
 {
-    for (int y = 0; y < Y_MAP_SIZE; y++) {
-        free(game->map[y]);
-    }
     free(game->map);
 }
 

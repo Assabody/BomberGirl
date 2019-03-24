@@ -62,7 +62,8 @@ int main() {
                             send_message(new, "pong");
                             number_of_clients++;
                             printf("Number of clients : %d/%d\n", number_of_clients, max_number_of_clients);
-                            send_message(new, serialize_map(game_infos->map));
+                            sendto(new, game_infos, sizeof(game_infos), 0, (struct sockaddr *) &client_addr, sizeof(client_addr));
+                            //send_message(new, serialize_map(game_infos->map));
                             FD_SET(new, &active_fd_set);
                         }
                     }

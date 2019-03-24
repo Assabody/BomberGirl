@@ -17,6 +17,7 @@
 #include <SDL2/SDL_image.h>
 #include "../network/network.h"
 #include "../network/request.h"
+#include "map.h"
 
 #define FPS 60
 #define TICKS_PER_FRAME 1000 / FPS
@@ -33,6 +34,14 @@
 #define DOWN 0
 #define RIGHT 1
 #define LEFT 3
+
+
+#define X_MAP_SIZE 15
+#define Y_MAP_SIZE 13
+#define MAP_WALL_BREAKABLE 3
+#define MAP_WALL_UNBREAKABLE 1
+#define MAP_GRASS 0
+#define MAP_BOMB 'b'
 
 // bombs
 #define DAMAGES 10
@@ -62,6 +71,11 @@ typedef struct bombs_s {
   struct bomb_node_s *first;
   struct bomb_node_s *last;
 } bombs_t;
+
+typedef struct cell_c {
+    unsigned char cell;
+    unsigned char bomb_timing;
+} cell_t;
 
 typedef struct player_s
 {
@@ -94,7 +108,7 @@ typedef struct game_s {
   player_t *player;
   textures_t *textures;
   
-  char **map;
+  cell_t *map;
   
   int running;
   int client_sock;
@@ -118,7 +132,19 @@ typedef struct game_s {
 ** 111 : Rien
 */
 
+/**
+ * Map.c
+ */
 
+cell_t *mapInit();
+
+void print_map(cell_t *);
+
+void clear_map(game_t *);
+
+char *serialize_map(char **);
+
+char **deserialize_map(char *);
 
 void movePlayer(game_t *, SDL_Keycode);
 

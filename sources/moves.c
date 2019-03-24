@@ -1,8 +1,7 @@
 #include "../includes/main.h"
-#include "../includes/map.h"
 
 void    movePlayer(game_t *game, SDL_Keycode direction) {
-  if (direction == SDLK_UP) {
+  /*if (direction == SDLK_UP) {
     if (game->player->y_pos > 0 && game->map[(game->player->y_pos / 40) - 1][game->player->x_pos / 40] != MAP_WALL_UNBREAKABLE && game->map[(game->player->y_pos / 40) - 1][game->player->x_pos / 40] != MAP_WALL_BREAKABLE) {
       game->player->y_pos -= game->player->current_speed;
     }
@@ -22,5 +21,5 @@ void    movePlayer(game_t *game, SDL_Keycode direction) {
       game->player->x_pos += game->player->current_speed;
     }
     game->player->current_dir = RIGHT;
-  }
+  }*/
 }

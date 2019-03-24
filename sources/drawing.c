@@ -2,7 +2,7 @@
 #include "../includes/map.h"
 
 void drawMap(game_t *game) {
-    SDL_Rect position;
+    /*SDL_Rect position;
     int x = 0;
     int y = 0;
     position.x = 0;
@@ -27,7 +27,7 @@ void drawMap(game_t *game) {
         y++;
         position.y += 40;
         position.x = 0;
-    }
+    }*/
 }
 
 void drawBombs(game_t *game) {
