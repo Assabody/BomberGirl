@@ -118,18 +118,6 @@ typedef struct game_s {
 ** 111 : Rien
 */
 
-/**
- * Map.c
- */
-char **mapInit();
-
-void print_map(char **);
-
-void clear_map(game_t *);
-
-char *serialize_map(char **);
-
-char **deserialize_map(char *);
 
 
 void movePlayer(game_t *, SDL_Keycode);
@@ -205,6 +193,8 @@ void removeBombNode(bombs_t *, bomb_node_t *);
 void bombExplosion(bomb_t *);
 
 void updateBombs(game_t *);
+
+char *bombDurationToChar(bomb_t *);
 
 /**
  * Player.c

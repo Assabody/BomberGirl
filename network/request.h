@@ -21,4 +21,13 @@ int deserialize_int(char *);
 char *deserialize_char(char *, char *);
 t_client_request *deserialize_request(char *, t_client_request *);
 
+void string_to_bytes(char n, char *str);
+int bytes_to_int(char n);
+
+int is_cell_in_flame(char cell);
+int get_cell_type(char cell);
+int is_cell_bombed(char cell);
+
+
+
 #endif

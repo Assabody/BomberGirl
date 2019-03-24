@@ -14,14 +14,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 
-#define X_MAP_SIZE 15
-#define Y_MAP_SIZE 13
 #define MAX_PLAYERS 4
-#define MAP_WALL_BREAKABLE 'w'
-#define MAP_WALL_UNBREAKABLE 'x'
-#define MAP_GRASS 'g'
-#define MAP_BOMB 'b'
-
 
 int send_message(int, const char *);
 char *read_message(int, int);

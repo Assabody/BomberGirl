@@ -124,3 +124,8 @@ void clearBombs(bombs_t *bombs)
     bombs = NULL;
     puts("Bombs cleared");
 }
+
+char *bombDurationToChar(bomb_t *bomb)
+{
+    return serialize_int(bomb->duration);
+}

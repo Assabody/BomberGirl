@@ -1,49 +1,45 @@
 #include "../includes/main.h"
+#include "../includes/map.h"
+#include "../includes/cell.h"
 
-char **mapInit()
+cell_t **mapInit()
 {
-    int x = 0;
-    int y = 0;
-    char **map;
+    int i;
+    cell_t **map;
 
-    map = malloc(sizeof(char *) * (Y_MAP_SIZE));
-    while (y < Y_MAP_SIZE) {
-        map[y] = malloc(sizeof(char) * (X_MAP_SIZE));
-        while (x < X_MAP_SIZE) {
-            if (x == X_MAP_SIZE - 1 || y == Y_MAP_SIZE - 1 || x == 0 || y == 0) {
-                // borders
-                map[y][x] = MAP_WALL_UNBREAKABLE;
-            } else if (x % 2 == 0 && y % 2 == 0) {
-                // every two lines and rows
-                map[y][x] = MAP_WALL_UNBREAKABLE;
-            } else if (
-                    (x >= 1 && x <= 2 && y >= 1 && y <= 2) ||
-                    (x >= X_MAP_SIZE - 3 && x <= X_MAP_SIZE - 2 && y >= Y_MAP_SIZE - 3 && y <= Y_MAP_SIZE - 2) ||
-                    (x >= 1 && x <= 2 && y >= Y_MAP_SIZE - 3 && y <= Y_MAP_SIZE - 2) ||
-                    (x >= X_MAP_SIZE - 3 && x <= X_MAP_SIZE - 2 && y >= 1 && y <= 2)
-                    ) {
-                // Put grass where the players spawn
-                map[y][x] = MAP_GRASS;
-            } else {
-                map[y][x] = MAP_WALL_BREAKABLE;
-            }
-            x++;
-        }
-        x = 0;
-        y++;
+    map = malloc(sizeof(*map) * Y_MAP_SIZE * X_MAP_SIZE);
+
+    for (i = 0; i < X_MAP_SIZE * Y_MAP_SIZE; i++) {
+        map[i] = malloc(sizeof(cell_t));
+        map[i]->cell = 0;
+        map[i]->cell = unbreakable_wall_cell(map[i]->cell);
+        map[i]->bomb_timing = 0;
     }
     return map;
 }
 
-void print_map(char **map)
+void print_map(cell_t **map)
 {
     if (map != NULL) {
-        for (int y = 0; y < Y_MAP_SIZE; y++) {
-            for (int x = 0; x < X_MAP_SIZE; x++) {
-                putchar(map[y][x]);
-                putchar(' ');
+        for (int y = 0; y < Y_MAP_SIZE * X_MAP_SIZE; y++) {
+            switch (get_cell_type(map[y]->cell)) {
+                case MAP_WALL_UNBREAKABLE:
+                    printf("u");
+                    break;
+                case MAP_WALL_BREAKABLE:
+                    printf("b");
+                    break;
+                case MAP_GRASS:
+                    printf("g");
+                    break;
+                default:
+                    printf("other: %d\n", get_cell_type(map[y]->cell));
+
             }
-            putchar('\n');
+            putchar(' ');
+            if (y % Y_MAP_SIZE == 0) {
+                putchar('\n');
+            }
         }
     }
 }

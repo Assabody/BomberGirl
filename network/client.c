@@ -1,5 +1,6 @@
 #include "network.h"
 #include "../includes/main.h"
+#include "../includes/map.h"
 
 void error(const char *msg)
 {

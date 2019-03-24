@@ -14,7 +14,9 @@ SRC		=	sources/moves.c \
 			sources/sdl.c \
 			sources/main.c \
 			sources/game.c \
+			sources/cell.c \
 			sources/menu.c \
+			sources/bonus.c \
 			network/client.c \
 			network/checksum.c \
 			network/message.c \

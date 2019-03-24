@@ -1,4 +1,5 @@
 #include "../includes/main.h"
+#include "../includes/map.h"
 
 void drawMap(game_t *game) {
     SDL_Rect position;

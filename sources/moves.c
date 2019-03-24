@@ -1,5 +1,5 @@
 #include "../includes/main.h"
-
+#include "../includes/map.h"
 
 void    movePlayer(game_t *game, SDL_Keycode direction) {
   if (direction == SDLK_UP) {

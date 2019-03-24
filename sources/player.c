@@ -1,4 +1,5 @@
 #include "../includes/main.h"
+#include "../includes/map.h"
 
 player_t *initPlayer(int player_position)
 {
@@ -15,8 +16,6 @@ player_t *initPlayer(int player_position)
     player->current_speed = SPEED;
     player->max_speed = MAX_SPEED;
     player->frags = 0;
-    printf("X_POS: %i" , player->x_pos);
-    printf("Y_POS: %i" , player->y_pos);
     switch (player_position) {
         case 1:
             player->x_pos = 40;
