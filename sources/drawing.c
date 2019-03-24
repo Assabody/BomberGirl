@@ -1,5 +1,4 @@
 #include "../includes/main.h"
-#include "../includes/map.h"
 
 void drawMap(game_t *game) {
     /*SDL_Rect position;
@@ -40,7 +39,7 @@ void drawBombs(game_t *game) {
       }
       renderTexture(
 		    game->textures->bomb,
-		    game,
+		    game->sdl,
 		    bomb_node->bomb->x,
 		    bomb_node->bomb->y,
 		    &game->textures->bomb_clips[bomb_node->bomb->clip]);
@@ -51,7 +50,7 @@ void drawBombs(game_t *game) {
 void drawPlayer(game_t *game) {
     renderTexture(
             game->textures->player,
-            game,
+            game->sdl,
             game->player->x_pos,
             game->player->y_pos - 20,
             &game->textures->player_clips[game->player->current_dir]);

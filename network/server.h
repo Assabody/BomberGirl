@@ -8,8 +8,7 @@
 #ifndef     _SERVER_H_
 #define     _SERVER_H_
 
-#include "../includes/main.h"
-
+#include "network.h"
 /*
 ** Bit 0 : Indique si la case est en flammes (1) ou non (0)
 ** Bits [1..2] : Indique le type de terrain ( 00 : Terrain vide, 10 : Brique indestructible, 11 : Brique destructible). Note : Combinaison 01 inutilisée.
@@ -30,10 +29,10 @@
 
 typedef struct game_infos_s
 {
-    player_t **players;
-    cell_t *map;
+    player_t players[MAX_PLAYERS];
+    cell_t map[X_MAP_SIZE * Y_MAP_SIZE];
 } game_infos_t;
 
-game_infos_t *init_game_infos();
+void init_game_infos(game_infos_t *game_infos);
 
 #endif

@@ -1,6 +1,5 @@
 #include "network.h"
 #include "../includes/main.h"
-#include "../includes/map.h"
 #include "server.h"
 
 void error(const char *msg)
@@ -42,10 +41,11 @@ int initClient(char *address, char *port, game_t *game)
     if (!result || strncmp(result, "pong", 4) != 0 ) {
         return -1;
     }
-    socklen_t len = sizeof(serv_addr);
-    game_infos_t *game_infos = malloc(sizeof(* game_infos));
-    game_infos->map = malloc(sizeof(cell_t) * X_MAP_SIZE * Y_MAP_SIZE);
-    recvfrom(sockfd, &game_infos, sizeof(game_infos), 0, (struct sockaddr *) &serv_addr, &len);
-    game->map = game_infos->map;
+    game_infos_t game_infos;
+    recv(sockfd, &game_infos, sizeof(game_infos), MSG_CONFIRM);
+    game->map = game_infos.map;
+    print_map(game->map);
+    printf("\ncell %d\n", game->map[0].cell);
+
     return sockfd;
 }

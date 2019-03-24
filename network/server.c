@@ -1,4 +1,6 @@
+#include "../includes/main.h"
 #include "server.h"
+
 
 int connect_client(int sock, struct sockaddr_in *client_addr) {
     int len = sizeof(client_addr);
@@ -38,7 +40,8 @@ int main() {
     FD_SET(sock, &active_fd_set);
     number_of_clients = 0;
     max_number_of_clients = 4;
-    game_infos_t *game_infos = init_game_infos();
+    game_infos_t game_infos;
+    init_game_infos(&game_infos);
     printf("Number of clients : %d/%d\n", number_of_clients, max_number_of_clients);
     while (1) {
         read_fd_set = active_fd_set;
@@ -62,7 +65,7 @@ int main() {
                             send_message(new, "pong");
                             number_of_clients++;
                             printf("Number of clients : %d/%d\n", number_of_clients, max_number_of_clients);
-                            sendto(new, game_infos, sizeof(game_infos), 0, (struct sockaddr *) &client_addr, sizeof(client_addr));
+                            send(new, &game_infos, sizeof(game_infos), MSG_CONFIRM);
                             //send_message(new, serialize_map(game_infos->map));
                             FD_SET(new, &active_fd_set);
                         }
@@ -87,15 +90,12 @@ int main() {
     return 0;
 }
 
-game_infos_t *init_game_infos()
+void init_game_infos(game_infos_t *game_infos)
 {
-    game_infos_t *game_infos = malloc(sizeof(* game_infos));
-    game_infos->map = mapInit();
+    mapInit(game_infos);
 
-    game_infos->players = malloc(sizeof(player_t *) * MAX_PLAYERS);
     /*game_infos->players[0] = initPlayer(1);
     game_infos->players[1] = initPlayer(2);
     game_infos->players[2] = initPlayer(3);
     game_infos->players[3] = initPlayer(4);*/
-    return game_infos;
 }

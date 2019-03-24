@@ -1,5 +1,4 @@
 #include "../includes/main.h"
-#include "../includes/bonus.h"
 
 int cell_has_bonus(char cell)
 {

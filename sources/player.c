@@ -1,5 +1,4 @@
 #include "../includes/main.h"
-#include "../includes/map.h"
 
 player_t *initPlayer(int player_position)
 {

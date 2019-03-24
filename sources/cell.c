@@ -1,4 +1,4 @@
-#include "../includes/cell.h"
+#include "../includes/main.h"
 
 int grass_cell(char cell)
 {

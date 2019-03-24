@@ -1,20 +1,14 @@
 #include "../includes/main.h"
-#include "../includes/map.h"
-#include "../includes/cell.h"
+#include "../network/server.h"
 
-cell_t *mapInit()
+void mapInit(game_infos_t *game_infos)
 {
     int i;
-    cell_t *map;
-
-    map = malloc(sizeof(*map) * Y_MAP_SIZE * X_MAP_SIZE);
-
     for (i = 0; i < X_MAP_SIZE * Y_MAP_SIZE; i++) {
-        map[i].cell = 0;
-        map[i].cell = unbreakable_wall_cell(map[i].cell);
-        map[i].bomb_timing = 0;
+        game_infos->map[i].cell = 0;
+        game_infos->map[i].cell = breakable_wall_cell(game_infos->map[i].cell);
+        game_infos->map[i].bomb_timing = 0;
     }
-    return map;
 }
 
 void print_map(cell_t *map)
@@ -36,7 +30,7 @@ void print_map(cell_t *map)
 
             }
             putchar(' ');
-            if (y % Y_MAP_SIZE == 0) {
+            if (y % Y_MAP_SIZE == 0 && (y != 0) && y != Y_MAP_SIZE * X_MAP_SIZE - 1) {
                 putchar('\n');
             }
         }

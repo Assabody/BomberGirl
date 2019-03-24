@@ -1,7 +1,4 @@
 #include "../includes/main.h"
-#include "../includes/bonus.h"
-#include "../includes/cell.h"
-#include "../includes/map.h"
 
 game_t *init() {
     game_t *game = malloc(sizeof *game);
@@ -44,9 +41,9 @@ void gameDestroy(game_t *game) {
         clearBombs(game->bombs);
         clearPlayer(game->player);
         clearSdl(game->sdl);
-        if (game->map != NULL) {
+        /*if (game->map != NULL) {
             clear_map(game);
-        }
+        }*/
         TTF_Quit();
         SDL_Quit();
         free(game);
@@ -55,12 +52,11 @@ void gameDestroy(game_t *game) {
 
 int main() {
     game_t *game = init();
-    //print_map(game->map);
 
     /* Convert */
-    char *cell = malloc(sizeof(char) * 8);
+    //char *cell = malloc(sizeof(char) * 8);
 
-    cell_t *map = mapInit();
+    /*cell_t *map = mapInit();
     print_map(map);
 
     string_to_bytes(map[0].cell, cell);
@@ -103,7 +99,7 @@ int main() {
                 printf("Malus de vitesse\n");
                 break;
         }
-    }
+    }*/
 
     srandom(time(0));
     if (game == NULL)

@@ -12,12 +12,12 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <time.h>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
-#include <SDL2/SDL_image.h>
+#include "../includes/sdl.h"
+#include "../includes/map.h"
+#include "../includes/player.h"
 #include "../network/network.h"
 #include "../network/request.h"
-#include "map.h"
+#include "../network/server.h"
 
 #define FPS 60
 #define TICKS_PER_FRAME 1000 / FPS
@@ -35,16 +35,16 @@
 #define RIGHT 1
 #define LEFT 3
 
-
-#define X_MAP_SIZE 15
-#define Y_MAP_SIZE 13
-#define MAP_WALL_BREAKABLE 3
-#define MAP_WALL_UNBREAKABLE 1
-#define MAP_GRASS 0
-#define MAP_BOMB 'b'
-
 // bombs
 #define DAMAGES 10
+
+// bonus
+#define RANGE_BONUS 0 // 000
+#define RANGE_MALUS 1 // 001
+#define BOMB_NUMBER_BONUS 2 // 010
+#define BOMB_NUMBER_MALUS 3 // 011
+#define SPEED_BONUS 4 // 100
+#define SPEED_MALUS 5 // 101
 
 typedef struct bomb_s {
   int x;
@@ -53,13 +53,6 @@ typedef struct bomb_s {
   int	damages;
   int clip;
 } bomb_t;
-
-typedef struct sdl_s {
-  SDL_Window *window;
-  SDL_Renderer *renderer;
-  long int frameCount;
-  TTF_Font *font;
-} sdl_t;
 
 typedef struct bomb_node_s {
   bomb_t *bomb;
@@ -71,36 +64,6 @@ typedef struct bombs_s {
   struct bomb_node_s *first;
   struct bomb_node_s *last;
 } bombs_t;
-
-typedef struct cell_c {
-    unsigned char cell;
-    unsigned char bomb_timing;
-} cell_t;
-
-typedef struct player_s
-{
-  int token;
-  int alive;
-  int x_pos;
-  int y_pos;
-  int current_dir;
-  int current_speed;
-  int max_speed;
-  int bombs_left;
-  int bombs_capacity;
-  int frags;
-} player_t;
-
-typedef struct textures_s {
-  SDL_Texture *menu;
-  SDL_Texture *player;
-  SDL_Texture *grass;
-  SDL_Texture *stone;
-  SDL_Texture *brick;
-  SDL_Texture *bomb;
-  SDL_Rect bomb_clips[4];
-  SDL_Rect player_clips[4];
-} textures_t;
 
 typedef struct game_s {
   sdl_t *sdl;
@@ -136,7 +99,7 @@ typedef struct game_s {
  * Map.c
  */
 
-cell_t *mapInit();
+void mapInit(game_infos_t *);
 
 void print_map(cell_t *);
 
@@ -160,18 +123,6 @@ game_t *init(void);
  * Events.c
  */
 void checkEvents(game_t *);
-
-
-/**
- * Sdl.c
- */
-sdl_t *initSdl();
-
-void clearTextures(textures_t *);
-
-void clearSdl(sdl_t *);
-
-void renderTexture(SDL_Texture *, game_t *, int, int, SDL_Rect *);
 
 /**
  * Menu.c
@@ -239,5 +190,21 @@ int initClient(char *, char *, game_t *);
  */
 int fetchDataFromServer(game_t *game);
 
+
+/**
+ * Cell.c
+ */
+int grass_cell(char);
+
+int breakable_wall_cell(char);
+
+int unbreakable_wall_cell(char);
+
+/**
+ * Bonus.c
+ */
+
+int get_bonus(char);
+int cell_has_bonus(char cell);
 
 #endif
