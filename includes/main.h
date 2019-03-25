@@ -38,12 +38,13 @@
 #define DAMAGES 10
 #define PLAYER_LIFE 30
 #define WALL_LIFE 10
+#define RADIUS 1
 
 typedef struct bomb_s {
   int x;
   int y;
   int duration;
-  int	damages;
+  int damages;
   int clip;
 } bomb_t;
 
@@ -209,9 +210,11 @@ void removeBomb(game_t *, bomb_t *);
 
 void removeBombNode(bombs_t *, bomb_node_t *);
 
-void bombExplosion(bomb_t *);
+void bombExplosion(bomb_t *, game_t *);
 
 void updateBombs(game_t *);
+
+void bombCheckObjectRadius(game_t *, bomb_t *);
 
 /**
  * Player.c

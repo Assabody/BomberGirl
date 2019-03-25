@@ -35,7 +35,7 @@ void drawBombs(game_t *game) {
     bomb_node_t *bomb_node = game->bombs->first;
     while (bomb_node != NULL) {
       if (bomb_node->bomb->duration <= 0) {
-      	bombExplosion(bomb_node->bomb);
+      	bombExplosion(bomb_node->bomb, game);
 	removeBomb(game, bomb_node->bomb);
 	break;
       }
