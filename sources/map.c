@@ -3,19 +3,38 @@
 
 void mapInit(game_infos_t *game_infos)
 {
-    for (int i = 0; i <= Y_MAP_SIZE * X_MAP_SIZE; i++) {
-        game_infos->map[i].cell = 0;
-        game_infos->map[i].cell = breakable_wall_cell(game_infos->map[i].cell);
-        game_infos->map[i].bomb_timing = 0;
+    for (int y = 0; y <= Y_MAP_SIZE; y++) {
+        for (int x = 0; x <= X_MAP_SIZE; x++) {
+            game_infos->map[y][x].cell = 0;
+            game_infos->map[y][x].bomb_timing = 0;
+            if (x == X_MAP_SIZE - 1 || y == Y_MAP_SIZE - 1 || x == 0 || y == 0) {
+                // borders
+                game_infos->map[y][x].cell = unbreakable_wall_cell(game_infos->map[y][x].cell);
+            } else if (x % 2 == 0 && y % 2 == 0) {
+                // every two lines and rows
+                game_infos->map[y][x].cell = unbreakable_wall_cell(game_infos->map[y][x].cell);
+            } else if (
+                    (x >= 1 && x <= 2 && y >= 1 && y <= 2) ||
+                    (x >= X_MAP_SIZE - 3 && x <= X_MAP_SIZE - 2 && y >= Y_MAP_SIZE - 3 && y <= Y_MAP_SIZE - 2) ||
+                    (x >= 1 && x <= 2 && y >= Y_MAP_SIZE - 3 && y <= Y_MAP_SIZE - 2) ||
+                    (x >= X_MAP_SIZE - 3 && x <= X_MAP_SIZE - 2 && y >= 1 && y <= 2)
+                    ) {
+                // Put grass where the players spawn
+                game_infos->map[y][x].cell = grass_cell(game_infos->map[y][x].cell);
+            } else {
+                game_infos->map[y][x].cell = breakable_wall_cell(game_infos->map[y][x].cell);
+            }
+
+        }
     }
 }
 
-void print_map(cell_t **map)
+void print_map(game_t *game)
 {
-    if (map != NULL) {
+    if (game->map != NULL) {
         for (int y = 0; y < Y_MAP_SIZE; y++) {
             for (int x = 0; x < X_MAP_SIZE; x++) {
-                switch (get_cell_type(map[y][x].cell)) {
+                switch (get_cell_type(game->map[y][x].cell)) {
                     case MAP_WALL_UNBREAKABLE:
                         printf("u");
                         break;
@@ -26,46 +45,11 @@ void print_map(cell_t **map)
                         printf("g");
                         break;
                     default:
-                        printf("\nother: %d\n", get_cell_type(map[y][x].cell));
-
+                        printf("\nother: %d\n", get_cell_type(game->map[y][x].cell));
                 }
                 putchar(' ');
             }
             putchar('\n');
         }
     }
-}
-
-void clear_map(game_t *game)
-{
-    free(game->map);
-}
-
-char *serialize_map(char **map)
-{
-    int i = 0;
-    char *serialized_map = malloc(sizeof(* serialized_map) * (X_MAP_SIZE * Y_MAP_SIZE));
-    if (map != NULL) {
-        for (int y = 0; y < Y_MAP_SIZE; y++) {
-            for (int x = 0; x < X_MAP_SIZE; x++) {
-                serialized_map[i++] = map[y][x];
-            }
-        }
-    }
-    return serialized_map;
-}
-
-char **deserialize_map(char *serialized_map)
-{
-    char **map;
-    int i = 0;
-
-    map = malloc(sizeof(char *) * Y_MAP_SIZE);
-    for (int y = 0 ; y < Y_MAP_SIZE; y++) {
-        map[y] = malloc(sizeof(char) * X_MAP_SIZE);
-        for (int x = 0 ; x < X_MAP_SIZE; x++) {
-            map[y][x] = serialized_map[i++];
-        }
-    }
-    return map;
 }

@@ -71,7 +71,7 @@ typedef struct game_s {
   player_t *player;
   textures_t *textures;
   
-  cell_t **map;
+  cell_t map[Y_MAP_SIZE][X_MAP_SIZE];
   
   int running;
   int client_sock;
@@ -101,13 +101,9 @@ typedef struct game_s {
 
 void mapInit(game_infos_t *);
 
-void print_map(cell_t **);
+void print_map(game_t *);
 
 void clear_map(game_t *);
-
-char *serialize_map(char **);
-
-char **deserialize_map(char *);
 
 void movePlayer(game_t *, SDL_Keycode);
 

@@ -10,10 +10,8 @@ void error(const char *msg)
 
 void getMap(int socket, game_t *game)
 {
-    game->map = malloc(sizeof(cell_t*) * Y_MAP_SIZE);
     game_infos_t game_infos;
     recv(socket, &game_infos, sizeof(game_infos), MSG_CONFIRM);
-    //printf("\ncell in game_infos->map %d\n", game_infos.map[0].cell);
     int y = 0;
     int x = 0;
     for (int i = 0; i <= X_MAP_SIZE * Y_MAP_SIZE; ++i) {
@@ -24,10 +22,9 @@ void getMap(int socket, game_t *game)
                 y++;
                 x = 0;
             }
-            game->map[y] = malloc(sizeof(cell_t) * X_MAP_SIZE);
         }
-        game->map[y][x].cell = game_infos.map[i].cell;
-        game->map[y][x].bomb_timing = game_infos.map[i].bomb_timing;
+        game->map[y][x].cell = game_infos.map[y][x].cell;
+        game->map[y][x].bomb_timing = game_infos.map[y][x].bomb_timing;
         x++;
     }
 }
@@ -66,7 +63,7 @@ int initClient(char *address, char *port, game_t *game)
         return -1;
     }
     getMap(sockfd, game);
-    print_map(game->map);
+    print_map(game);
     printf("\ncell in game->map %d\n", game->map[0][0].cell);
 
     return sockfd;
