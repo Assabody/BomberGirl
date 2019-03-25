@@ -53,10 +53,12 @@ void drawBombs(game_t *game) {
 }
 
 void drawPlayer(game_t *game) {
+    if (game->player.alive == 1) {
     renderTexture(
             game->textures->player,
             game->sdl,
-            game->player->x_pos,
-            game->player->y_pos - 20,
-            &game->textures->player_clips[game->player->current_dir]);
+            game->player.x_pos,
+            game->player.y_pos - 20,
+            &game->textures->player_clips[game->player.current_dir]);
+    }
 }

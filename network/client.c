@@ -8,24 +8,39 @@ void error(const char *msg)
     exit(0);
 }
 
-void getMap(int socket, game_t *game)
+void getServerInfo(int socket, game_t *game)
 {
     game_infos_t game_infos;
-    recv(socket, &game_infos, sizeof(game_infos), MSG_CONFIRM);
-    int y = 0;
-    int x = 0;
-    for (int i = 0; i <= X_MAP_SIZE * Y_MAP_SIZE; ++i) {
-        printf("x %d - y %d : %d\n", x, y, i % X_MAP_SIZE);
-        if (i % X_MAP_SIZE == 0) {
-            if (i != 0) {
-                printf("y++\n");
-                y++;
-                x = 0;
+    puts("recv game_infos\n");
+    if (recv(socket, &game_infos, sizeof(game_infos), 0)) {
+        if (game_infos.players[game->player.token].x_pos > 0 && game_infos.players[game->player.token].y_pos > 0) {
+            int y = 0;
+            int x = 0;
+            for (int i = 0; i <= X_MAP_SIZE * Y_MAP_SIZE; ++i) {
+                if (i % X_MAP_SIZE == 0) {
+                    if (i != 0) {
+                        y++;
+                        x = 0;
+                    }
+                }
+                game->map[y][x].cell = game_infos.map[y][x].cell;
+                game->map[y][x].bomb_timing = game_infos.map[y][x].bomb_timing;
+                x++;
             }
+            if (game->player.token == -1) {
+                printf("actual %d new %d\n", game->player.token, game_infos.players[game->player.token].token);
+                game->player.token = game_infos.players[game->player.token].token;
+            }
+            game->player.x_pos = game_infos.players[game->player.token].x_pos;
+            game->player.y_pos = game_infos.players[game->player.token].y_pos;
+            game->player.alive = game_infos.players[game->player.token].alive;
+            game->player.current_speed = game_infos.players[game->player.token].current_speed;
+            game->player.max_speed = game_infos.players[game->player.token].max_speed;
+            game->player.bombs_left = game_infos.players[game->player.token].bombs_left;
+            game->player.bombs_capacity = game_infos.players[game->player.token].bombs_capacity;
+            printf("new position x %d y %d\n", game_infos.players[game->player.token].x_pos, game_infos.players[game->player.token].y_pos);
+            //game->player = game_infos.players[game->player.token];
         }
-        game->map[y][x].cell = game_infos.map[y][x].cell;
-        game->map[y][x].bomb_timing = game_infos.map[y][x].bomb_timing;
-        x++;
     }
 }
 
@@ -57,14 +72,9 @@ int initClient(char *address, char *port, game_t *game)
         return -1;
     }
     send_message(sockfd, "ping");
-    char *result = read_message(sockfd, 4);
-    puts(result);
-    if (!result || strncmp(result, "pong", 4) != 0 ) {
-        return -1;
-    }
-    getMap(sockfd, game);
-    print_map(game);
-    printf("\ncell in game->map %d\n", game->map[0][0].cell);
+    recv(sockfd, &game->player.token, sizeof(int), 0);
+    printf("token received from the server is %d\n", game->player.token);
+    getServerInfo(sockfd, game);
 
     return sockfd;
 }

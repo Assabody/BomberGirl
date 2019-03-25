@@ -68,10 +68,12 @@ typedef struct bombs_s {
 typedef struct game_s {
   sdl_t *sdl;
   bombs_t *bombs;
-  player_t *player;
+  player_t player;
   textures_t *textures;
   
   cell_t map[Y_MAP_SIZE][X_MAP_SIZE];
+
+  t_client_request request;
   
   int running;
   int client_sock;
@@ -102,8 +104,6 @@ typedef struct game_s {
 void mapInit(game_infos_t *);
 
 void print_map(game_t *);
-
-void clear_map(game_t *);
 
 void movePlayer(game_t *, SDL_Keycode);
 
@@ -172,9 +172,7 @@ char *bombDurationToChar(bomb_t *);
 /**
  * Player.c
  */
-player_t *initPlayer(int);
-
-void clearPlayer(player_t *);
+void initPlayer(player_t *, int);
 
 void printPlayerStruct(player_t *);
 
@@ -202,5 +200,17 @@ int unbreakable_wall_cell(char);
 
 int get_bonus(char);
 int cell_has_bonus(char cell);
+
+/**
+ * Moves.c
+ */
+int can_go_to_cell(cell_t);
+void map_coords_to_player_coords(int, int, int *, int *);
+void player_coords_to_map_coords(int, int, int *, int *);
+
+/**
+ * Client.c
+ */
+void getServerInfo(int, game_t *);
 
 #endif

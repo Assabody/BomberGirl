@@ -31,7 +31,7 @@ int menuWindow(game_t *game) {
                 update = 1;
                 switch (counter) {
                     case 0:
-		      address = showInputMenu(game, "addresse ip");
+		                address = showInputMenu(game, "addresse ip");
                         printf("addresse ip %s\n", address);
                         port = showInputMenu(game, "port");
                         printf("port %s\n", port);
@@ -40,12 +40,16 @@ int menuWindow(game_t *game) {
                             showText(game, "Error while connecting to the server");
                         } else {
                             showText(game, "Connected!");
-                            //game->player->token = getClientToken(game->client_sock);
+                            //game->player.token = getClientToken(game->client_sock);
                         }
                         break;
                     case 2:
-                        //printf("Player token is %d\n", game->player->token);
-                        game->client_sock = initClient("127.0.0.1", "1234", game);
+                        //printf("Player token is %d\n", game->player.token);
+                        if (game->client_sock == -1) {
+                            game->client_sock = initClient("127.0.0.1", "1234", game);
+                        }
+                        if (game->client_sock == -1)
+                            quit = 1;
                         drawGame(game);
                         break;
                     case 3:

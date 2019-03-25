@@ -1,6 +1,17 @@
 #include "request.h"
 #include "../includes/main.h"
 
+int send_request(int socket, t_client_request *request) {
+    printf("Sending request to server... %d\n", request->magic);
+
+    if (send(socket, request, sizeof(*request), 0)) {
+        request->magic = 0;
+        request->command = 0;
+        return 1;
+    }
+    return 0;
+}
+
 char *serialize_int(int value)
 {
     char *buffer = malloc(sizeof(char) * 4);

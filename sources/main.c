@@ -15,13 +15,10 @@ game_t *init() {
         gameDestroy(game);
         return NULL;
     }
+    game->player.alive = 0;
+    game->player.token = -1;
     game->bombs = initBombs();
     if (!game->bombs) {
-        gameDestroy(game);
-        return NULL;
-    }
-    game->player = initPlayer(1);
-    if (!game->player) {
         gameDestroy(game);
         return NULL;
     }
@@ -38,11 +35,7 @@ void gameDestroy(game_t *game) {
         clearTextures(game->textures);
         // TO DO: Fix Clear bombs (memory leak)
         clearBombs(game->bombs);
-        clearPlayer(game->player);
         clearSdl(game->sdl);
-        /*if (game->map != NULL) {
-            clear_map(game);
-        }*/
         TTF_Quit();
         SDL_Quit();
         free(game);

@@ -25,6 +25,16 @@ int main() {
         perror("socket()");
         return 1;
     }
+    timeout.tv_sec = 10;
+    timeout.tv_usec = 0;
+
+    if (setsockopt (sock, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout,
+                    sizeof(timeout)) < 0)
+        perror("setsockopt()");
+
+    if (setsockopt (sock, SOL_SOCKET, SO_SNDTIMEO, (char *)&timeout,
+                    sizeof(timeout)) < 0)
+        perror("setsockopt()");
 
     server.sin_addr.s_addr = htonl(INADDR_ANY);
     server.sin_family = AF_INET;
@@ -62,25 +72,42 @@ int main() {
                             close(new);
                         } else {
                             printf("Client connected\n");
-                            send_message(new, "pong");
+                            puts("send token\n");
+                            send(new, &number_of_clients, sizeof(number_of_clients), 0);
                             number_of_clients++;
                             printf("Number of clients : %d/%d\n", number_of_clients, max_number_of_clients);
-                            send(new, &game_infos, sizeof(game_infos), MSG_CONFIRM);
+                            puts("send game_infos\n");
+                            send(new, &game_infos, sizeof(game_infos), 0);
                             FD_SET(new, &active_fd_set);
                         }
                     }
-                }
-                else {
-                    char *result = read_message(i, 4);
-                    if (result == NULL) {
+                } else {
+                    t_client_request client_request;
+                    puts("recv client_request\n");
+                    if (!recv(i, &client_request, sizeof(client_request), 0)) {
                         printf("Client disconnected\n");
                         number_of_clients--;
                         printf("Number of clients : %d/%d\n", number_of_clients, max_number_of_clients);
                         close(i);
                         FD_CLR(i, &active_fd_set);
-                    }/* else {
-                        send_message(i, "fetching");
-                    }*/
+                    } else {
+                        printf("magic number %d\n", client_request.magic);
+                        if (client_request.y_pos < Y_MAP_SIZE && client_request.x_pos < X_MAP_SIZE) {
+                            int player_key = client_request.magic / 16 - 1;
+                            //= (game->player.token + 1) * 16;
+
+                            printf("player_key %d moving to x %d y %d? %s\n", player_key, client_request.x_pos, client_request.y_pos, can_go_to_cell(game_infos.map[client_request.y_pos][client_request.x_pos]) ? "ok" : "ko");
+                            if (can_go_to_cell(game_infos.map[client_request.y_pos][client_request.x_pos])) {
+                                map_coords_to_player_coords(client_request.x_pos, client_request.y_pos, &game_infos.players[player_key].x_pos, &game_infos.players[player_key].y_pos);
+                                printf("moved to x %d y %d?\n", game_infos.players[player_key].x_pos, game_infos.players[player_key].y_pos);
+                            }
+                            printf("request received: pose_bomb %d\n", client_request.command);
+                        } else {
+                            printf("moving to x %d y %d? %s\n", client_request.x_pos, client_request.y_pos, "bad coords");
+                        }
+                        puts("send game_infos\n");
+                        send(i, &game_infos, sizeof(game_infos), 0);
+                    }
                 }
             }
         }
@@ -93,8 +120,8 @@ void init_game_infos(game_infos_t *game_infos)
 {
     mapInit(game_infos);
 
-    /*game_infos->players[0] = initPlayer(1);
-    game_infos->players[1] = initPlayer(2);
-    game_infos->players[2] = initPlayer(3);
-    game_infos->players[3] = initPlayer(4);*/
+    initPlayer(&game_infos->players[0], 1);
+    initPlayer(&game_infos->players[1], 2);
+    initPlayer(&game_infos->players[2], 3);
+    initPlayer(&game_infos->players[3], 4);
 }
