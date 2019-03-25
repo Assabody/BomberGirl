@@ -11,8 +11,8 @@ void checkEvents(game_t *game) {
         if (event.type == SDL_KEYDOWN) {
             switch (event.key.keysym.sym) {
                 case SDLK_SPACE:
-                    placeBomb(game, game->player.x_pos, game->player.y_pos);
-                    game->request.magic = (game->player.token + 1) * 16;
+                    placeBomb(game, game->player[game->player_key].x_pos, game->player[game->player_key].y_pos);
+                    game->request.magic = (game->player[game->player_key].token + 1) * 16;
                     game->request.command = 1;
                     puts("bomb placed");
                     break;

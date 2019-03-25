@@ -33,7 +33,7 @@ void placeBomb(game_t *game, int x, int y) {
             game->bombs->last = bomb_node;
         }
         game->request.command = 1;
-        game->request.magic = game->player.token ? game->player.token + 1 : 0;
+        game->request.magic = game->player[game->player_key].token ? game->player[game->player_key].token + 1 : 0;
     } else {
         free(bomb);
         free(bomb_node);

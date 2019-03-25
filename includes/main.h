@@ -68,13 +68,14 @@ typedef struct bombs_s {
 typedef struct game_s {
   sdl_t *sdl;
   bombs_t *bombs;
-  player_t player;
+  player_t player[MAX_PLAYERS - 1];
   textures_t *textures;
   
   cell_t map[Y_MAP_SIZE][X_MAP_SIZE];
 
   t_client_request request;
-  
+
+  int player_key;
   int running;
   int client_sock;
 } game_t;
