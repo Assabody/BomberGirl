@@ -102,28 +102,50 @@ void updateBombs(game_t *game)
 
 void bombCheckObjectRadius(game_t *game, bomb_t *bomb)
 {
-  /*
-  if (game->map[bomb->y][bomb->x + RADIUS] == MAP_WALL_UNBREAKABLE)
-    {
-      printf("Wall\n");
-    }
-  else if (game->map[bomb->y][bomb->x - RADIUS] == MAP_WALL_UNBREAKABLE)
-    {
-      printf("Wall\n");
-    }
-  else if (game->map[bomb->y + RADIUS][bomb->x] == MAP_WALL_UNBREAKABLE)
-    {
-      printf("Wall\n");
-    }
-  else if (game->map[bomb->y - RADIUS][bomb->x] == MAP_WALL_UNBREAKABLE)
-    {
-      printf("Wall\n");
-      }*/
+  if (game->map[bomb->y / 40][bomb->x / 40 + 1] == 'w') {
+    puts("WALL RIGHT");
+  }
+  if (game->map[bomb->y / 40][bomb->x / 40 - 1] == 'w') {
+    puts("WALL LEFT");
+  }
+  if (game->map[bomb->y / 40 - 1][bomb->x / 40] == 'w') {
+    puts("WALL TOP");
+  }
+  if (game->map[bomb->y / 40 + 1][bomb->x / 40] == 'w') {
+    puts("WALL BOTTOM");
+  }
+  checkPlayerDamagesFromBombs(game, bomb);
+  removeBomb(game, bomb);
+}
+
+void	checkPlayerDamagesFromBombs(game_t *game, bomb_t *bomb)
+{
+  if (bomb->y == game->player->y_pos &&
+      bomb->x == game->player->x_pos) {
+    puts("Player ON BOMB");
+  }
+
+  if (bomb->y / 40 + 1 == game->player->y_pos / 40) {
+    puts("Player under bomb");
+  }
+
+  if (bomb->y / 40 - 1 == game->player->y_pos / 40) {
+    puts("Player over bomb");
+  }
+
+  if (bomb->x / 40 - 1 == game->player->x_pos / 40) {
+    puts("Player before bomb");
+  }
+  if (bomb->x / 40 + 1 == game->player->x_pos / 40) {
+    puts("Player after bomb");
+  }
+
+
 }
 
 void	bombExplosion(bomb_t *bomb, game_t *game) {
   bombCheckObjectRadius(game, bomb);
-  printf("Bomb Dammage: %i\n", bomb->damages);
+  printf("Bomb Damages: %i\n", bomb->damages);
 }
 
 void clearBombs(bombs_t *bombs)
