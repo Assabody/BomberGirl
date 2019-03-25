@@ -1,7 +1,7 @@
 #include "../includes/main.h"
 
 void drawMap(game_t *game) {
-    /*SDL_Rect position;
+    SDL_Rect position;
     int x = 0;
     int y = 0;
     position.x = 0;
@@ -10,14 +10,19 @@ void drawMap(game_t *game) {
     position.h = 40;
     while (y < Y_MAP_SIZE) {
         while (x < X_MAP_SIZE) {
-            if (game->map[y][x] == MAP_BOMB) {
-                SDL_RenderCopy(game->sdl->renderer, game->textures->bomb, NULL, &position);
-            } else if (game->map[y][x] == MAP_WALL_UNBREAKABLE) {
-                SDL_RenderCopy(game->sdl->renderer, game->textures->stone, NULL, &position);
-            } else if (game->map[y][x] == MAP_WALL_BREAKABLE) {
-                SDL_RenderCopy(game->sdl->renderer, game->textures->brick, NULL, &position);
-            } else {
-                SDL_RenderCopy(game->sdl->renderer, game->textures->grass, NULL, &position);
+            switch (get_cell_type(game->map[y][x].cell)) {
+                case MAP_BOMB:
+                    SDL_RenderCopy(game->sdl->renderer, game->textures->bomb, NULL, &position);
+                    break;
+                case MAP_WALL_UNBREAKABLE:
+                    SDL_RenderCopy(game->sdl->renderer, game->textures->stone, NULL, &position);
+                    break;
+                case MAP_WALL_BREAKABLE:
+                    SDL_RenderCopy(game->sdl->renderer, game->textures->brick, NULL, &position);
+                    break;
+                case MAP_GRASS:
+                    SDL_RenderCopy(game->sdl->renderer, game->textures->grass, NULL, &position);
+                    break;
             }
             x++;
             position.x += 40;
@@ -26,7 +31,7 @@ void drawMap(game_t *game) {
         y++;
         position.y += 40;
         position.x = 0;
-    }*/
+    }
 }
 
 void drawBombs(game_t *game) {

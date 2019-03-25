@@ -30,7 +30,7 @@
 typedef struct game_infos_s
 {
     player_t players[MAX_PLAYERS];
-    cell_t map[X_MAP_SIZE * Y_MAP_SIZE];
+    cell_t map[Y_MAP_SIZE * X_MAP_SIZE];
 } game_infos_t;
 
 void init_game_infos(game_infos_t *game_infos);

@@ -71,7 +71,7 @@ typedef struct game_s {
   player_t *player;
   textures_t *textures;
   
-  cell_t *map;
+  cell_t **map;
   
   int running;
   int client_sock;
@@ -101,7 +101,7 @@ typedef struct game_s {
 
 void mapInit(game_infos_t *);
 
-void print_map(cell_t *);
+void print_map(cell_t **);
 
 void clear_map(game_t *);
 

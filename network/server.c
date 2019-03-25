@@ -66,7 +66,7 @@ int main() {
                             number_of_clients++;
                             printf("Number of clients : %d/%d\n", number_of_clients, max_number_of_clients);
                             send(new, &game_infos, sizeof(game_infos), MSG_CONFIRM);
-                            //send_message(new, serialize_map(game_infos->map));
+                            printf("\ncell sent to client (game_infos): %d\n", game_infos.map[0].cell);
                             FD_SET(new, &active_fd_set);
                         }
                     }

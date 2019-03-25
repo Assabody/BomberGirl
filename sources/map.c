@@ -3,36 +3,35 @@
 
 void mapInit(game_infos_t *game_infos)
 {
-    int i;
-    for (i = 0; i < X_MAP_SIZE * Y_MAP_SIZE; i++) {
+    for (int i = 0; i <= Y_MAP_SIZE * X_MAP_SIZE; i++) {
         game_infos->map[i].cell = 0;
         game_infos->map[i].cell = breakable_wall_cell(game_infos->map[i].cell);
         game_infos->map[i].bomb_timing = 0;
     }
 }
 
-void print_map(cell_t *map)
+void print_map(cell_t **map)
 {
     if (map != NULL) {
-        for (int y = 0; y < Y_MAP_SIZE * X_MAP_SIZE; y++) {
-            switch (get_cell_type(map[y].cell)) {
-                case MAP_WALL_UNBREAKABLE:
-                    printf("u");
-                    break;
-                case MAP_WALL_BREAKABLE:
-                    printf("b");
-                    break;
-                case MAP_GRASS:
-                    printf("g");
-                    break;
-                default:
-                    printf("other: %d\n", get_cell_type(map[y].cell));
+        for (int y = 0; y < Y_MAP_SIZE; y++) {
+            for (int x = 0; x < X_MAP_SIZE; x++) {
+                switch (get_cell_type(map[y][x].cell)) {
+                    case MAP_WALL_UNBREAKABLE:
+                        printf("u");
+                        break;
+                    case MAP_WALL_BREAKABLE:
+                        printf("b");
+                        break;
+                    case MAP_GRASS:
+                        printf("g");
+                        break;
+                    default:
+                        printf("\nother: %d\n", get_cell_type(map[y][x].cell));
 
+                }
+                putchar(' ');
             }
-            putchar(' ');
-            if (y % Y_MAP_SIZE == 0 && (y != 0) && y != Y_MAP_SIZE * X_MAP_SIZE - 1) {
-                putchar('\n');
-            }
+            putchar('\n');
         }
     }
 }

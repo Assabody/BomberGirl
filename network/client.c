@@ -8,6 +8,30 @@ void error(const char *msg)
     exit(0);
 }
 
+void getMap(int socket, game_t *game)
+{
+    game->map = malloc(sizeof(cell_t*) * Y_MAP_SIZE);
+    game_infos_t game_infos;
+    recv(socket, &game_infos, sizeof(game_infos), MSG_CONFIRM);
+    //printf("\ncell in game_infos->map %d\n", game_infos.map[0].cell);
+    int y = 0;
+    int x = 0;
+    for (int i = 0; i <= X_MAP_SIZE * Y_MAP_SIZE; ++i) {
+        printf("x %d - y %d : %d\n", x, y, i % X_MAP_SIZE);
+        if (i % X_MAP_SIZE == 0) {
+            if (i != 0) {
+                printf("y++\n");
+                y++;
+                x = 0;
+            }
+            game->map[y] = malloc(sizeof(cell_t) * X_MAP_SIZE);
+        }
+        game->map[y][x].cell = game_infos.map[i].cell;
+        game->map[y][x].bomb_timing = game_infos.map[i].bomb_timing;
+        x++;
+    }
+}
+
 int initClient(char *address, char *port, game_t *game)
 {
     int sockfd, portno;
@@ -41,11 +65,9 @@ int initClient(char *address, char *port, game_t *game)
     if (!result || strncmp(result, "pong", 4) != 0 ) {
         return -1;
     }
-    game_infos_t game_infos;
-    recv(sockfd, &game_infos, sizeof(game_infos), MSG_CONFIRM);
-    game->map = game_infos.map;
+    getMap(sockfd, game);
     print_map(game->map);
-    printf("\ncell %d\n", game->map[0].cell);
+    printf("\ncell in game->map %d\n", game->map[0][0].cell);
 
     return sockfd;
 }
