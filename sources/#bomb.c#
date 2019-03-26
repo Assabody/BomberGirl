@@ -78,25 +78,25 @@ void updateBombs(game_t *game)
     int count = 0;
     bomb_node_t* bomb_node = game->bombs->first;
     while (bomb_node != NULL) {
-        count++;
-        if (bomb_node->bomb != NULL) {
-            bombs_count++;
-            if (bomb_node->bomb->duration > 0) {
-                if (bomb_node->bomb->duration > 80 && bomb_node->bomb->duration < 110) {
-                    bomb_node->bomb->clip = 2;
-                }
-                if (bomb_node->bomb->duration > 15 && bomb_node->bomb->duration < 50) {
-                    bomb_node->bomb->clip = 1;
-                }
-                if (bomb_node->bomb->duration > 0 && bomb_node->bomb->duration < 15) {
-                    bomb_node->bomb->clip = 3;
-                }
-                bomb_node->bomb->duration--;
-            } else {
-	      bomb_node->bomb = NULL;
-	    }
-        }
-        bomb_node = bomb_node->next;
+      count++;
+      if (bomb_node->bomb != NULL) {
+	bombs_count++;
+	if (bomb_node->bomb->duration > 0) {
+	  if (bomb_node->bomb->duration > 80 && bomb_node->bomb->duration < 110) {
+	    bomb_node->bomb->clip = 2;
+	  }
+	  if (bomb_node->bomb->duration > 15 && bomb_node->bomb->duration < 50) {
+	    bomb_node->bomb->clip = 1;
+	  }
+	  if (bomb_node->bomb->duration > 0 && bomb_node->bomb->duration < 15) {
+	    bomb_node->bomb->clip = 3;
+	  }
+	  bomb_node->bomb->duration--;
+	} else {
+	  bomb_node->bomb = NULL;
+	}
+      }
+      bomb_node = bomb_node->next;
     }
 }
 
