@@ -57,7 +57,7 @@ void clearSdl(sdl_t *sdl)
     puts("Sdl cleared");
 }
 
-void renderTexture(SDL_Texture *tex, game_t *game, int x, int y, SDL_Rect *clip) {
+void renderTexture(SDL_Texture *tex, sdl_t *sdl, int x, int y, SDL_Rect *clip) {
     SDL_Rect dst;
     dst.x = x;
     dst.y = y;
@@ -67,7 +67,7 @@ void renderTexture(SDL_Texture *tex, game_t *game, int x, int y, SDL_Rect *clip)
     } else {
         SDL_QueryTexture(tex, NULL, NULL, &dst.w, &dst.h);
     }
-    SDL_RenderCopy(game->sdl->renderer, tex, clip, &dst);
+    SDL_RenderCopy(sdl->renderer, tex, clip, &dst);
 }
 
 void clearTextures(textures_t *textures) {

@@ -1,8 +1,7 @@
 #include "../includes/main.h"
 
-bombs_t *initBombs(void)
-{
-    bombs_t* bombs = malloc(sizeof *bombs);
+bombs_t *initBombs(void) {
+    bombs_t *bombs = malloc(sizeof *bombs);
 
     if (bombs != NULL) {
         bombs->first = NULL;
@@ -11,46 +10,46 @@ bombs_t *initBombs(void)
     return bombs;
 }
 
-void  placeBomb(game_t *game, int x, int y)
-{
-  bomb_node_t* bomb_node = malloc(sizeof *bomb_node);
-  bomb_node->prev = NULL;
-  bomb_node->next = NULL;
-  bomb_t* bomb = malloc(sizeof *bomb);
-  bomb->x = x;
-  bomb->y = y;
-  bomb->damages = DAMAGES;
-  bomb->duration = 2 * FPS;
-  bomb->clip = 0;
-  if (game->bombs != NULL && bomb_node != NULL) {
-    bomb_node->bomb = bomb;
+void placeBomb(game_t *game, int x, int y) {
+    bomb_node_t *bomb_node = malloc(sizeof *bomb_node);
+    bomb_node->prev = NULL;
     bomb_node->next = NULL;
-    if (game->bombs->last == NULL) {
-      bomb_node->prev = NULL;
-      game->bombs->first = bomb_node;
-      game->bombs->last = bomb_node;
+    bomb_t *bomb = malloc(sizeof *bomb);
+    bomb->x = x;
+    bomb->y = y;
+    bomb->damages = DAMAGES;
+    bomb->duration = 2 * FPS;
+    bomb->clip = 0;
+    if (game->bombs != NULL && bomb_node != NULL) {
+        bomb_node->bomb = bomb;
+        bomb_node->next = NULL;
+        if (game->bombs->last == NULL) {
+            bomb_node->prev = NULL;
+            game->bombs->first = bomb_node;
+            game->bombs->last = bomb_node;
+        } else {
+            bomb_node->prev = game->bombs->last;
+            game->bombs->last->next = bomb_node;
+            game->bombs->last = bomb_node;
+        }
+        game->request.command = 1;
+        game->request.magic = game->player[game->player_key].token ? game->player[game->player_key].token + 1 : 0;
     } else {
-      bomb_node->prev = game->bombs->last;
-      game->bombs->last->next = bomb_node;
-      game->bombs->last = bomb_node;
+        free(bomb);
+        free(bomb_node);
     }
-  } else {
-    free(bomb);
-    free(bomb_node);
-  }
 }
 
-void removeBomb(game_t *game, bomb_t *bomb)
-{
-  bomb_node_t *tmp_node = game->bombs->first;
+void removeBomb(game_t *game, bomb_t *bomb) {
+    bomb_node_t *tmp_node = game->bombs->first;
 
-  while (tmp_node != NULL) {
-    if (tmp_node->bomb->x == bomb->x && tmp_node->bomb->y == bomb->y) {
-      removeBombNode(game->bombs, tmp_node);
-      break;
+    while (tmp_node != NULL) {
+        if (tmp_node->bomb->x == bomb->x && tmp_node->bomb->y == bomb->y) {
+            removeBombNode(game->bombs, tmp_node);
+            break;
+        }
+        tmp_node = tmp_node->next;
     }
-    tmp_node = tmp_node->next;
-  }
 }
 
 void removeBombNode(bombs_t *bombs, bomb_node_t *bomb_node) {
@@ -72,11 +71,10 @@ void removeBombNode(bombs_t *bombs, bomb_node_t *bomb_node) {
     free(tmp_bomb);
 }
 
-void updateBombs(game_t *game)
-{
+void updateBombs(game_t *game) {
     int bombs_count = 0;
     int count = 0;
-    bomb_node_t* bomb_node = game->bombs->first;
+    bomb_node_t *bomb_node = game->bombs->first;
     while (bomb_node != NULL) {
         count++;
         if (bomb_node->bomb != NULL) {
@@ -93,8 +91,8 @@ void updateBombs(game_t *game)
                 }
                 bomb_node->bomb->duration--;
             } else {
-	      bomb_node->bomb = NULL;
-	    }
+                bomb_node->bomb = NULL;
+            }
         }
         bomb_node = bomb_node->next;
     }
@@ -102,11 +100,11 @@ void updateBombs(game_t *game)
 
 void bombCheckObjectRadius(game_t *game, bomb_t *bomb)
 {
-  if (game->map[bomb->y / 40][bomb->x / 40 + 1] == 'w') {
+  if (game->map[bomb->y / 40][bomb->x / 40 + 1].cell == 'w') {
     puts("WALL RIGHT");
-  } else if (game->map[bomb->y / 40][bomb->x / 40 - 1] == 'w') {
+  } else if (game->map[bomb->y / 40][bomb->x / 40 - 1].cell == 'w') {
     puts("WALL LEFT");
-  } else if (game->map[bomb->y / 40 - 1][bomb->x / 40] == 'w') {
+    } else if (game->map[bomb->y / 40 - 1][bomb->x / 40].cell == 'w') {
     puts("WALL TOP");
   } else {
     puts("WALL BOTTOM");
@@ -138,10 +136,10 @@ void	checkPlayerDamagesFromBombs(game_t *game, bomb_t *bomb)
 void	bombExplosion(bomb_t *bomb, game_t *game) {
   bombCheckObjectRadius(game, bomb);
   printf("Bomb Damages: %i\n", bomb->damages);
+  printf("Bomb Duration: %i\n", bomb->duration);
 }
 
-void clearBombs(bombs_t *bombs)
-{
+void clearBombs(bombs_t *bombs) {
     puts("Clearing Bombs");
 
     bomb_node_t *tmp_node;
@@ -159,4 +157,8 @@ void clearBombs(bombs_t *bombs)
     }
     bombs = NULL;
     puts("Bombs cleared");
+}
+
+char *bombDurationToChar(bomb_t *bomb) {
+    return serialize_int(bomb->duration);
 }
