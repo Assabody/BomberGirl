@@ -14,14 +14,11 @@ int joinGame(char *address, char *port, game_t *game) {
 }
 
 void startServer(game_t *game, int *port) {
-    if (game->server == NULL) {
-        game->server = malloc(sizeof(*game->server));
-    }
     printf("Creation du thread server.\n");
-    if (pthread_create(&game->server->server_thread, NULL, server, (void *) port)) {
+    if (pthread_create(&game->server.server_thread, NULL, server, (void *) port)) {
         perror("pthread_create");
     } else {
-        game->server->started = 1;
+        game->server.started = 1;
     }
 }
 
@@ -32,7 +29,7 @@ void stopServer(game_t *game) {
     send(game->client_sock, &query, sizeof(query), 0);
 
     printf("pthread_join\n");
-    pthread_join(game->server->server_thread, (void *)&result);
+    pthread_join(game->server.server_thread, (void *)&result);
     printf("Server result %d\n", result);
 }
 
@@ -54,7 +51,7 @@ int menuWindow(game_t *game) {
     menus[0].text = strdup("Se connecter a une partie");
     menus[0].enabled = 1;
     menus[1].text = strdup("Heberger une partie");
-    menus[1].enabled = game->server && game->server->started ? 0 : 1;
+    menus[1].enabled = game->server.started ? 0 : 1;
     menus[2].text = strdup("Local");
     menus[2].enabled = 1;
     menus[3].text = strdup("Quitter");

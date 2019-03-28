@@ -88,7 +88,7 @@ typedef struct game_s {
   bombs_t *bombs;
   player_t player[MAX_PLAYERS];
   textures_t *textures;
-  server_t *server;
+  server_t server;
 
   cell_t map[Y_MAP_SIZE][X_MAP_SIZE];
   t_client_request request;

@@ -21,7 +21,7 @@ game_t *init() {
         return NULL;
     }
 
-    game->server = NULL;
+    game->server.started = 0;
     game->running = 1;
     game->player_key = -1;
     game->client_sock = -1;
