@@ -211,6 +211,6 @@ void player_coords_to_map_coords(int, int, int *, int *);
 /**
  * Client.c
  */
-void getServerInfo(int, game_t *);
+int getServerInfo(int, game_t *);
 
 #endif

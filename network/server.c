@@ -83,7 +83,6 @@ int main() {
                     }
                 } else {
                     t_client_request client_request;
-                    puts("recv client_request\n");
                     if (!recv(i, &client_request, sizeof(client_request), 0)) {
                         printf("Client disconnected\n");
                         number_of_clients--;
@@ -91,19 +90,19 @@ int main() {
                         close(i);
                         FD_CLR(i, &active_fd_set);
                     } else {
-                        printf("magic number %d\n", client_request.magic);
-                        if (client_request.y_pos < Y_MAP_SIZE && client_request.x_pos < X_MAP_SIZE) {
+                        printf("== Request received ==\n");
+                        if (verify_request(client_request)) {
                             int player_key = client_request.magic / 16 - 1;
-                            //= (game->player.token + 1) * 16;
-
-                            printf("player_key %d moving to x %d y %d? %s\n", player_key, client_request.x_pos, client_request.y_pos, can_go_to_cell(game_infos.map[client_request.y_pos][client_request.x_pos]) ? "ok" : "ko");
+                            printf("Request sent by player [%d]\n", player_key); 
+                            printf("  x_pos %d\n  y_pos %d\n", client_request.x_pos, client_request.y_pos);
                             if (can_go_to_cell(game_infos.map[client_request.y_pos][client_request.x_pos])) {
                                 map_coords_to_player_coords(client_request.x_pos, client_request.y_pos, &game_infos.players[player_key].x_pos, &game_infos.players[player_key].y_pos);
-                                printf("moved to x %d y %d?\n", game_infos.players[player_key].x_pos, game_infos.players[player_key].y_pos);
                             }
-                            printf("request received: pose_bomb %d\n", client_request.command);
+                            printf("player at [X]%d  [Y]%d\n", game_infos.players[player_key].x_pos, game_infos.players[player_key].y_pos);
+                            if (client_request.command == 1)
+                            printf("pose bomb\n");
                         } else {
-                            printf("moving to x %d y %d? %s\n", client_request.x_pos, client_request.y_pos, "bad coords");
+                            printf("bad request data (checksum)\n");
                         }
                         puts("send game_infos\n");
                         send(i, &game_infos, sizeof(game_infos), 0);

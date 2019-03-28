@@ -8,7 +8,7 @@ void error(const char *msg)
     exit(0);
 }
 
-void getServerInfo(int socket, game_t *game)
+int getServerInfo(int socket, game_t *game)
 {
     game_infos_t game_infos;
     puts("recv game_infos\n");
@@ -40,8 +40,10 @@ void getServerInfo(int socket, game_t *game)
             game->player.bombs_capacity = game_infos.players[game->player.token].bombs_capacity;
             printf("new position x %d y %d\n", game_infos.players[game->player.token].x_pos, game_infos.players[game->player.token].y_pos);
             //game->player = game_infos.players[game->player.token];
+            return 1;
         }
     }
+    return 0;
 }
 
 int initClient(char *address, char *port, game_t *game)
@@ -74,7 +76,7 @@ int initClient(char *address, char *port, game_t *game)
     send_message(sockfd, "ping");
     recv(sockfd, &game->player.token, sizeof(int), 0);
     printf("token received from the server is %d\n", game->player.token);
-    getServerInfo(sockfd, game);
-
+    if (!getServerInfo(sockfd, game))
+        return -1;
     return sockfd;
 }
