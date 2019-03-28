@@ -1,22 +1,46 @@
 #include "../includes/main.h"
 #include "../network/request.h"
 
+int joinGame(char *address, char *port, game_t *game) {
+    if (address == NULL || port == NULL || strlen(address) <= 1 || strlen(port) <= 1) {
+        return 0;
+    }
+    printf("Connecting to %s:%s...\n", address, port);
+    game->client_sock = initClient(address, port, game);
+    if (game->client_sock > 0) {
+        return 1;
+    }
+    return 0;
+}
+
 int menuWindow(game_t *game) {
     int quit = 0;
     int counter = 0;
     SDL_Event event;
     int menu_size = 4;
-    char *menus[menu_size];
+    menu_t *menus = malloc(sizeof(menu_t) * 4);
+
+    SDL_Color white = { 255, 255, 255, 255 };
+
+    SDL_Rect text_pos;
+    text_pos.y = 80;
+    text_pos.x = 80;
 
     char *address = NULL;
     char *port = NULL;
-    menus[0] = strdup("Se connecter a une partie");
-    menus[1] = strdup("Heberger une partie");
-    menus[2] = strdup("Local");
-    menus[3] = strdup("Quitter");
+    menus[0].text = strdup("Se connecter a une partie");
+    menus[0].enabled = 0;
+    menus[1].text = strdup("Heberger une partie");
+    menus[1].enabled = 1;
+    menus[2].text = strdup("Local");
+    menus[2].enabled = 1;
+    menus[3].text = strdup("Quitter");
+    menus[3].enabled = 1;
 
     showMenu(game, menus, menu_size, counter);
     do {
+        SDL_RenderClear(game->sdl->renderer);
+
         int update = 0;
         game->running = 1;
         SDL_WaitEvent(&event);
@@ -31,28 +55,38 @@ int menuWindow(game_t *game) {
                 update = 1;
                 switch (counter) {
                     case 0:
-		                address = showInputMenu(game, "addresse ip");
-                        printf("addresse ip %s\n", address);
-                        port = showInputMenu(game, "port");
-                        printf("port %s\n", port);
-                        game->client_sock = initClient(address, port, game);
-                        if (game->client_sock <= 0) {
-                            showText(game, "Error while connecting to the server");
-                        } else {
-                            showText(game, "Connected!");
-                            if (game->client_sock == -1)
-                                quit = 1;
-                            drawGame(game);
+                        if (menus[counter].enabled) {
+                            address = showInputTextMenu(game, "addresse ip");
+                            port = showInputTextMenu(game, "port");
+                            if (joinGame(address, port, game)) {
+                                drawGame(game);
+                            } else {
+                                showPromptMessage(game, "Cannot connect to the server", text_pos, white);
+                            }
+                            if (address && port) {
+                                free(address);
+                                free(port);
+                            }
+                        }
+
+                        break;
+                    case 1:
+                        if (menus[counter].enabled) {
+                            hostGame(game);
                         }
                         break;
                     case 2:
-                        //printf("Player token is %d\n", game->player.token);
-                        if (game->client_sock == -1) {
-                            game->client_sock = initClient("127.0.0.1", "1234", game);
+                        if (menus[counter].enabled) {
+                            if (joinGame("127.0.0.1", "1234", game)) {
+                                drawGame(game);
+                            } else {
+                                showPromptMessage(game, "Cannot connect to the server", text_pos, white);
+                            }
+                            if (address && port) {
+                                free(address);
+                                free(port);
+                            }
                         }
-                        if (game->client_sock == -1)
-                            quit = 1;
-                        drawGame(game);
                         break;
                     case 3:
                         quit = 1;
@@ -63,19 +97,29 @@ int menuWindow(game_t *game) {
         if (event.type == SDL_QUIT)
             quit = 1;
         if (update) {
-            //printPlayerStruct(game->player);
             showMenu(game, menus, menu_size, counter);
         }
     } while (!quit);
     game->running = 0;
-    free(menus[0]);
-    free(menus[1]);
-    free(menus[2]);
-    free(menus[3]);
+    free(menus[0].text);
+    free(menus[1].text);
+    free(menus[2].text);
+    free(menus[3].text);
+    free(menus);
     return 1;
 }
 
-void    showMenu(game_t *game, char **menus_text, int menu_number, int current_menu)
+int hostGame(game_t *game) {
+    SDL_Color white = { 255, 255, 255, 255 };
+    char *input_port;
+    SDL_RenderClear(game->sdl->renderer);
+    SDL_RenderPresent(game->sdl->renderer);
+    input_port = showInputNumberMenu(game, "Host a game - Choose port (0-99999)");
+
+    return 1;
+}
+
+void    showMenu(game_t *game, menu_t *menus, int menu_number, int current_menu)
 {
     int width;
     int height;
@@ -83,7 +127,8 @@ void    showMenu(game_t *game, char **menus_text, int menu_number, int current_m
     int texH = 0;
     int menuHeight = 30;
     SDL_Rect bgDstrect = { 0, 0, 600, 520 };
-    SDL_Color color = { 255, 255, 255, 255 };
+    SDL_Color disabled = { 150, 150, 150, 255 };
+    SDL_Color enabled = { 255, 255, 255, 255 };
     SDL_GetRendererOutputSize(game->sdl->renderer, &width, &height);
     SDL_RenderClear(game->sdl->renderer);
     SDL_RenderCopy(game->sdl->renderer, game->textures->menu, NULL, &bgDstrect);
@@ -93,7 +138,7 @@ void    showMenu(game_t *game, char **menus_text, int menu_number, int current_m
     for (int i = menu_number - 1; i >= 0; i--) {
       text_pos.y = height / 2 - menu_number * menuHeight / 2 + menuHeight * i;
       text_pos.x = 80;
-      surface = TTF_RenderText_Solid(game->sdl->font, menus_text[i], color);
+      surface = TTF_RenderText_Solid(game->sdl->font, menus[i].text, menus[i].enabled ? enabled : disabled);
       texture = SDL_CreateTextureFromSurface(game->sdl->renderer, surface);
       SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
       SDL_Rect dstrect = { text_pos.x, text_pos.y, texW, texH };
@@ -127,26 +172,109 @@ void    showSelection(game_t *game, int menu_selected_number)
     SDL_RenderCopy(game->sdl->renderer, game->textures->bomb, &texture_pos, &selection_pos);
 }
 
-char    *showInputMenu(game_t *game, const char *placeholder)
+char    *showInputNumberMenu(game_t *game, const char *placeholder)
 {
     int width;
     int height;
     int texW = 0;
     int texH = 0;
 
-    SDL_Color color = { 255, 255, 255, 255 };
-    SDL_Color gray_color = { 170, 170, 170, 255 };
+    SDL_Color white = { 255, 255, 255, 255 };
+    SDL_Color gray = { 170, 170, 170, 255 };
+
+    SDL_Rect text_pos;
+    text_pos.y = 80;
+    text_pos.x = 80;
+    SDL_Rect placeholder_pos;
+    placeholder_pos.y = 50;
+    placeholder_pos.x = 80;
 
     char *text = NULL;
 
-    if ((text = malloc(sizeof(*text) * 20)) ==  NULL)
-        return NULL;
     text = strdup("");
     int done = 0;
+
     SDL_GetRendererOutputSize(game->sdl->renderer, &width, &height);
     SDL_StartTextInput();
     while (!done) {
+        SDL_Event event;
+        SDL_WaitEvent(&event);
+        switch (event.type) {
+            case SDL_QUIT:
+                done = 1;
+                break;
+            case SDL_TEXTINPUT:
+                if ((strcmp(event.text.text, "0") == 0 ||
+                    strcmp(event.text.text, "1") == 0 ||
+                    strcmp(event.text.text, "2") == 0 ||
+                    strcmp(event.text.text, "3") == 0 ||
+                    strcmp(event.text.text, "4") == 0 ||
+                    strcmp(event.text.text, "5") == 0 ||
+                    strcmp(event.text.text, "6") == 0 ||
+                    strcmp(event.text.text, "7") == 0 ||
+                    strcmp(event.text.text, "8") == 0 ||
+                    strcmp(event.text.text, "9") == 0)
+                && strlen(text) / sizeof(*text) < 5) {
+                    strcat(text, event.text.text);
+                }
+                break;
+            case SDL_KEYDOWN:
+                if(event.key.keysym.scancode == SDL_SCANCODE_BACKSPACE) {
+                    if (strlen(text) > 1) {
+                        text[strlen(text) - 1] = '\0';
+                    } else {
+                        text = strdup("");
+                    }
+                } else if (event.key.keysym.scancode == SDL_SCANCODE_RETURN) {
+                    done = 1;
+                }
+                break;
+        }
+
+        SDL_Surface *surface;
+        if(text && strcmp("", text) != 0)
+            surface = TTF_RenderText_Solid(game->sdl->font, text, white);
+        else
+            surface = TTF_RenderText_Solid(game->sdl->font, "_", gray);
+        SDL_Texture *texture = SDL_CreateTextureFromSurface(game->sdl->renderer, surface);
+        SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
+        SDL_Rect dstrect = { text_pos.x, text_pos.y, texW, texH };
         SDL_RenderClear(game->sdl->renderer);
+        showText(game, placeholder, placeholder_pos, white);
+        SDL_RenderCopy(game->sdl->renderer, texture, NULL, &dstrect);
+        SDL_DestroyTexture(texture);
+        SDL_FreeSurface(surface);
+        SDL_RenderPresent(game->sdl->renderer);
+    }
+    SDL_StopTextInput();
+    return text;
+}
+
+char    *showInputTextMenu(game_t *game, const char *placeholder)
+{
+    int width;
+    int height;
+    int texW = 0;
+    int texH = 0;
+
+    SDL_Color white = { 255, 255, 255, 255 };
+    SDL_Color gray = { 170, 170, 170, 255 };
+
+    SDL_Rect text_pos;
+    text_pos.y = 80;
+    text_pos.x = 80;
+    SDL_Rect placeholder_pos;
+    placeholder_pos.y = 50;
+    placeholder_pos.x = 80;
+
+    char *text = NULL;
+
+    text = strdup("");
+    int done = 0;
+
+    SDL_GetRendererOutputSize(game->sdl->renderer, &width, &height);
+    SDL_StartTextInput();
+    while (!done) {
         SDL_Event event;
         SDL_WaitEvent(&event);
         switch (event.type) {
@@ -159,27 +287,27 @@ char    *showInputMenu(game_t *game, const char *placeholder)
                 break;
             case SDL_KEYDOWN:
                 if(event.key.keysym.scancode == SDL_SCANCODE_BACKSPACE) {
-                    if (strlen(text) > 1)
+                    if (strlen(text) > 1) {
                         text[strlen(text) - 1] = '\0';
-                    else
+                    } else {
                         text = strdup("");
-                }
-                else if(event.key.keysym.scancode == SDL_SCANCODE_RETURN) {
+                    }
+                } else if (event.key.keysym.scancode == SDL_SCANCODE_RETURN) {
                     done = 1;
                 }
                 break;
         }
-        SDL_Rect text_pos;
-        text_pos.y = 80;
-        text_pos.x = 80;
+
         SDL_Surface *surface;
-        if(strlen(text) > 1)
-            surface = TTF_RenderText_Solid(game->sdl->font, text, color);
+        if(text && strcmp("", text) != 0)
+            surface = TTF_RenderText_Solid(game->sdl->font, text, white);
         else
-            surface = TTF_RenderText_Solid(game->sdl->font, placeholder, gray_color);
+            surface = TTF_RenderText_Solid(game->sdl->font, "_", gray);
         SDL_Texture *texture = SDL_CreateTextureFromSurface(game->sdl->renderer, surface);
         SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
         SDL_Rect dstrect = { text_pos.x, text_pos.y, texW, texH };
+        SDL_RenderClear(game->sdl->renderer);
+        showText(game, placeholder, placeholder_pos, white);
         SDL_RenderCopy(game->sdl->renderer, texture, NULL, &dstrect);
         SDL_DestroyTexture(texture);
         SDL_FreeSurface(surface);
@@ -189,14 +317,32 @@ char    *showInputMenu(game_t *game, const char *placeholder)
     return text;
 }
 
-void showText(game_t *game, const char* text)
+void showText(game_t *game, const char* text, SDL_Rect text_pos, SDL_Color color)
 {
     int width;
     int height;
     int texW = 0;
     int texH = 0;
 
-    SDL_Color color = { 170, 170, 170, 255 };
+    SDL_GetRendererOutputSize(game->sdl->renderer, &width, &height);
+    SDL_Surface *surface;
+    surface = TTF_RenderText_Solid(game->sdl->font, text, color);
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(game->sdl->renderer, surface);
+    SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
+    SDL_Rect dstrect = { text_pos.x, text_pos.y, texW, texH };
+    SDL_RenderCopy(game->sdl->renderer, texture, NULL, &dstrect);
+    SDL_DestroyTexture(texture);
+    SDL_FreeSurface(surface);
+}
+
+
+void showPromptMessage(game_t *game, const char* text, SDL_Rect text_pos, SDL_Color color)
+{
+    int width;
+    int height;
+    int texW = 0;
+    int texH = 0;
+
     int done = 0;
     SDL_GetRendererOutputSize(game->sdl->renderer, &width, &height);
     while (!done) {
@@ -213,9 +359,6 @@ void showText(game_t *game, const char* text)
                 }
                 break;
         }
-        SDL_Rect text_pos;
-        text_pos.y = 80;
-        text_pos.x = 80;
         SDL_Surface *surface;
         surface = TTF_RenderText_Solid(game->sdl->font, text, color);
         SDL_Texture *texture = SDL_CreateTextureFromSurface(game->sdl->renderer, surface);
@@ -227,15 +370,3 @@ void showText(game_t *game, const char* text)
         SDL_RenderPresent(game->sdl->renderer);
     }
 }
-
-/*
-int getClientToken(int sock)
-{
-    char *tmp_token = read_message(sock, 4);
-    int token = 0;
-    if (tmp_token != NULL) {
-        token = deserialize_int(tmp_token);
-        free(tmp_token);
-    }
-    return token;
-}*/

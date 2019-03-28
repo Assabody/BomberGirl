@@ -30,6 +30,11 @@ typedef struct textures_s {
     SDL_Rect player_clips[4];
 } textures_t;
 
+typedef struct menu_s {
+    char *text;
+    int enabled;
+} menu_t;
+
 sdl_t *initSdl();
 
 void clearTextures(textures_t *);
