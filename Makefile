@@ -20,13 +20,14 @@ SRC		=	sources/moves.c \
 			network/client.c \
 			network/checksum.c \
 			network/message.c \
-			network/request.c
+			network/request.c \
+			network/server.c
 
 GCC		=	gcc
 
 CFLAGS		=	-Wall -Wextra -g
 
-SDL		=   -L./lib -lSDL2 -lSDL2_image -lSDL2_ttf
+SDL		=   -L./lib -lSDL2 -lSDL2_image -lSDL2_ttf -pthread
 
 RM		=	rm -rf
 

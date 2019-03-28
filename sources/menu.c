@@ -1,6 +1,16 @@
 #include "../includes/main.h"
 #include "../network/request.h"
 
+
+
+void startServer() {
+    pthread_t threadServer;
+    printf("Creation du thread server.\n");
+    if (pthread_create(&threadServer, NULL, server, NULL)) {
+        perror("pthread_create");
+    }
+}
+
 int menuWindow(game_t *game) {
     int quit = 0;
     int counter = 0;
@@ -45,6 +55,10 @@ int menuWindow(game_t *game) {
                             drawGame(game);
                         }
                         break;
+                    case 1:
+                       startServer();
+                       // quit = 1;
+                       break;
                     case 2:
                         //printf("Player token is %d\n", game->player.token);
                         if (game->client_sock == -1) {

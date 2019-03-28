@@ -7,7 +7,7 @@ int connect_client(int sock, struct sockaddr_in *client_addr) {
     return accept(sock, (struct sockaddr *) client_addr, (socklen_t*)&len);
 }
 
-int main() {
+void *server(void *arg) {
     int sock;
     int client1;
     int client2;
@@ -19,6 +19,7 @@ int main() {
     int i;
     fd_set active_fd_set, read_fd_set;
     struct timeval timeout;
+    (void) arg;
 
     sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock == -1) {
