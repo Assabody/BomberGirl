@@ -37,6 +37,9 @@
 
 // bombs
 #define DAMAGES 10
+#define PLAYER_LIFE 30
+#define WALL_LIFE 10
+#define RADIUS 40
 
 // bonus
 #define RANGE_BONUS 0 // 000
@@ -53,6 +56,10 @@ typedef struct bomb_s {
   int	damages;
   int clip;
 } bomb_t;
+
+typedef struct breakablewall_s {
+    int life;
+} breakablewall_t;
 
 typedef struct bomb_node_s {
   bomb_t *bomb;
@@ -101,7 +108,6 @@ typedef struct game_s {
 /**
  * Map.c
  */
-
 void mapInit(game_infos_t *);
 
 void print_map(game_t *);
@@ -116,10 +122,12 @@ void gameDestroy(game_t *);
 
 game_t *init(void);
 
+
 /**
  * Events.c
  */
 void checkEvents(game_t *);
+
 
 /**
  * Menu.c
@@ -137,7 +145,6 @@ void showText(game_t *, const char *);
 int getClientToken(int);
 
 
-
 /**
  * Drawing.c
  */
@@ -148,7 +155,6 @@ void drawPlayer(game_t *game);
 void drawMap(game_t *);
 
 int drawGame(game_t *);
-
 
 
 /**
@@ -170,7 +176,10 @@ void updateBombs(game_t *);
 
 void bombCheckObjectRadius(game_t *, bomb_t *);
 
+void checkPlayerDamagesFromBombs(game_t *, bomb_t *);
+
 char *bombDurationToChar(bomb_t *);
+
 
 /**
  * Player.c
@@ -197,12 +206,13 @@ int breakable_wall_cell(char);
 
 int unbreakable_wall_cell(char);
 
+
 /**
  * Bonus.c
  */
-
 int get_bonus(char);
 int cell_has_bonus(char cell);
+
 
 /**
  * Moves.c
@@ -210,6 +220,7 @@ int cell_has_bonus(char cell);
 int can_go_to_cell(cell_t);
 void map_coords_to_player_coords(int, int, int *, int *);
 void player_coords_to_map_coords(int, int, int *, int *);
+
 
 /**
  * Client.c
