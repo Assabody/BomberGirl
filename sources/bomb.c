@@ -100,43 +100,43 @@ void updateBombs(game_t *game) {
 
 void bombCheckObjectRadius(game_t *game, bomb_t *bomb)
 {
-  if (game->map[bomb->y / 40][bomb->x / 40 + 1].cell == 'w') {
-    puts("WALL RIGHT");
-  } else if (game->map[bomb->y / 40][bomb->x / 40 - 1].cell == 'w') {
-    puts("WALL LEFT");
+    if (game->map[bomb->y / 40][bomb->x / 40 + 1].cell == 'w') {
+        puts("WALL RIGHT");
+    } else if (game->map[bomb->y / 40][bomb->x / 40 - 1].cell == 'w') {
+        puts("WALL LEFT");
     } else if (game->map[bomb->y / 40 - 1][bomb->x / 40].cell == 'w') {
-    puts("WALL TOP");
-  } else {
-    puts("WALL BOTTOM");
-  }
-  checkPlayerDamagesFromBombs(game, bomb);
-  removeBomb(game, bomb);
+        puts("WALL TOP");
+    } else {
+        puts("WALL BOTTOM");
+    }
+    checkPlayerDamagesFromBombs(game, bomb);
+    removeBomb(game, bomb);
 }
 
 void	checkPlayerDamagesFromBombs(game_t *game, bomb_t *bomb)
 {
-  if (bomb->y == game->player->y_pos &&
-      bomb->x == game->player->x_pos) {
-    puts("Player ON BOMB");
-  } else if (bomb->y / 40 + 1 == game->player->y_pos / 40
-	     && bomb->x / 40 == game->player->x_pos / 40) {
-    puts("Player under bomb");
-  } else if (bomb->y / 40 - 1 == game->player->y_pos / 40
-	     && bomb->x / 40 == game->player->x_pos / 40) {
-    puts("Player over bomb");
-  } else if (bomb->x / 40 - 1 == game->player->x_pos / 40
-	     && bomb->y / 40 == game->player->y_pos / 40) {
-    puts("Player before bomb");
-  } else if (bomb->x / 40 + 1 == game->player->x_pos / 40
-	     && bomb->y / 40 == game->player->y_pos / 40) {
-    puts("Player after bomb");
-  }
+    if (bomb->y == game->player->y_pos &&
+        bomb->x == game->player->x_pos) {
+        puts("Player ON BOMB");
+    } else if (bomb->y / 40 + 1 == game->player->y_pos / 40
+               && bomb->x / 40 == game->player->x_pos / 40) {
+        puts("Player under bomb");
+    } else if (bomb->y / 40 - 1 == game->player->y_pos / 40
+               && bomb->x / 40 == game->player->x_pos / 40) {
+        puts("Player over bomb");
+    } else if (bomb->x / 40 - 1 == game->player->x_pos / 40
+               && bomb->y / 40 == game->player->y_pos / 40) {
+        puts("Player before bomb");
+    } else if (bomb->x / 40 + 1 == game->player->x_pos / 40
+               && bomb->y / 40 == game->player->y_pos / 40) {
+        puts("Player after bomb");
+    }
 }
 
 void	bombExplosion(bomb_t *bomb, game_t *game) {
-  bombCheckObjectRadius(game, bomb);
-  printf("Bomb Damages: %i\n", bomb->damages);
-  printf("Bomb Duration: %i\n", bomb->duration);
+    bombCheckObjectRadius(game, bomb);
+    printf("Bomb Damages: %i\n", bomb->damages);
+    printf("Bomb Duration: %i\n", bomb->duration);
 }
 
 void clearBombs(bombs_t *bombs) {

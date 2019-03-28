@@ -40,7 +40,9 @@ int menuWindow(game_t *game) {
                             showText(game, "Error while connecting to the server");
                         } else {
                             showText(game, "Connected!");
-                            //game->player.token = getClientToken(game->client_sock);
+                            if (game->client_sock == -1)
+                                quit = 1;
+                            drawGame(game);
                         }
                         break;
                     case 2:
@@ -84,7 +86,6 @@ void    showMenu(game_t *game, char **menus_text, int menu_number, int current_m
     SDL_Color color = { 255, 255, 255, 255 };
     SDL_GetRendererOutputSize(game->sdl->renderer, &width, &height);
     SDL_RenderClear(game->sdl->renderer);
-    puts("crash here\n");
     SDL_RenderCopy(game->sdl->renderer, game->textures->menu, NULL, &bgDstrect);
     SDL_Texture *texture;
     SDL_Surface *surface;

@@ -1,8 +1,19 @@
 #include "request.h"
 #include "../includes/main.h"
 
-int send_request(int socket, t_client_request *request) {
-    printf("Sending request to server... %d\n", request->magic);
+int send_request(int socket, int client_token, t_client_request *request) {
+    request->magic = (client_token + 1) * 16;
+    printf("Sending request to server...\n");
+    printf("From Player [%d]\n", client_token);
+    printf("Request content:\n");
+    printf("  MAGIC:%d\n", request->magic);
+    printf("  Y_POS:%d\n", request->y_pos);
+    printf("  X_POS:%d\n", request->x_pos);
+    printf("  COMMAND:%d\n", request->command);
+    printf("  SPEED:%d\n", request->speed);
+    printf("  DIR:%d\n", request->dir);
+    request->checksum = request->dir + request->speed + request->command + request->x_pos + request->y_pos + request->magic;
+    printf("#checksum (%d)\n", request->checksum);
 
     if (send(socket, request, sizeof(*request), 0)) {
         request->magic = 0;
@@ -21,6 +32,10 @@ char *serialize_int(int value)
     buffer[2] = value       & 0xFF;
     //buffer[3] = value;
     return buffer;
+}
+
+int verify_request(t_client_request request) {
+    return (request.checksum == request.magic + request.y_pos + request.x_pos + request.command + request.speed + request.dir);
 }
 
 char * serialize_char(char *buffer, char value)

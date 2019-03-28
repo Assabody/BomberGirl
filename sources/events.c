@@ -12,8 +12,8 @@ void checkEvents(game_t *game) {
             switch (event.key.keysym.sym) {
                 case SDLK_SPACE:
                     placeBomb(game, game->player[game->player_key].x_pos, game->player[game->player_key].y_pos);
-                    game->request.magic = (game->player[game->player_key].token + 1) * 16;
-                    game->request.command = 1;
+                    /*game->request.magic = 1;
+                    game->request.command = 1;*/
                     puts("bomb placed");
                     break;
                 case SDLK_ESCAPE:

@@ -53,14 +53,13 @@ typedef struct bomb_s {
   int x;
   int y;
   int duration;
-  int damages;
+  int	damages;
   int clip;
 } bomb_t;
 
 typedef struct breakablewall_s {
-  int	life;
-}	       breakablewall_t;
-
+    int life;
+} breakablewall_t;
 
 typedef struct bomb_node_s {
   bomb_t *bomb;
@@ -76,15 +75,15 @@ typedef struct bombs_s {
 typedef struct game_s {
   sdl_t *sdl;
   bombs_t *bombs;
-  player_t player[MAX_PLAYERS - 1];
+  player_t player[MAX_PLAYERS];
   textures_t *textures;
   
   cell_t map[Y_MAP_SIZE][X_MAP_SIZE];
 
   t_client_request request;
-
-  int player_key;
+  
   int running;
+  int player_key;
   int client_sock;
 } game_t;
 
@@ -109,7 +108,6 @@ typedef struct game_s {
 /**
  * Map.c
  */
-
 void mapInit(game_infos_t *);
 
 void print_map(game_t *);
@@ -124,10 +122,12 @@ void gameDestroy(game_t *);
 
 game_t *init(void);
 
+
 /**
  * Events.c
  */
 void checkEvents(game_t *);
+
 
 /**
  * Menu.c
@@ -145,7 +145,6 @@ void showText(game_t *, const char *);
 int getClientToken(int);
 
 
-
 /**
  * Drawing.c
  */
@@ -156,7 +155,6 @@ void drawPlayer(game_t *game);
 void drawMap(game_t *);
 
 int drawGame(game_t *);
-
 
 
 /**
@@ -181,6 +179,7 @@ void bombCheckObjectRadius(game_t *, bomb_t *);
 void checkPlayerDamagesFromBombs(game_t *, bomb_t *);
 
 char *bombDurationToChar(bomb_t *);
+
 
 /**
  * Player.c
@@ -207,12 +206,13 @@ int breakable_wall_cell(char);
 
 int unbreakable_wall_cell(char);
 
+
 /**
  * Bonus.c
  */
-
 int get_bonus(char);
 int cell_has_bonus(char cell);
+
 
 /**
  * Moves.c
@@ -221,9 +221,10 @@ int can_go_to_cell(cell_t);
 void map_coords_to_player_coords(int, int, int *, int *);
 void player_coords_to_map_coords(int, int, int *, int *);
 
+
 /**
  * Client.c
  */
-void getServerInfo(int, game_t *);
+int getServerInfo(int, game_t *);
 
 #endif

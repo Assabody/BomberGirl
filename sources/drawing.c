@@ -1,9 +1,7 @@
 #include "../includes/main.h"
 
 void drawMap(game_t *game) {
-  breakablewall_t *breakable = malloc(sizeof *breakable);
-  breakable->life = WALL_LIFE;
-  SDL_Rect position;
+    SDL_Rect position;
     int x = 0;
     int y = 0;
     position.x = 0;
@@ -14,6 +12,7 @@ void drawMap(game_t *game) {
         while (x < X_MAP_SIZE) {
             switch (get_cell_type(game->map[y][x].cell)) {
                 case MAP_BOMB:
+                    SDL_RenderCopy(game->sdl->renderer, game->textures->grass, NULL, &position);
                     SDL_RenderCopy(game->sdl->renderer, game->textures->bomb, NULL, &position);
                     break;
                 case MAP_WALL_UNBREAKABLE:
@@ -39,8 +38,9 @@ void drawMap(game_t *game) {
 void drawBombs(game_t *game) {
     bomb_node_t *bomb_node = game->bombs->first;
     while (bomb_node != NULL) {
-      if (bomb_node->bomb->duration == 0) {
+      if (bomb_node->bomb->duration <= 0) {
       	bombExplosion(bomb_node->bomb, game);
+	removeBomb(game, bomb_node->bomb);
 	break;
       }
       renderTexture(
@@ -55,11 +55,13 @@ void drawBombs(game_t *game) {
 
 void drawPlayer(game_t *game) {
     for (int i = 0; i < MAX_PLAYERS; i++) {
-        renderTexture(
-                game->textures->player,
-                game->sdl,
-                game->player[i].x_pos,
-                game->player[i].y_pos - 20,
-                &game->textures->player_clips[game->player[i].current_dir]);
+        if (game->player[i].alive == 1) {
+            renderTexture(
+                    game->textures->player,
+                    game->sdl,
+                    game->player[i].x_pos,
+                    game->player[i].y_pos - 20,
+                    &game->textures->player_clips[game->player[i].current_dir]);
+        }
     }
 }
