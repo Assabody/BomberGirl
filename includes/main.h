@@ -83,7 +83,6 @@ typedef struct game_s {
 
   t_client_request request;
 
-  int player_key;
   int running;
   int player_key;
   int client_sock;
