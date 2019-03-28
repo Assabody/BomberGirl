@@ -72,7 +72,14 @@ int menuWindow(game_t *game) {
                         break;
                     case 1:
                         if (menus[counter].enabled) {
-                            hostGame(game);
+                            if (hostGame(game)) {
+                                if (waitingLobby(game)) {
+                                    drawGame(game);
+                                } else {
+                                    showPromptMessage(game, "Stopping server...", text_pos, white);
+                                    //stopServer(game);
+                                }
+                            }
                         }
                         break;
                     case 2:
@@ -112,11 +119,63 @@ int menuWindow(game_t *game) {
 int hostGame(game_t *game) {
     SDL_Color white = { 255, 255, 255, 255 };
     char *input_port;
+    char message[30];
+
+    SDL_Rect pos;
+    pos.x = 80;
+    pos.y = 80;
     SDL_RenderClear(game->sdl->renderer);
     SDL_RenderPresent(game->sdl->renderer);
     input_port = showInputNumberMenu(game, "Host a game - Choose port (0-99999)");
 
+    //startServer(game, input_port);
+
+    if (!joinGame("127.0.0.1", input_port, game)) {
+        showPromptMessage(game, "Failed to host a game", pos, white);
+        //stopServer();
+        return 0;
+    } else if (game->client_sock  <= 0) {
+        sprintf(message, "Cannot connect to localhost:%s", input_port);
+        showPromptMessage(game, message, pos, white);
+        //stopServer();
+        return 0;
+    }
     return 1;
+}
+
+int get_clients_number() {
+    return 2;
+}
+
+int waitingLobby(game_t *game)
+{
+    SDL_Color white = { 255, 255, 255, 255 };
+    SDL_Rect pos;
+    SDL_Event event;
+
+    char message[30];
+    pos.x = 80;
+    pos.y = 80;
+    SDL_RenderClear(game->sdl->renderer);
+    showText(game, "Waiting for server to start...", pos, white);
+    sprintf(message, "%d/%d players", get_clients_number(), MAX_PLAYERS);
+    pos.y += 30;
+    showText(game, message, pos, white);
+    SDL_RenderPresent(game->sdl->renderer);
+    while (1) {
+        SDL_WaitEvent(&event);
+        switch (event.type) {
+            case SDL_QUIT:
+                return 0;
+            case SDL_KEYDOWN:
+                if(event.key.keysym.scancode == SDL_SCANCODE_ESCAPE ) {
+                    return 0;
+                } else if (event.key.keysym.scancode == SDL_SCANCODE_RETURN || event.key.keysym.scancode == SDL_SCANCODE_BACKSPACE) {
+                    return 1;
+                }
+                break;
+        }
+    }
 }
 
 void    showMenu(game_t *game, menu_t *menus, int menu_number, int current_menu)
@@ -324,6 +383,7 @@ void showText(game_t *game, const char* text, SDL_Rect text_pos, SDL_Color color
     int texW = 0;
     int texH = 0;
 
+    printf("# Display Text: %s\n", text);
     SDL_GetRendererOutputSize(game->sdl->renderer, &width, &height);
     SDL_Surface *surface;
     surface = TTF_RenderText_Solid(game->sdl->font, text, color);
@@ -344,6 +404,7 @@ void showPromptMessage(game_t *game, const char* text, SDL_Rect text_pos, SDL_Co
     int texH = 0;
 
     int done = 0;
+    printf("# Display PromptMessage: %s\n", text);
     SDL_GetRendererOutputSize(game->sdl->renderer, &width, &height);
     while (!done) {
         SDL_RenderClear(game->sdl->renderer);
