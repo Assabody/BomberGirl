@@ -138,14 +138,15 @@ void showMenu(game_t *, menu_t *, int, int);
 
 void showSelection(game_t *, int);
 
-char *showInputMenu(game_t *, const char *);
+char *showInputTextMenu(game_t *, const char *);
+
+char *showInputNumberMenu(game_t *, const char *);
 
 void showPromptMessage(game_t *, const char *, SDL_Rect, SDL_Color);
 
 void showText(game_t *, const char *, SDL_Rect, SDL_Color);
 
-int getClientToken(int);
-
+int hostGame(game_t *);
 
 /**
  * Drawing.c
