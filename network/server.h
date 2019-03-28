@@ -8,7 +8,6 @@
 #ifndef     _SERVER_H_
 #define     _SERVER_H_
 
-#include "network.h"
 /*
 ** Bit 0 : Indique si la case est en flammes (1) ou non (0)
 ** Bits [1..2] : Indique le type de terrain ( 00 : Terrain vide, 10 : Brique indestructible, 11 : Brique destructible). Note : Combinaison 01 inutilisée.

@@ -13,12 +13,27 @@ int joinGame(char *address, char *port, game_t *game) {
     return 0;
 }
 
-void startServer() {
-    pthread_t threadServer;
-    printf("Creation du thread server.\n");
-    if (pthread_create(&threadServer, NULL, server, NULL)) {
-        perror("pthread_create");
+void startServer(game_t *game, int *port) {
+    if (game->server == NULL) {
+        game->server = malloc(sizeof(*game->server));
     }
+    printf("Creation du thread server.\n");
+    if (pthread_create(&game->server->server_thread, NULL, server, (void *) port)) {
+        perror("pthread_create");
+    } else {
+        game->server->started = 1;
+    }
+}
+
+void stopServer(game_t *game) {
+    int result = -9;
+
+    char query[4] = {'s','t','o','p'};
+    send(game->client_sock, &query, sizeof(query), 0);
+
+    printf("pthread_join\n");
+    pthread_join(game->server->server_thread, (void *)&result);
+    printf("Server result %d\n", result);
 }
 
 int menuWindow(game_t *game) {
@@ -37,9 +52,9 @@ int menuWindow(game_t *game) {
     char *address = NULL;
     char *port = NULL;
     menus[0].text = strdup("Se connecter a une partie");
-    menus[0].enabled = 0;
+    menus[0].enabled = 1;
     menus[1].text = strdup("Heberger une partie");
-    menus[1].enabled = 1;
+    menus[1].enabled = game->server && game->server->started ? 0 : 1;
     menus[2].text = strdup("Local");
     menus[2].enabled = 1;
     menus[3].text = strdup("Quitter");
@@ -67,7 +82,11 @@ int menuWindow(game_t *game) {
                             address = showInputTextMenu(game, "addresse ip");
                             port = showInputTextMenu(game, "port");
                             if (joinGame(address, port, game)) {
-                                drawGame(game);
+                                if (waitingLobby(game)) {
+                                    drawGame(game);
+                                } else {
+                                    quit = 1;
+                                }
                             } else {
                                 showPromptMessage(game, "Cannot connect to the server", text_pos, white);
                             }
@@ -85,7 +104,7 @@ int menuWindow(game_t *game) {
                                     drawGame(game);
                                 } else {
                                     showPromptMessage(game, "Stopping server...", text_pos, white);
-                                    //stopServer(game);
+                                    stopServer(game);
                                 }
                             }
                         }
@@ -136,13 +155,11 @@ int hostGame(game_t *game) {
     SDL_RenderPresent(game->sdl->renderer);
     input_port = showInputNumberMenu(game, "Host a game - Choose port (0-99999)");
 
-    startServer();
+    int port = atoi(input_port);
+    startServer(game, &port);
 
-    if (!joinGame("127.0.0.1", input_port, game)) {
-        showPromptMessage(game, "Failed to host a game", pos, white);
-        //stopServer();
-        return 0;
-    } else if (game->client_sock  <= 0) {
+    SDL_Delay(60);
+    if (!joinGame("127.0.0.1", input_port, game) || game->client_sock  <= 0) {
         sprintf(message, "Cannot connect to localhost:%s", input_port);
         showPromptMessage(game, message, pos, white);
         //stopServer();
@@ -151,8 +168,12 @@ int hostGame(game_t *game) {
     return 1;
 }
 
-int get_clients_number() {
-    return 2;
+int get_clients_number(int sock) {
+    int players_number = 0;
+    char query[4] = {'l','i','s','t'};
+    send(sock, &query, sizeof(query), 0);
+    recv(sock, &players_number, sizeof(players_number), 0);
+    return players_number;
 }
 
 int waitingLobby(game_t *game)
@@ -162,15 +183,20 @@ int waitingLobby(game_t *game)
     SDL_Event event;
 
     char message[30];
+    Uint32 frameStart;
+    int frameTime;
+
     pos.x = 80;
-    pos.y = 80;
-    SDL_RenderClear(game->sdl->renderer);
-    showText(game, "Waiting for server to start...", pos, white);
-    sprintf(message, "%d/%d players", get_clients_number(), MAX_PLAYERS);
-    pos.y += 30;
-    showText(game, message, pos, white);
-    SDL_RenderPresent(game->sdl->renderer);
     while (1) {
+        frameStart = SDL_GetTicks();
+        SDL_RenderClear(game->sdl->renderer);
+        pos.y = 80;
+        showText(game, "Waiting for server to start...", pos, white);
+        sprintf(message, "%d/%d players", get_clients_number(game->client_sock), MAX_PLAYERS);
+        pos.y = 110;
+        showText(game, message, pos, white);
+        SDL_RenderPresent(game->sdl->renderer);
+
         SDL_WaitEvent(&event);
         switch (event.type) {
             case SDL_QUIT:
@@ -179,10 +205,15 @@ int waitingLobby(game_t *game)
                 if(event.key.keysym.scancode == SDL_SCANCODE_ESCAPE ) {
                     return 0;
                 } else if (event.key.keysym.scancode == SDL_SCANCODE_RETURN || event.key.keysym.scancode == SDL_SCANCODE_BACKSPACE) {
+                    char query[4] = {'p','l','a','y'};
+                    send(game->client_sock, &query, sizeof(query), 0);
                     return 1;
                 }
                 break;
         }
+        frameTime = SDL_GetTicks() - frameStart;
+        if (TICKS_PER_FRAME > frameTime)
+            SDL_Delay(TICKS_PER_FRAME - frameTime);
     }
 }
 

@@ -5,14 +5,14 @@
 ##      Makefile
 ##
 
-SRC		=	sources/moves.c \
+SRC		=	sources/main.c \
+            sources/moves.c \
 			sources/drawing.c \
 			sources/map.c \
 			sources/events.c \
 			sources/player.c \
 			sources/bomb.c \
 			sources/sdl.c \
-			sources/main.c \
 			sources/game.c \
 			sources/cell.c \
 			sources/menu.c \
@@ -25,9 +25,9 @@ SRC		=	sources/moves.c \
 
 GCC		=	gcc
 
-CFLAGS		=	-Wall -Wextra -g
+CFLAGS		=	-Wall -Wextra -Werror -g -pthread
 
-SDL		=   -L./lib -lSDL2 -lSDL2_image -lSDL2_ttf -pthread
+SDL		=   -L./lib -lSDL2 -lSDL2_image -lSDL2_ttf
 
 RM		=	rm -rf
 

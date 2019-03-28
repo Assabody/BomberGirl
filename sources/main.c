@@ -15,14 +15,13 @@ game_t *init() {
         gameDestroy(game);
         return NULL;
     }
-    /*game->player.alive = 0;
-    game->player.token = -1;*/
     game->bombs = initBombs();
     if (!game->bombs) {
         gameDestroy(game);
         return NULL;
     }
 
+    game->server = NULL;
     game->running = 1;
     game->player_key = -1;
     game->client_sock = -1;

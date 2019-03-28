@@ -73,14 +73,24 @@ typedef struct bombs_s {
   struct bomb_node_s *last;
 } bombs_t;
 
+typedef struct server_s
+{
+    pthread_t server_thread;
+    int port;
+    int started;
+    int waiting_lobby;
+    int players_connected;
+    game_infos_t game_infos;
+} server_t;
+
 typedef struct game_s {
   sdl_t *sdl;
   bombs_t *bombs;
   player_t player[MAX_PLAYERS];
   textures_t *textures;
-  
-  cell_t map[Y_MAP_SIZE][X_MAP_SIZE];
+  server_t *server;
 
+  cell_t map[Y_MAP_SIZE][X_MAP_SIZE];
   t_client_request request;
   
   int running;
