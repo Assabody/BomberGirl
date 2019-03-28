@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <time.h>
+#include <pthread.h>
 #include "../includes/sdl.h"
 #include "../includes/map.h"
 #include "../includes/player.h"
@@ -231,5 +232,7 @@ void player_coords_to_map_coords(int, int, int *, int *);
  * Client.c
  */
 int getServerInfo(int, game_t *);
+
+void *server(void *arg);
 
 #endif

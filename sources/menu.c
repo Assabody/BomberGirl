@@ -13,6 +13,14 @@ int joinGame(char *address, char *port, game_t *game) {
     return 0;
 }
 
+void startServer() {
+    pthread_t threadServer;
+    printf("Creation du thread server.\n");
+    if (pthread_create(&threadServer, NULL, server, NULL)) {
+        perror("pthread_create");
+    }
+}
+
 int menuWindow(game_t *game) {
     int quit = 0;
     int counter = 0;
@@ -128,7 +136,7 @@ int hostGame(game_t *game) {
     SDL_RenderPresent(game->sdl->renderer);
     input_port = showInputNumberMenu(game, "Host a game - Choose port (0-99999)");
 
-    //startServer(game, input_port);
+    startServer();
 
     if (!joinGame("127.0.0.1", input_port, game)) {
         showPromptMessage(game, "Failed to host a game", pos, white);
