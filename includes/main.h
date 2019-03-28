@@ -134,13 +134,15 @@ void checkEvents(game_t *);
  */
 int menuWindow(game_t *);
 
-void showMenu(game_t *, char **, int, int);
+void showMenu(game_t *, menu_t *, int, int);
 
 void showSelection(game_t *, int);
 
 char *showInputMenu(game_t *, const char *);
 
-void showText(game_t *, const char *);
+void showPromptMessage(game_t *, const char *, SDL_Rect, SDL_Color);
+
+void showText(game_t *, const char *, SDL_Rect, SDL_Color);
 
 int getClientToken(int);
 
