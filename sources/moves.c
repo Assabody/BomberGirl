@@ -40,42 +40,26 @@ void movePlayer(game_t *game, SDL_Keycode direction) {
         player_coords_to_map_coords(game->player.x_pos, game->player.y_pos - game->player.current_speed, &x, &y);
         game->request.x_pos = x;
         game->request.y_pos = y;
-        // Server part
-        /*if (can_go_to_cell(game->map[y][x])) {
-            game->player.y_pos -= game->player.current_speed;
-        }*/
         game->player.current_dir = UP;
     } else if (direction == SDLK_DOWN) {
         player_coords_to_map_coords(game->player.x_pos, game->player.y_pos + game->player.current_speed, &x, &y);
         game->request.x_pos = x;
         game->request.y_pos = y;
-        // Server part
-        /*if (can_go_to_cell(game->map[y][x])) {
-            game->player.y_pos += game->player.current_speed;
-        }*/
         game->player.current_dir = DOWN;
     } else if (direction == SDLK_LEFT) {
         player_coords_to_map_coords(game->player.x_pos - game->player.current_speed, game->player.y_pos, &x, &y);
         game->request.x_pos = x;
         game->request.y_pos = y;
-        // Server part
-        /*if (can_go_to_cell(game->map[y][x])) {
-            game->player.x_pos -= game->player.current_speed;
-        }*/
         game->player.current_dir = LEFT;
     } else if (direction == SDLK_RIGHT) {
         player_coords_to_map_coords(game->player.x_pos + game->player.current_speed, game->player.y_pos, &x, &y);
         game->request.x_pos = x;
         game->request.y_pos = y;
-        // Server part
-        /*if (can_go_to_cell(game->map[y][x])) {
-            game->player.x_pos += game->player.current_speed;
-        }*/
         game->player.current_dir = RIGHT;
     }
+
     game->request.dir = game->player.current_dir;
     game->request.command = 0;
     game->request.speed = game->player.current_speed;
-    game->request.magic = (game->player.token + 1) * 16;
-    printf("Player token is %d. magic is %d for request\n", game->player.token, game->request.magic);
+    game->request.magic = 1;
 }
