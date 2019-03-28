@@ -15,7 +15,7 @@ int drawGame(game_t *game)
         checkEvents(game);
         if (game->request.magic != 0) {
             puts("send request\n");
-            send_request(game->client_sock, game->player.token, &game->request);
+            send_request(game->client_sock, game->player_key, &game->request);
             wait_server = 1;
             game->request.magic = 0;
             game->request.command = 0;

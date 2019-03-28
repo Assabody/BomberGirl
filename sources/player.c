@@ -12,20 +12,16 @@ void initPlayer(player_t *player, int player_position)
     player->frags = 0;
     switch (player_position) {
         case 1:
-            player->x_pos = 40;
-            player->y_pos = 40;
+            map_coords_to_player_coords(1, 1, &player->x_pos, &player->y_pos);
             break;
         case 2:
-            player->x_pos = X_MAP_SIZE - 40;
-            player->y_pos = 40;
+            map_coords_to_player_coords(X_MAP_SIZE - 2, 1, &player->x_pos, &player->y_pos);
             break;
         case 3:
-            player->x_pos = 40;
-            player->y_pos = Y_MAP_SIZE - 40;
+            map_coords_to_player_coords(1, Y_MAP_SIZE - 2, &player->x_pos, &player->y_pos);
             break;
         case 4:
-            player->x_pos = X_MAP_SIZE - 40;
-            player->y_pos = Y_MAP_SIZE - 40;
+            map_coords_to_player_coords(X_MAP_SIZE - 2, Y_MAP_SIZE - 2, &player->x_pos, &player->y_pos);
             break;
     }
 }

@@ -4,6 +4,7 @@
 int send_request(int socket, int client_token, t_client_request *request) {
     request->magic = (client_token + 1) * 16;
     printf("Sending request to server...\n");
+    printf("From Player [%d]\n", client_token);
     printf("Request content:\n");
     printf("  MAGIC:%d\n", request->magic);
     printf("  Y_POS:%d\n", request->y_pos);

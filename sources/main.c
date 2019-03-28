@@ -15,8 +15,8 @@ game_t *init() {
         gameDestroy(game);
         return NULL;
     }
-    game->player.alive = 0;
-    game->player.token = -1;
+    /*game->player.alive = 0;
+    game->player.token = -1;*/
     game->bombs = initBombs();
     if (!game->bombs) {
         gameDestroy(game);
@@ -24,6 +24,7 @@ game_t *init() {
     }
 
     game->running = 1;
+    game->player_key = -1;
     game->client_sock = -1;
     return game;
 }

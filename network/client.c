@@ -12,8 +12,9 @@ int getServerInfo(int socket, game_t *game)
 {
     game_infos_t game_infos;
     puts("recv game_infos\n");
+    printf("Actual client is Player [%d]\n", game->player_key);
     if (recv(socket, &game_infos, sizeof(game_infos), 0)) {
-        if (game_infos.players[game->player.token].x_pos > 0 && game_infos.players[game->player.token].y_pos > 0) {
+        if (game_infos.players[game->player_key].x_pos > 0 && game_infos.players[game->player_key].y_pos > 0) {
             int y = 0;
             int x = 0;
             for (int i = 0; i <= X_MAP_SIZE * Y_MAP_SIZE; ++i) {
@@ -27,18 +28,20 @@ int getServerInfo(int socket, game_t *game)
                 game->map[y][x].bomb_timing = game_infos.map[y][x].bomb_timing;
                 x++;
             }
-            if (game->player.token == -1) {
+            /*if (game->player.token == -1) {
                 printf("actual %d new %d\n", game->player.token, game_infos.players[game->player.token].token);
                 game->player.token = game_infos.players[game->player.token].token;
+            }*/
+            for (int i = 0; i < MAX_PLAYERS; i++) {
+                game->player[i].x_pos = game_infos.players[i].x_pos;
+                game->player[i].y_pos = game_infos.players[i].y_pos;
+                game->player[i].alive = game_infos.players[i].alive;
+                game->player[i].current_speed = game_infos.players[i].current_speed;
+                game->player[i].max_speed = game_infos.players[i].max_speed;
+                game->player[i].bombs_left = game_infos.players[i].bombs_left;
+                game->player[i].bombs_capacity = game_infos.players[i].bombs_capacity;
+                printf("new position for Player [%d] [X]%d [Y]%d\n", i, game_infos.players[i].x_pos, game_infos.players[i].y_pos);
             }
-            game->player.x_pos = game_infos.players[game->player.token].x_pos;
-            game->player.y_pos = game_infos.players[game->player.token].y_pos;
-            game->player.alive = game_infos.players[game->player.token].alive;
-            game->player.current_speed = game_infos.players[game->player.token].current_speed;
-            game->player.max_speed = game_infos.players[game->player.token].max_speed;
-            game->player.bombs_left = game_infos.players[game->player.token].bombs_left;
-            game->player.bombs_capacity = game_infos.players[game->player.token].bombs_capacity;
-            printf("new position x %d y %d\n", game_infos.players[game->player.token].x_pos, game_infos.players[game->player.token].y_pos);
             //game->player = game_infos.players[game->player.token];
             return 1;
         }
@@ -74,8 +77,8 @@ int initClient(char *address, char *port, game_t *game)
         return -1;
     }
     send_message(sockfd, "ping");
-    recv(sockfd, &game->player.token, sizeof(int), 0);
-    printf("token received from the server is %d\n", game->player.token);
+    recv(sockfd, &game->player_key, sizeof(int), 0);
+    printf("token received from the server is %d\n", game->player_key);
     if (!getServerInfo(sockfd, game))
         return -1;
     return sockfd;
