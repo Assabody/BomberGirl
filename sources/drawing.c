@@ -12,6 +12,7 @@ void drawMap(game_t *game) {
         while (x < X_MAP_SIZE) {
             switch (get_cell_type(game->map[y][x].cell)) {
                 case MAP_BOMB:
+                    SDL_RenderCopy(game->sdl->renderer, game->textures->grass, NULL, &position);
                     SDL_RenderCopy(game->sdl->renderer, game->textures->bomb, NULL, &position);
                     break;
                 case MAP_WALL_UNBREAKABLE:
@@ -38,7 +39,7 @@ void drawBombs(game_t *game) {
     bomb_node_t *bomb_node = game->bombs->first;
     while (bomb_node != NULL) {
       if (bomb_node->bomb->duration <= 0) {
-      	bombExplosion(bomb_node->bomb);
+      	bombExplosion(bomb_node->bomb, game);
 	removeBomb(game, bomb_node->bomb);
 	break;
       }

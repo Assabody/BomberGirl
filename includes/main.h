@@ -164,9 +164,11 @@ void removeBomb(game_t *, bomb_t *);
 
 void removeBombNode(bombs_t *, bomb_node_t *);
 
-void bombExplosion(bomb_t *);
+void bombExplosion(bomb_t *, game_t *);
 
 void updateBombs(game_t *);
+
+void bombCheckObjectRadius(game_t *, bomb_t *);
 
 char *bombDurationToChar(bomb_t *);
 

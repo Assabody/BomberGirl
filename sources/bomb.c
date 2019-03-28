@@ -98,8 +98,30 @@ void updateBombs(game_t *game) {
     }
 }
 
-void bombExplosion(bomb_t *bomb) {
-    printf("%i", bomb->duration);
+void bombCheckObjectRadius(game_t *game, bomb_t *bomb)
+{
+    /*
+    if (game->map[bomb->y][bomb->x + RADIUS] == MAP_WALL_UNBREAKABLE)
+      {
+        printf("Wall\n");
+      }
+    else if (game->map[bomb->y][bomb->x - RADIUS] == MAP_WALL_UNBREAKABLE)
+      {
+        printf("Wall\n");
+      }
+    else if (game->map[bomb->y + RADIUS][bomb->x] == MAP_WALL_UNBREAKABLE)
+      {
+        printf("Wall\n");
+      }
+    else if (game->map[bomb->y - RADIUS][bomb->x] == MAP_WALL_UNBREAKABLE)
+      {
+        printf("Wall\n");
+        }*/
+}
+
+void	bombExplosion(bomb_t *bomb, game_t *game) {
+    bombCheckObjectRadius(game, bomb);
+    printf("Bomb Dammage: %i\n", bomb->damages);
 }
 
 void clearBombs(bombs_t *bombs) {
