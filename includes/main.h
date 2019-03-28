@@ -148,6 +148,8 @@ void showText(game_t *, const char *, SDL_Rect, SDL_Color);
 
 int hostGame(game_t *);
 
+int waitingLobby(game_t *);
+
 /**
  * Drawing.c
  */
