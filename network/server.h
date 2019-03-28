@@ -29,7 +29,7 @@
 
 typedef struct game_infos_s
 {
-    player_t players[MAX_PLAYERS];
+    player_t players[MAX_PLAYERS - 1];
     cell_t map[Y_MAP_SIZE][X_MAP_SIZE];
 } game_infos_t;
 

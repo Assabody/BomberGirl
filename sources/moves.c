@@ -36,7 +36,6 @@ void movePlayer(game_t *game, SDL_Keycode direction) {
     int x;
     int y;
     game->request.dir = game->player[game->player_key].current_dir;
-
     if (direction == SDLK_UP) {
         player_coords_to_map_coords(game->player[game->player_key].x_pos, game->player[game->player_key].y_pos - game->player[game->player_key].current_speed, &x, &y);
         game->request.x_pos = x;

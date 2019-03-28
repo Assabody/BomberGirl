@@ -1,7 +1,9 @@
 #include "../includes/main.h"
 
 void drawMap(game_t *game) {
-    SDL_Rect position;
+  breakablewall_t *breakable = malloc(sizeof *breakable);
+  breakable->life = WALL_LIFE;
+  SDL_Rect position;
     int x = 0;
     int y = 0;
     position.x = 0;
@@ -40,7 +42,6 @@ void drawBombs(game_t *game) {
     while (bomb_node != NULL) {
       if (bomb_node->bomb->duration <= 0) {
       	bombExplosion(bomb_node->bomb, game);
-	removeBomb(game, bomb_node->bomb);
 	break;
       }
       renderTexture(

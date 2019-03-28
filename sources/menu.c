@@ -84,6 +84,7 @@ void    showMenu(game_t *game, char **menus_text, int menu_number, int current_m
     SDL_Color color = { 255, 255, 255, 255 };
     SDL_GetRendererOutputSize(game->sdl->renderer, &width, &height);
     SDL_RenderClear(game->sdl->renderer);
+    puts("crash here\n");
     SDL_RenderCopy(game->sdl->renderer, game->textures->menu, NULL, &bgDstrect);
     SDL_Texture *texture;
     SDL_Surface *surface;

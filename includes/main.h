@@ -37,6 +37,9 @@
 
 // bombs
 #define DAMAGES 10
+#define PLAYER_LIFE 30
+#define WALL_LIFE 10
+#define RADIUS 40
 
 // bonus
 #define RANGE_BONUS 0 // 000
@@ -50,9 +53,14 @@ typedef struct bomb_s {
   int x;
   int y;
   int duration;
-  int	damages;
+  int damages;
   int clip;
 } bomb_t;
+
+typedef struct breakablewall_s {
+  int	life;
+}	       breakablewall_t;
+
 
 typedef struct bomb_node_s {
   bomb_t *bomb;
@@ -74,7 +82,8 @@ typedef struct game_s {
   cell_t map[Y_MAP_SIZE][X_MAP_SIZE];
 
   t_client_request request;
-  
+
+  int player_key;
   int running;
   int player_key;
   int client_sock;
@@ -169,6 +178,8 @@ void bombExplosion(bomb_t *, game_t *);
 void updateBombs(game_t *);
 
 void bombCheckObjectRadius(game_t *, bomb_t *);
+
+void checkPlayerDamagesFromBombs(game_t *, bomb_t *);
 
 char *bombDurationToChar(bomb_t *);
 

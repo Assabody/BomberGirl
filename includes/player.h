@@ -10,16 +10,17 @@
 
 typedef struct player_s
 {
-    int token;
-    int alive;
-    int x_pos;
-    int y_pos;
-    int current_dir;
-    int current_speed;
-    int max_speed;
-    int bombs_left;
-    int bombs_capacity;
-    int frags;
+  int token;
+  int alive;
+  int x_pos;
+  int y_pos;
+  int current_dir;
+  int current_speed;
+  int max_speed;
+  int bombs_left;
+  int bombs_capacity;
+  int frags;
+  int life;
 } player_t;
 
 #endif

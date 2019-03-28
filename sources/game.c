@@ -3,6 +3,7 @@
 
 int drawGame(game_t *game)
 {
+    puts("STARTING GAME\n");
     if (game == NULL)
         return (EXIT_FAILURE);
     Uint32 frameStart;
