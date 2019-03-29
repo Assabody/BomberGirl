@@ -81,7 +81,6 @@ typedef struct server_s
     int started;
     int waiting_lobby;
     int players_connected;
-    game_infos_t game_infos;
 } server_t;
 
 typedef struct game_s {

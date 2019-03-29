@@ -95,7 +95,6 @@ int menuWindow(game_t *game) {
                             address = showInputTextMenu(game, "addresse ip");
                             port = showInputTextMenu(game, "port");
                             if (joinGame(address, port, game)) {
-                                drawGame(game);
                                 if (waitingLobby(game)) {
                                     drawGame(game);
                                 } else {
@@ -202,6 +201,7 @@ int waitingLobby(game_t *game)
     SDL_Color white = { 255, 255, 255, 255 };
     SDL_Rect pos;
     SDL_Event event;
+    unsigned int players;
 
     char message[30];
     Uint32 frameStart;
@@ -213,25 +213,31 @@ int waitingLobby(game_t *game)
         SDL_RenderClear(game->sdl->renderer);
         pos.y = 80;
         showText(game, "Waiting for server to start...", pos, white);
-        sprintf(message, "%d/%d players", get_clients_number(game->client_sock), MAX_PLAYERS);
+        players = get_clients_number(game->client_sock);
+        if (players > MAX_PLAYERS) {
+            return 1;
+        }
+        sprintf(message, "%d/%d players", players, MAX_PLAYERS);
         pos.y = 110;
         showText(game, message, pos, white);
         SDL_RenderPresent(game->sdl->renderer);
 
-        SDL_WaitEvent(&event);
-        switch (event.type) {
-            case SDL_QUIT:
-                return 0;
-            case SDL_KEYDOWN:
-                if(event.key.keysym.scancode == SDL_SCANCODE_ESCAPE ) {
+        while (SDL_PollEvent(&event)) {
+            switch (event.type) {
+                case SDL_QUIT:
                     return 0;
-                } else if (event.key.keysym.scancode == SDL_SCANCODE_RETURN || event.key.keysym.scancode == SDL_SCANCODE_BACKSPACE) {
-                    char query[4] = {'p','l','a','y'};
-                    send(game->client_sock, &query, sizeof(query), 0);
-                    return 1;
-                }
-                break;
+                case SDL_KEYDOWN:
+                    if(event.key.keysym.scancode == SDL_SCANCODE_ESCAPE ) {
+                        return 0;
+                    } else if (event.key.keysym.scancode == SDL_SCANCODE_RETURN || event.key.keysym.scancode == SDL_SCANCODE_BACKSPACE) {
+                        char query[4] = {'p','l','a','y'};
+                        send(game->client_sock, &query, sizeof(query), 0);
+                        return 1;
+                    }
+                    break;
+            }
         }
+
         frameTime = SDL_GetTicks() - frameStart;
         if (TICKS_PER_FRAME > frameTime)
             SDL_Delay(TICKS_PER_FRAME - frameTime);
@@ -437,7 +443,7 @@ void showText(game_t *game, const char* text, SDL_Rect text_pos, SDL_Color color
     int texW = 0;
     int texH = 0;
 
-    printf("# Display Text: %s\n", text);
+    //printf("# Display Text: %s\n", text);
     SDL_GetRendererOutputSize(game->sdl->renderer, &width, &height);
     SDL_Surface *surface;
     surface = TTF_RenderText_Solid(game->sdl->font, text, color);

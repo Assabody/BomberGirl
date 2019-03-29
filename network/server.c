@@ -91,13 +91,16 @@ void *server(void *arg) {
                                 answer = number_of_clients;
                                 send(i, &answer, sizeof(char), 0);
                             } else if (strncmp(text, "stop", 4) == 0) {
+                                printf("# Server - Leaving lobby and stopping server...\n");
                                 running = 0;
                             } else if (strncmp(text, "play", 4) == 0) {
+                                printf("# Server - Leaving lobby and starting game...\n");
                                 waiting_lobby = 0;
                             }
                         }
                     } else {
                         t_client_request client_request;
+                        puts("# Server - receiving game_infos\n");
                         if (!recv(i, &client_request, sizeof(client_request), 0)) {
                             printf("# Server - Client disconnected\n");
                             number_of_clients--;
@@ -113,14 +116,14 @@ void *server(void *arg) {
                                 if (can_go_to_cell(game_infos.map[client_request.y_pos][client_request.x_pos])) {
                                     map_coords_to_player_coords(client_request.x_pos, client_request.y_pos, &game_infos.players[player_key].x_pos, &game_infos.players[player_key].y_pos);
                                 }
-                                printf("player at [X]%d  [Y]%d\n", game_infos.players[player_key].x_pos, game_infos.players[player_key].y_pos);
+                                printf("player at [X]%d  [Y]%d (%d %d)\n", game_infos.players[player_key].x_pos, game_infos.players[player_key].y_pos, client_request.x_pos, client_request.y_pos);
                                 if (client_request.command == 1)
                                     printf("pose bomb\n");
-                                printf("==   End Request   ==\n");
                             } else {
                                 printf("# Server - bad request data (checksum)\n");
                             }
-                            puts("# Server - send game_infos\n");
+                            printf("==   End Request   ==\n");
+                            puts("# Server - sending game_infos\n");
                             send(i, &game_infos, sizeof(game_infos), 0);
                         }
                     }

@@ -7,7 +7,7 @@ int drawGame(game_t *game)
         return (EXIT_FAILURE);
     Uint32 frameStart;
     int frameTime;
-    int wait_server = 1;
+    int wait_server = 0;
     SDL_SetRenderDrawColor(game->sdl->renderer, 50, 50, 50, 255);
     while (game->running) {
         frameStart = SDL_GetTicks();
@@ -33,7 +33,8 @@ int drawGame(game_t *game)
         frameTime = SDL_GetTicks() - frameStart;
         if (TICKS_PER_FRAME > frameTime)
             SDL_Delay(TICKS_PER_FRAME - frameTime);
-
+//        if (getServerInfo(game->client_sock, game))
+//            wait_server = 0;
     }
     return (EXIT_SUCCESS);
 }
