@@ -79,11 +79,12 @@ int menuWindow(game_t *game) {
                             address = showInputTextMenu(game, "addresse ip");
                             port = showInputTextMenu(game, "port");
                             if (joinGame(address, port, game)) {
-                                if (waitingLobby(game)) {
-                                    drawGame(game);
-                                } else {
-                                    quit = 1;
-                                }
+                                drawGame(game);
+                                // if (waitingLobby(game)) {
+                                //     drawGame(game);
+                                // } else {
+                                //     quit = 1;
+                                // }
                             } else {
                                 showPromptMessage(game, "Cannot connect to the server", text_pos, white);
                             }
@@ -97,12 +98,13 @@ int menuWindow(game_t *game) {
                     case 1:
                         if (menus[counter].enabled) {
                             if (hostGame(game)) {
-                                if (waitingLobby(game)) {
-                                    drawGame(game);
-                                } else {
-                                    showPromptMessage(game, "Stopping server...", text_pos, white);
-                                    stopServer(game);
-                                }
+                                drawGame(game);
+                                // if (waitingLobby(game)) {
+                                //     drawGame(game);
+                                // } else {
+                                //     showPromptMessage(game, "Stopping server...", text_pos, white);
+                                //     stopServer(game);
+                                // }
                             }
                         }
                         break;

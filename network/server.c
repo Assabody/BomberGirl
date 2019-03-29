@@ -45,7 +45,7 @@ void *server(void *arg) {
     FD_SET(sock, &active_fd_set);
     number_of_clients = 0;
     game_infos_t game_infos;
-    waiting_lobby = 1;
+    waiting_lobby = 0;
     running = 1;
     init_game_infos(&game_infos);
     printf("Number of clients : %d/%d\n", number_of_clients, MAX_PLAYERS);
