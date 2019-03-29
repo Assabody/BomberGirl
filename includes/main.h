@@ -13,6 +13,7 @@
 #include <unistd.h>
 #include <time.h>
 #include <pthread.h>
+#include <signal.h>
 #include "../includes/sdl.h"
 #include "../includes/map.h"
 #include "../includes/player.h"

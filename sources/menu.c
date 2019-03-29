@@ -2,17 +2,33 @@
 #include "../network/request.h"
 
 int joinGame(char *address, char *port, game_t *game) {
+    printf("%s", address);
+    printf("%s", port);
     if (address == NULL || port == NULL || strlen(address) <= 1 || strlen(port) <= 1) {
         return 0;
     }
     printf("Connecting to %s:%s...\n", address, port);
     game->client_sock = initClient(address, port, game);
+    printf("initClient() finished\n");
     if (game->client_sock > 0) {
         return 1;
     }
     return 0;
 }
 
+int isServerRunning(game_t *game) {
+    int ret;
+    if( (ret = pthread_kill(game->server.server_thread, 0)) == 0)
+    {
+        printf("still running\n");
+        //pthread_join(game->server.server_thread, NULL);
+    }
+    else
+    {
+        printf("RIP Thread = %d\n",ret);
+    }
+    return ret == 0;
+}
 void startServer(game_t *game, int *port) {
     printf("Creation du thread server.\n");
     if (pthread_create(&game->server.server_thread, NULL, server, (void *) port)) {
@@ -80,11 +96,11 @@ int menuWindow(game_t *game) {
                             port = showInputTextMenu(game, "port");
                             if (joinGame(address, port, game)) {
                                 drawGame(game);
-                                // if (waitingLobby(game)) {
-                                //     drawGame(game);
-                                // } else {
-                                //     quit = 1;
-                                // }
+                                if (waitingLobby(game)) {
+                                    drawGame(game);
+                                } else {
+                                    quit = 1;
+                                }
                             } else {
                                 showPromptMessage(game, "Cannot connect to the server", text_pos, white);
                             }
@@ -98,13 +114,12 @@ int menuWindow(game_t *game) {
                     case 1:
                         if (menus[counter].enabled) {
                             if (hostGame(game)) {
-                                drawGame(game);
-                                // if (waitingLobby(game)) {
-                                //     drawGame(game);
-                                // } else {
-                                //     showPromptMessage(game, "Stopping server...", text_pos, white);
-                                //     stopServer(game);
-                                // }
+                                 if (waitingLobby(game)) {
+                                     drawGame(game);
+                                 } else {
+                                     showPromptMessage(game, "Stopping server...", text_pos, white);
+                                     stopServer(game);
+                                 }
                             }
                         }
                         break;
@@ -143,8 +158,9 @@ int menuWindow(game_t *game) {
 }
 
 int hostGame(game_t *game) {
+    printf("== Host Game ==\n");
     SDL_Color white = { 255, 255, 255, 255 };
-    char *input_port;
+    char *input_port = NULL;
     char message[30];
 
     SDL_Rect pos;
@@ -152,13 +168,18 @@ int hostGame(game_t *game) {
     pos.y = 80;
     SDL_RenderClear(game->sdl->renderer);
     SDL_RenderPresent(game->sdl->renderer);
-    input_port = showInputNumberMenu(game, "Host a game - Choose port (0-99999)");
-
+    while (input_port == NULL) {
+        input_port = showInputNumberMenu(game, "Host a game - Choose port (0-99999)");
+    }
+    printf("Port chosen is %s\n", input_port);
     int port = atoi(input_port);
     startServer(game, &port);
 
     SDL_Delay(60);
-    if (!joinGame("127.0.0.1", input_port, game) || game->client_sock  <= 0) {
+    if (!isServerRunning(game)) {
+        showPromptMessage(game, "Server error", pos, white);
+        return 0;
+    } else if (!joinGame("localhost", input_port, game) || game->client_sock  <= 0) {
         sprintf(message, "Cannot connect to localhost:%s", input_port);
         showPromptMessage(game, message, pos, white);
         //stopServer();
@@ -177,6 +198,7 @@ int get_clients_number(int sock) {
 
 int waitingLobby(game_t *game)
 {
+    printf("== Waiting Lobby ==\n");
     SDL_Color white = { 255, 255, 255, 255 };
     SDL_Rect pos;
     SDL_Event event;
@@ -286,8 +308,7 @@ char    *showInputNumberMenu(game_t *game, const char *placeholder)
     placeholder_pos.y = 50;
     placeholder_pos.x = 80;
 
-    char *text = NULL;
-
+    char *text = malloc(sizeof(char) * 6);
     text = strdup("");
     int done = 0;
 
@@ -311,18 +332,13 @@ char    *showInputNumberMenu(game_t *game, const char *placeholder)
                     strcmp(event.text.text, "7") == 0 ||
                     strcmp(event.text.text, "8") == 0 ||
                     strcmp(event.text.text, "9") == 0)
-                && strlen(text) / sizeof(*text) < 5) {
+                && strlen(text) < 5) {
                     strcat(text, event.text.text);
                 }
                 break;
             case SDL_KEYDOWN:
-                if(event.key.keysym.scancode == SDL_SCANCODE_BACKSPACE) {
-                    if (strlen(text) > 1) {
-                        text[strlen(text) - 1] = '\0';
-                    } else {
-                        text = strdup("");
-                    }
-                } else if (event.key.keysym.scancode == SDL_SCANCODE_RETURN) {
+                if(event.key.keysym.scancode == SDL_SCANCODE_BACKSPACE || event.key.keysym.scancode == SDL_SCANCODE_RETURN) {
+                    text[strlen(text)] = '\0';
                     done = 1;
                 }
                 break;

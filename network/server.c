@@ -20,6 +20,7 @@ void *server(void *arg) {
     sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock == -1) {
         perror("socket()");
+        pthread_exit(NULL);
     }
     timeout.tv_sec = 10;
     timeout.tv_usec = 0;
@@ -38,6 +39,7 @@ void *server(void *arg) {
 
     if (bind(sock, (struct sockaddr *) &server, sizeof(server)) < 0) {
         perror("bind()");
+        pthread_exit(NULL);
     }
 
     listen(sock, 2);
@@ -45,15 +47,15 @@ void *server(void *arg) {
     FD_SET(sock, &active_fd_set);
     number_of_clients = 0;
     game_infos_t game_infos;
-    waiting_lobby = 0;
+    waiting_lobby = 1;
     running = 1;
     init_game_infos(&game_infos);
-    printf("Number of clients : %d/%d\n", number_of_clients, MAX_PLAYERS);
+    printf("# Server - Number of clients : %d/%d\n", number_of_clients, MAX_PLAYERS);
     while (running) {
         read_fd_set = active_fd_set;
         if (select(FD_SETSIZE, &read_fd_set, NULL, NULL, NULL) < 0) {
             perror("select");
-            exit(-1);
+            pthread_exit(NULL);
         }
         for (i = 0; i < FD_SETSIZE; ++i) {
             if (FD_ISSET(i, &read_fd_set)) {
@@ -61,19 +63,19 @@ void *server(void *arg) {
                     int new;
                     if ((new = connect_client(sock, &client_addr)) < 0) {
                         perror("accept");
-                        exit(EXIT_FAILURE);
+                        pthread_exit(NULL);
                     }
                     else {
                         if (number_of_clients >= MAX_PLAYERS || waiting_lobby == 0) {
                             close(new);
                         } else {
-                            printf("Client connected\n");
-                            puts("send token\n");
+                            printf("# Server - Client connected\n");
+                            printf("# Server - Send token\n");
                             send(new, &number_of_clients, sizeof(number_of_clients), 0);
                             number_of_clients++;
-                            printf("Number of clients : %d/%d\n", number_of_clients, MAX_PLAYERS);
+                            printf("# Server - Number of clients : %d/%d\n", number_of_clients, MAX_PLAYERS);
                             printf("# Server - In the game\n");
-                            puts("send game_infos\n");
+                            printf("# Server - Send game_infos\n");
                             send(new, &game_infos, sizeof(game_infos), 0);
                             FD_SET(new, &active_fd_set);
                         }
@@ -97,9 +99,9 @@ void *server(void *arg) {
                     } else {
                         t_client_request client_request;
                         if (!recv(i, &client_request, sizeof(client_request), 0)) {
-                            printf("Client disconnected\n");
+                            printf("# Server - Client disconnected\n");
                             number_of_clients--;
-                            printf("Number of clients : %d/%d\n", number_of_clients, MAX_PLAYERS);
+                            printf("# Server - Number of clients : %d/%d\n", number_of_clients, MAX_PLAYERS);
                             close(i);
                             FD_CLR(i, &active_fd_set);
                         } else {
@@ -114,10 +116,11 @@ void *server(void *arg) {
                                 printf("player at [X]%d  [Y]%d\n", game_infos.players[player_key].x_pos, game_infos.players[player_key].y_pos);
                                 if (client_request.command == 1)
                                     printf("pose bomb\n");
+                                printf("==   End Request   ==\n");
                             } else {
-                                printf("bad request data (checksum)\n");
+                                printf("# Server - bad request data (checksum)\n");
                             }
-                            puts("send game_infos\n");
+                            puts("# Server - send game_infos\n");
                             send(i, &game_infos, sizeof(game_infos), 0);
                         }
                     }
@@ -127,7 +130,7 @@ void *server(void *arg) {
         }
     }
     close(sock);
-    return 0;
+    pthread_exit(NULL);
 }
 
 void init_game_infos(game_infos_t *game_infos)

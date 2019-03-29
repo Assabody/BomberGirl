@@ -21,6 +21,8 @@ game_t *init() {
         return NULL;
     }
 
+    game->request.checksum = 0;
+    game->request.magic = 0;
     game->server.started = 0;
     game->running = 1;
     game->player_key = -1;

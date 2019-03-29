@@ -13,6 +13,7 @@ int getServerInfo(int socket, game_t *game)
     game_infos_t game_infos;
     puts("recv game_infos\n");
     printf("Actual client is Player [%d]\n", game->player_key);
+    printf("Waiting to receive game_infos...\n");
     if (recv(socket, &game_infos, sizeof(game_infos), 0)) {
         if (game_infos.players[game->player_key].x_pos > 0 && game_infos.players[game->player_key].y_pos > 0) {
             int y = 0;
@@ -56,6 +57,7 @@ int initClient(char *address, char *port, game_t *game)
     struct hostent *server;
 
     sockfd = -1;
+    printf("initClient port %s\n", port);
     portno = atoi(port);
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0)
