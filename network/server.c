@@ -29,8 +29,7 @@ void processRequest(game_infos_t *game, t_client_request request) {
     if (request.speed == 2 * FPS) {
         // Remove bomb from the cell
         if (has_bomb(game->map[request.y_pos][request.x_pos].cell) && request.command == 0) {
-            game->map[request.y_pos][request.x_pos].duration = 0;
-            game->map[request.y_pos][request.x_pos].cell = grass_cell(0);
+            explodeBomb(game, request.x_pos, request.y_pos);
         }
     }
     // Move to new coords if possible
@@ -39,12 +38,7 @@ void processRequest(game_infos_t *game, t_client_request request) {
         map_coords_to_player_coords(request.x_pos, request.y_pos, &game->players[player_key].x_pos, &game->players[player_key].y_pos);
         // Pose bomb
         if (request.command) {
-            if (game->players[player_key].bombs_left && can_pose_bomb(game->map[request.y_pos][request.x_pos].cell)) {
-                game->map[request.y_pos][request.x_pos].cell = add_bomb_to_cell(game->map[request.y_pos][request.x_pos].cell);
-                game->players[player_key].bombs_left--;
-            } else {
-                printf("Cannot pose bomb at x%d y%d\n", request.x_pos, request.y_pos);
-            }
+            plantBomb(game, player_key, request.x_pos, request.y_pos);
         }
     }
     game->players[player_key].current_dir = request.dir;
@@ -159,9 +153,43 @@ void *server(void *arg) {
     pthread_exit(NULL);
 }
 
+void plantBomb(game_infos_t *game_infos, int player_key, int x, int y)
+{
+    if (game_infos->players[player_key].bombs_left && can_pose_bomb(game_infos->map[y][x].cell)) {
+        game_infos->map[y][x].cell = add_bomb_to_cell(game_infos->map[y][x].cell);
+        game_infos->players[player_key].bombs_left--;
+        game_infos->bombs[y][x].bomb_posed = 1;
+        game_infos->bombs[y][x].player = player_key;
+    }
+}
+
+void explodeBomb(game_infos_t *game_infos, int x, int y)
+{
+    int bomb_planter;
+    game_infos->map[y][x].duration = 0;
+    game_infos->map[y][x].cell = grass_cell(0);
+    if (game_infos->bombs[y][x].bomb_posed) {
+        bomb_planter = (int)game_infos->bombs[y][x].player;
+        if (game_infos->players[bomb_planter].bombs_left < game_infos->players[bomb_planter].bombs_capacity) {
+            game_infos->players[bomb_planter].bombs_left++;
+        }
+    }
+}
+
+void initBombGrid(game_infos_t *game_infos)
+{
+    for (int y = 0; y <= Y_MAP_SIZE; y++) {
+        for (int x = 0; x <= X_MAP_SIZE; x++) {
+            game_infos->bombs[y][x].player = 0;
+            game_infos->bombs[y][x].bomb_posed = 0;
+        }
+    }
+}
+
 void init_game_infos(game_infos_t *game_infos)
 {
     mapInit(game_infos);
+    initBombGrid(game_infos);
     initPlayer(&game_infos->players[0], 1);
     initPlayer(&game_infos->players[1], 2);
     initPlayer(&game_infos->players[2], 3);

@@ -26,13 +26,21 @@
 ** 111 : Rien
 */
 
+typedef struct cell_bomb_s
+{
+    char player;
+    char bomb_posed;
+} cell_bomb_t;
+
 typedef struct game_infos_s
 {
     player_t players[MAX_PLAYERS];
     cell_t map[Y_MAP_SIZE][X_MAP_SIZE];
-    struct sockaddr_in clients_addresses[MAX_PLAYERS];
+    cell_bomb_t bombs[Y_MAP_SIZE][X_MAP_SIZE];
 } game_infos_t;
 
 void init_game_infos(game_infos_t *game_infos);
+void explodeBomb(game_infos_t *, int, int);
+void plantBomb(game_infos_t *, int, int, int);
 
 #endif
