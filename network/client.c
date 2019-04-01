@@ -4,9 +4,12 @@
 
 int getServerInfo(int socket, game_t *game)
 {
+    int x;
+    int y;
+    map_coords_to_player_coords(X_MAP_SIZE, Y_MAP_SIZE, &x, &y);
     game_infos_t game_infos;
     if (recv(socket, &game_infos, sizeof(game_infos), 0)) {
-        if (game_infos.players[game->player_key].x_pos > 0 && game_infos.players[game->player_key].y_pos > 0) {
+        if (game_infos.players[game->player_key].x_pos > 0 && game_infos.players[game->player_key].y_pos > 0 && game_infos.players[game->player_key].x_pos < x && game_infos.players[game->player_key].y_pos < y) {
             int y = 0;
             int x = 0;
             for (int i = 0; i <= X_MAP_SIZE * Y_MAP_SIZE; ++i) {

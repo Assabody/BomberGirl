@@ -35,7 +35,7 @@ char* read_message(int sock, int length) {
 int send_message(int sock, const char *message) {
     if (sock < 0)
         return 0;
-    if (send(sock, message, strlen(message), 0) < 0) {
+    if (send(sock, message, strlen(message), MSG_NOSIGNAL) < 0) {
         return 1;
     } else {
         return 0;

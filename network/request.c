@@ -10,14 +10,14 @@ int send_bomb_exploded(int socket, int x, int y) {
     request.command = 0;
     request.x_pos = x_map;
     request.y_pos = y_map;
-    return send(socket, &request, sizeof(request), 0);
+    return send(socket, &request, sizeof(request), MSG_NOSIGNAL);
 }
 
 int send_request(game_t *game) {
     game->request.magic = (game->player_key + 1) * 16;
     game->request.checksum = game->request.dir + game->request.speed + game->request.command + game->request.x_pos + game->request.y_pos + game->request.magic;
 
-    if (send(game->client_sock, &game->request, sizeof(game->request), 0)) {
+    if (send(game->client_sock, &game->request, sizeof(game->request), MSG_NOSIGNAL)) {
         game->request.magic = 0;
         game->request.command = 0;
         game->request.checksum = 0;
@@ -28,17 +28,6 @@ int send_request(game_t *game) {
     return 0;
 }
 
-char *serialize_int(int value)
-{
-    char *buffer = malloc(sizeof(char) * 4);
-    /* Write big-endian int value into buffer; assumes 32-bit int and 8-bit char. */
-    buffer[0] = value >> 16 & 0xFF;//24;
-    buffer[1] = value >> 8  & 0xFF;
-    buffer[2] = value       & 0xFF;
-    //buffer[3] = value;
-    return buffer;
-}
-
 int verify_request(t_client_request request) {
     if (request.checksum == request.magic + request.y_pos + request.x_pos + request.command + request.speed + request.dir) {
         return 1;
@@ -47,15 +36,6 @@ int verify_request(t_client_request request) {
     }
     return 0;
 }
-
-char * serialize_char(char *buffer, char value)
-{
-    buffer[0] = value;
-    return buffer + 1;
-}
-
-//char *cell = (char)strtol("00000000", 0, 2);
-
 
 void string_to_bytes(char n, char *str)
 {

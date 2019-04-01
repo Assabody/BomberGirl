@@ -49,15 +49,6 @@ void drawBombs(game_t *game, SDL_Rect position) {
     }
     game->map[y][x].duration--;
     if (game->map[y][x].duration <= 0) {
-        printf("Sending bomb_explode request");
-        /*printf("previous request pos x%d y%d\n", game->request.x_pos, game->request.y_pos);
-        game->request.command = 0;
-        game->request.x_pos = x;
-        game->request.y_pos = y;*/
-        /*send_request(game);
-        game->request.speed = game->player[game->player_key].current_speed;
-        game->request.x_pos = 0;
-        game->request.y_pos = 0;*/
         send_bomb_exploded(game->client_sock, position.x, position.y);
     }
     renderTexture(

@@ -32,9 +32,6 @@ void placeBomb(game_t *game, int x, int y) {
             game->bombs->last->next = bomb_node;
             game->bombs->last = bomb_node;
         }
-        printf("placeBomb()\n");
-        game->request.command = 1;
-        //game->request.magic = game->player[game->player_key].token ? game->player[game->player_key].token + 1 : 0;
     } else {
         free(bomb);
         free(bomb_node);
@@ -154,8 +151,4 @@ void clearBombs(bombs_t *bombs) {
     }
     bombs = NULL;
     puts("Bombs cleared");
-}
-
-char *bombDurationToChar(bomb_t *bomb) {
-    return serialize_int(bomb->duration);
 }

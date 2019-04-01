@@ -22,7 +22,6 @@ int drawGame(game_t *game)
         SDL_RenderClear(game->sdl->renderer);
         updateBombs(game);
         drawMap(game);
-        //drawBombs(game);
         drawPlayer(game);
         SDL_RenderPresent(game->sdl->renderer);
         frameTime = SDL_GetTicks() - frameStart;

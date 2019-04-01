@@ -173,7 +173,7 @@ int hostGame(game_t *game) {
 int get_clients_number(int sock) {
     int players_number = 0;
     char query[4] = {'l','i','s','t'};
-    send(sock, &query, sizeof(query), 0);
+    send(sock, &query, sizeof(query), MSG_NOSIGNAL);
     recv(sock, &players_number, sizeof(players_number), 0);
     return players_number;
 }
@@ -204,7 +204,7 @@ int waitingLobby(game_t *game)
                         return 0;
                     } else if (event.key.keysym.scancode == SDL_SCANCODE_RETURN || event.key.keysym.scancode == SDL_SCANCODE_BACKSPACE) {
                         char query[4] = {'p','l','a','y'};
-                        send(game->client_sock, &query, sizeof(query), 0);
+                        send(game->client_sock, &query, sizeof(query), MSG_NOSIGNAL);
                         return 1;
                     }
             }

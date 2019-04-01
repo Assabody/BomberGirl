@@ -12,11 +12,6 @@ typedef struct s_client_request
     unsigned int checksum; /* Un checksum simple */
 } t_client_request;
 
-char *serialize_int(int);
-char *serialize_char(char *, char);
-
-int deserialize_int(char *);
-char *deserialize_char(char *, char *);
 
 void string_to_bytes(char n, char *str);
 int bytes_to_int(char n);

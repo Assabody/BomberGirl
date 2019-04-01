@@ -17,7 +17,7 @@ void startServer(game_t *game, int *port) {
 
 void stopServer(game_t *game) {
     char query[4] = {'s','t','o','p'};
-    send(game->client_sock, &query, sizeof(query), 0);
+    send(game->client_sock, &query, sizeof(query), MSG_NOSIGNAL);
     sleep(1);
     pthread_cancel(game->server.server_thread);
 }
@@ -27,8 +27,9 @@ void processRequest(game_infos_t *game, t_client_request request) {
     // Is special request ?
     printf("server request pos x%d y%d\n", request.x_pos, request.y_pos);
     if (request.speed == 2 * FPS) {
-        printf("bomb request\n");
+        // Remove bomb from the cell
         if (has_bomb(game->map[request.y_pos][request.x_pos].cell) && request.command == 0) {
+            game->map[request.y_pos][request.x_pos].duration = 0;
             game->map[request.y_pos][request.x_pos].cell = grass_cell(0);
         }
     }
@@ -104,12 +105,12 @@ void *server(void *arg) {
                             close(new);
                         } else {
                             printf("# Server - Client connected\n");
-                            send(new, &number_of_clients, sizeof(number_of_clients), 0);
+                            send(new, &number_of_clients, sizeof(number_of_clients), MSG_NOSIGNAL);
                             game_infos.players[number_of_clients].alive = 1;
                             number_of_clients++;
                             printf("# Server - Number of clients : %d/%d\n", number_of_clients, MAX_PLAYERS);
                             printf("# Server - Send game_infos\n");
-                            send(new, &game_infos, sizeof(game_infos), 0);
+                            send(new, &game_infos, sizeof(game_infos), MSG_NOSIGNAL);
                             FD_SET(new, &active_fd_set);
                         }
                     }
@@ -121,7 +122,7 @@ void *server(void *arg) {
                         if (recv(i, &text, sizeof(text), 0)) {
                             if (strncmp(text, "list", 4) == 0) {
                                 answer = number_of_clients;
-                                send(i, &answer, sizeof(char), 0);
+                                send(i, &answer, sizeof(char), MSG_NOSIGNAL);
                             } else if (strncmp(text, "stop", 4) == 0) {
                                 printf("# Server - Leaving lobby and stopping server...\n");
                                 running = 0;
@@ -143,7 +144,7 @@ void *server(void *arg) {
                             if (verify_request(client_request)) {
                                 processRequest(&game_infos, client_request);
                             }
-                            send(i, &game_infos, sizeof(game_infos), 0);
+                            send(i, &game_infos, sizeof(game_infos), MSG_NOSIGNAL);
                         }
                     }
                     if (number_of_clients <= 0) {

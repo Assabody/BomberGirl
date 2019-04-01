@@ -199,8 +199,6 @@ void bombCheckObjectRadius(game_t *, bomb_t *);
 
 void checkPlayerDamagesFromBombs(game_t *, bomb_t *);
 
-char *bombDurationToChar(bomb_t *);
-
 int checkBreakableWall(cell_t);
 
 
