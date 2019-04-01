@@ -3,7 +3,8 @@
 
 int send_request(int socket, int client_token, t_client_request *request) {
     request->magic = (client_token + 1) * 16;
-    printf("Sending request to server...\n");
+    request->checksum = request->dir + request->speed + request->command + request->x_pos + request->y_pos + request->magic;
+    /*printf("Sending request to server...\n");
     printf("From Player [%d]\n", client_token);
     printf("Request content:\n");
     printf("  MAGIC:%d\n", request->magic);
@@ -12,8 +13,7 @@ int send_request(int socket, int client_token, t_client_request *request) {
     printf("  COMMAND:%d\n", request->command);
     printf("  SPEED:%d\n", request->speed);
     printf("  DIR:%d\n", request->dir);
-    request->checksum = request->dir + request->speed + request->command + request->x_pos + request->y_pos + request->magic;
-    printf("#checksum (%d)\n", request->checksum);
+    printf("#checksum (%d)\n", request->checksum);*/
 
     if (send(socket, request, sizeof(*request), 0)) {
         request->magic = 0;
