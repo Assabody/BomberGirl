@@ -16,14 +16,38 @@ void startServer(game_t *game, int *port) {
 }
 
 void stopServer(game_t *game) {
-    int result = -9;
-
     char query[4] = {'s','t','o','p'};
     send(game->client_sock, &query, sizeof(query), 0);
+    sleep(1);
+    pthread_cancel(game->server.server_thread);
+}
 
-    printf("pthread_join\n");
-    pthread_join(game->server.server_thread, (void *)&result);
-    printf("Server result %d\n", result);
+void processRequest(game_infos_t *game, t_client_request request) {
+    int player_key = request.magic / 16 - 1;
+    // Is special request ?
+    printf("server request pos x%d y%d\n", request.x_pos, request.y_pos);
+    if (request.speed == 2 * FPS) {
+        printf("bomb request\n");
+        if (has_bomb(game->map[request.y_pos][request.x_pos].cell) && request.command == 0) {
+            game->map[request.y_pos][request.x_pos].cell = grass_cell(0);
+        }
+    }
+    // Move to new coords if possible
+    else if (can_go_to_cell(game->map[request.y_pos][request.x_pos])) {
+        printf("move request\n");
+        map_coords_to_player_coords(request.x_pos, request.y_pos, &game->players[player_key].x_pos, &game->players[player_key].y_pos);
+        // Pose bomb
+        if (request.command) {
+            if (game->players[player_key].bombs_left && can_pose_bomb(game->map[request.y_pos][request.x_pos].cell)) {
+                game->map[request.y_pos][request.x_pos].cell = add_bomb_to_cell(game->map[request.y_pos][request.x_pos].cell);
+                game->players[player_key].bombs_left--;
+            } else {
+                printf("Cannot pose bomb at x%d y%d\n", request.x_pos, request.y_pos);
+            }
+        }
+    }
+    game->players[player_key].current_dir = request.dir;
+
 }
 
 void *server(void *arg) {
@@ -35,7 +59,6 @@ void *server(void *arg) {
     int running;
     int waiting_lobby;
     fd_set active_fd_set, read_fd_set;
-    struct timeval timeout;
     int *server_port = (int*) arg;
 
     sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -43,8 +66,6 @@ void *server(void *arg) {
         perror("socket()");
         pthread_exit(NULL);
     }
-    timeout.tv_sec = 10;
-    timeout.tv_usec = 0;
 
     server.sin_addr.s_addr = htonl(INADDR_ANY);
     server.sin_family = AF_INET;
@@ -66,7 +87,7 @@ void *server(void *arg) {
     printf("# Server - Number of clients : %d/%d\n", number_of_clients, MAX_PLAYERS);
     while (running) {
         read_fd_set = active_fd_set;
-        if (select(FD_SETSIZE, &read_fd_set, NULL, NULL, &timeout) < 0) {
+        if (select(FD_SETSIZE, &read_fd_set, NULL, NULL, NULL) < 0) {
             perror("select");
             pthread_exit(NULL);
         }
@@ -120,10 +141,7 @@ void *server(void *arg) {
                             FD_CLR(i, &active_fd_set);
                         } else {
                             if (verify_request(client_request)) {
-                                int player_key = client_request.magic / 16 - 1;
-                                if (can_go_to_cell(game_infos.map[client_request.y_pos][client_request.x_pos])) {
-                                    map_coords_to_player_coords(client_request.x_pos, client_request.y_pos, &game_infos.players[player_key].x_pos, &game_infos.players[player_key].y_pos);
-                                }
+                                processRequest(&game_infos, client_request);
                             }
                             send(i, &game_infos, sizeof(game_infos), 0);
                         }
@@ -144,10 +162,7 @@ void init_game_infos(game_infos_t *game_infos)
 {
     mapInit(game_infos);
     initPlayer(&game_infos->players[0], 1);
-    game_infos->players[0].life = 30;
     initPlayer(&game_infos->players[1], 2);
     initPlayer(&game_infos->players[2], 3);
     initPlayer(&game_infos->players[3], 4);
-
-    printf("%d", game_infos->players[0].life);
 }

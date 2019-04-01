@@ -11,10 +11,6 @@ void drawMap(game_t *game) {
     while (y < Y_MAP_SIZE) {
         while (x < X_MAP_SIZE) {
             switch (get_cell_type(game->map[y][x].cell)) {
-                case MAP_BOMB:
-                    SDL_RenderCopy(game->sdl->renderer, game->textures->grass, NULL, &position);
-                    SDL_RenderCopy(game->sdl->renderer, game->textures->bomb, NULL, &position);
-                    break;
                 case MAP_WALL_UNBREAKABLE:
                     SDL_RenderCopy(game->sdl->renderer, game->textures->stone, NULL, &position);
                     break;
@@ -24,6 +20,10 @@ void drawMap(game_t *game) {
                 case MAP_GRASS:
                     SDL_RenderCopy(game->sdl->renderer, game->textures->grass, NULL, &position);
                     break;
+            }
+            if (has_bomb(game->map[y][x].cell)) {
+                drawBombs(game, position);
+                printf("bomb duration is %d\n", game->map[y][x].duration);
             }
             x++;
             position.x += 40;
@@ -35,22 +35,37 @@ void drawMap(game_t *game) {
     }
 }
 
-void drawBombs(game_t *game) {
-    bomb_node_t *bomb_node = game->bombs->first;
-    while (bomb_node != NULL) {
-      if (bomb_node->bomb->duration <= 0) {
-      	bombExplosion(bomb_node->bomb, game);
-	removeBomb(game, bomb_node->bomb);
-	break;
-      }
-      renderTexture(
-		    game->textures->bomb,
-		    game->sdl,
-		    bomb_node->bomb->x,
-		    bomb_node->bomb->y,
-		    &game->textures->bomb_clips[bomb_node->bomb->clip]);
-      bomb_node = bomb_node->next;
+void drawBombs(game_t *game, SDL_Rect position) {
+    int x;
+    int y;
+    player_coords_to_map_coords(position.x, position.y, &x, &y);
+    int bomb_clip = 0;
+    if (game->map[y][x].duration > 80 && game->map[y][x].duration < 110) {
+        bomb_clip = 2;
+    } else if (game->map[y][x].duration > 15 && game->map[y][x].duration < 50) {
+        bomb_clip = 1;
+    } else if (game->map[y][x].duration > 0 && game->map[y][x].duration < 15) {
+        bomb_clip = 3;
     }
+    game->map[y][x].duration--;
+    if (game->map[y][x].duration <= 0) {
+        printf("Sending bomb_explode request");
+        /*printf("previous request pos x%d y%d\n", game->request.x_pos, game->request.y_pos);
+        game->request.command = 0;
+        game->request.x_pos = x;
+        game->request.y_pos = y;*/
+        /*send_request(game);
+        game->request.speed = game->player[game->player_key].current_speed;
+        game->request.x_pos = 0;
+        game->request.y_pos = 0;*/
+        send_bomb_exploded(game->client_sock, position.x, position.y);
+    }
+    renderTexture(
+        game->textures->bomb,
+        game->sdl,
+        position.x,
+        position.y,
+        &game->textures->bomb_clips[bomb_clip]);
 }
 
 void drawPlayer(game_t *game) {

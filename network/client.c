@@ -5,9 +5,6 @@
 int getServerInfo(int socket, game_t *game)
 {
     game_infos_t game_infos;
-    puts("recv game_infos\n");
-    printf("Actual client is Player [%d]\n", game->player_key);
-    printf("Waiting to receive game_infos...\n");
     if (recv(socket, &game_infos, sizeof(game_infos), 0)) {
         if (game_infos.players[game->player_key].x_pos > 0 && game_infos.players[game->player_key].y_pos > 0) {
             int y = 0;
@@ -20,19 +17,24 @@ int getServerInfo(int socket, game_t *game)
                     }
                 }
                 game->map[y][x].cell = game_infos.map[y][x].cell;
-                game->map[y][x].bomb_timing = game_infos.map[y][x].bomb_timing;
+                if (has_bomb(game->map[y][x].cell) && game->map[y][x].duration == 0) {
+                    game->map[y][x].duration = 2 * FPS;
+                }
                 x++;
             }
             for (int i = 0; i < MAX_PLAYERS; i++) {
-                game->player[i].x_pos = game_infos.players[i].x_pos;
-                game->player[i].y_pos = game_infos.players[i].y_pos;
-                game->player[i].alive = game_infos.players[i].alive;
-                game->player[i].current_speed = game_infos.players[i].current_speed;
-                game->player[i].max_speed = game_infos.players[i].max_speed;
-                game->player[i].bombs_left = game_infos.players[i].bombs_left;
-                game->player[i].bombs_capacity = game_infos.players[i].bombs_capacity;
-                printf("new position for Player [%d] [X]%d [Y]%d\n", i, game_infos.players[i].x_pos, game_infos.players[i].y_pos);
+                if (game_infos.players[i].alive) {
+                    game->player[i].x_pos = game_infos.players[i].x_pos;
+                    game->player[i].y_pos = game_infos.players[i].y_pos;
+                    game->player[i].alive = game_infos.players[i].alive;
+                    game->player[i].current_speed = game_infos.players[i].current_speed;
+                    game->player[i].max_speed = game_infos.players[i].max_speed;
+                    game->player[i].bombs_left = game_infos.players[i].bombs_left;
+                    game->player[i].bombs_capacity = game_infos.players[i].bombs_capacity;
+                }
+
             }
+            printf("New player coords x%d y%d\n", game->player[game->player_key].x_pos, game->player[game->player_key].y_pos);
             return 1;
         }
     }

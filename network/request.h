@@ -25,7 +25,8 @@ int is_cell_in_flame(char cell);
 int get_cell_type(char cell);
 int is_cell_bombed(char cell);
 
-int send_request(int, int, t_client_request*);
 int verify_request(t_client_request);
+
+int send_bomb_exploded(int, int, int);
 
 #endif

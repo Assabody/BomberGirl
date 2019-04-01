@@ -155,8 +155,6 @@ char *showInputNumberMenu(game_t *, const char *);
 
 void showPromptMessage(game_t *, const char *, SDL_Rect, SDL_Color);
 
-void showText(game_t *, const char *, SDL_Rect, SDL_Color);
-
 int hostGame(game_t *);
 
 int waitingLobby(game_t *);
@@ -169,7 +167,7 @@ void ask_for_port(SDL_Renderer *, TTF_Font *, char *);
 /**
  * Drawing.c
  */
-void drawBombs(game_t *);
+void drawBombs(game_t *, SDL_Rect);
 
 void drawPlayer(game_t *game);
 
@@ -206,6 +204,7 @@ char *bombDurationToChar(bomb_t *);
 int checkBreakableWall(cell_t);
 
 
+
 /**
  * Player.c
  */
@@ -230,6 +229,12 @@ int grass_cell(char);
 int breakable_wall_cell(char);
 
 int unbreakable_wall_cell(char);
+
+int can_pose_bomb(char);
+
+int add_bomb_to_cell(char);
+
+int has_bomb(char);
 
 
 /**
@@ -260,5 +265,10 @@ void *server(void *arg);
 void startServer(game_t *, int *);
 
 void stopServer(game_t *);
+
+/**
+ * Request.c
+ */
+int send_request(game_t *game);
 
 #endif

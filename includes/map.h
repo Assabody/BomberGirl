@@ -13,11 +13,10 @@
 #define MAP_WALL_BREAKABLE 3
 #define MAP_WALL_UNBREAKABLE 1
 #define MAP_GRASS 0
-#define MAP_BOMB 'b'
 
 typedef struct cell_c {
     unsigned char cell;
-    unsigned char bomb_timing;
+    unsigned char duration;
 } cell_t;
 
 #endif //_MAP_H_

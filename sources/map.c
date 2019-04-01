@@ -6,7 +6,7 @@ void mapInit(game_infos_t *game_infos)
     for (int y = 0; y <= Y_MAP_SIZE; y++) {
         for (int x = 0; x <= X_MAP_SIZE; x++) {
             game_infos->map[y][x].cell = 0;
-            game_infos->map[y][x].bomb_timing = 0;
+            game_infos->map[y][x].duration = -1;
             if (x == X_MAP_SIZE - 1 || y == Y_MAP_SIZE - 1 || x == 0 || y == 0) {
                 // borders
                 game_infos->map[y][x].cell = unbreakable_wall_cell(0);

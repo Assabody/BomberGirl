@@ -14,3 +14,20 @@ int unbreakable_wall_cell(char cell)
 {
     return cell | 0x02;
 }
+
+int has_bomb(char cell)
+{
+    return ((cell >> 3) & 0x01);
+}
+
+int add_bomb_to_cell(char cell)
+{
+    return cell | 0x08;
+}
+
+int can_pose_bomb(char cell) {
+    if (get_cell_type(cell) == MAP_GRASS && !has_bomb(cell)) {
+        return 1;
+    }
+    return 0;
+}

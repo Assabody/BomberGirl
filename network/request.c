@@ -1,23 +1,28 @@
 #include "request.h"
 #include "../includes/main.h"
 
-int send_request(int socket, int client_token, t_client_request *request) {
-    request->magic = (client_token + 1) * 16;
-    request->checksum = request->dir + request->speed + request->command + request->x_pos + request->y_pos + request->magic;
-    /*printf("Sending request to server...\n");
-    printf("From Player [%d]\n", client_token);
-    printf("Request content:\n");
-    printf("  MAGIC:%d\n", request->magic);
-    printf("  Y_POS:%d\n", request->y_pos);
-    printf("  X_POS:%d\n", request->x_pos);
-    printf("  COMMAND:%d\n", request->command);
-    printf("  SPEED:%d\n", request->speed);
-    printf("  DIR:%d\n", request->dir);
-    printf("#checksum (%d)\n", request->checksum);*/
+int send_bomb_exploded(int socket, int x, int y) {
+    int x_map;
+    int y_map;
+    t_client_request request;
+    player_coords_to_map_coords(x, y, &x_map, &y_map);
+    request.speed = 2 * FPS;
+    request.command = 0;
+    request.x_pos = x_map;
+    request.y_pos = y_map;
+    return send(socket, &request, sizeof(request), 0);
+}
 
-    if (send(socket, request, sizeof(*request), 0)) {
-        request->magic = 0;
-        request->command = 0;
+int send_request(game_t *game) {
+    game->request.magic = (game->player_key + 1) * 16;
+    game->request.checksum = game->request.dir + game->request.speed + game->request.command + game->request.x_pos + game->request.y_pos + game->request.magic;
+
+    if (send(game->client_sock, &game->request, sizeof(game->request), 0)) {
+        game->request.magic = 0;
+        game->request.command = 0;
+        game->request.checksum = 0;
+        game->request.dir = UP;
+        game->request.speed = game->player[game->player_key].current_speed;
         return 1;
     }
     return 0;
@@ -35,7 +40,12 @@ char *serialize_int(int value)
 }
 
 int verify_request(t_client_request request) {
-    return (request.checksum == request.magic + request.y_pos + request.x_pos + request.command + request.speed + request.dir);
+    if (request.checksum == request.magic + request.y_pos + request.x_pos + request.command + request.speed + request.dir) {
+        return 1;
+    } else if (!request.command && request.speed == 2 * FPS) {
+        return 1;
+    }
+    return 0;
 }
 
 char * serialize_char(char *buffer, char value)

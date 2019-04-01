@@ -98,7 +98,7 @@ int menuWindow(game_t *game) {
                                  if (waitingLobby(game)) {
                                      drawGame(game);
                                  } else {
-                                     showPromptMessage(game, "Stopping server...", text_pos, white);
+                                     disp_text(game->sdl->renderer, "Stopping server...", game->sdl->font, 80, 80);
                                      stopServer(game);
                                  }
                             }
@@ -130,10 +130,9 @@ int menuWindow(game_t *game) {
         }
     } while (!quit);
     game->running = 0;
-    free(menus[0].text);
-    free(menus[1].text);
-    free(menus[2].text);
-    free(menus[3].text);
+    for (int i = 0; i < menu_size; i++) {
+        free(menus[i].text);
+    }
     free(menus);
     free(port);
     free(address);
@@ -311,7 +310,9 @@ void ask_for_port(SDL_Renderer *renderer, TTF_Font *font, char *port) {
         usleep(200);
         SDL_RenderClear(renderer);
         disp_text(renderer, "port", font, 240, 200);
-        disp_text(renderer, port, font, 240, 230);
+        if (strlen(port)) {
+            disp_text(renderer, port, font, 240, 230);
+        }
         SDL_RenderPresent(renderer);
     }
 }
@@ -347,7 +348,9 @@ void ask_for_ip(SDL_Renderer *renderer, TTF_Font *font, char *ip) {
         usleep(200);
         SDL_RenderClear(renderer);
         disp_text(renderer, "ip address", font, 240, 200);
-        disp_text(renderer, ip, font, 240, 230);
+        if (strlen(ip)) {
+            disp_text(renderer, ip, font, 240, 230);
+        }
         SDL_RenderPresent(renderer);
     }
 }
