@@ -20,7 +20,8 @@ typedef struct player_s
     int bombs_left;
     int bombs_capacity;
     int frags;
-  int	life;
+    int bomb_radius;
+    int	life;
 } player_t;
 
 #endif

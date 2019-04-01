@@ -234,6 +234,12 @@ int add_bomb_to_cell(char);
 
 int has_bomb(char);
 
+int has_flame(char);
+
+int flame_cell(char);
+
+void explode_cell(cell_t *);
+
 
 /**
  * Bonus.c

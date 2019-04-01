@@ -38,8 +38,7 @@ sdl_t *initSdl() {
     return sdl;
 }
 
-void clearSdl(sdl_t *sdl)
-{
+void clearSdl(sdl_t *sdl) {
     puts("Clearing sdl");
     if (sdl) {
         if (sdl->renderer) {
@@ -75,18 +74,20 @@ void renderTexture(SDL_Texture *tex, sdl_t *sdl, int x, int y, SDL_Rect *clip) {
 void clearTextures(textures_t *textures) {
     puts("Clearing textures");
     if (textures) {
-      if (textures->player)
-	  SDL_DestroyTexture(textures->player);
+        if (textures->player)
+            SDL_DestroyTexture(textures->player);
         if (textures->grass)
-	  SDL_DestroyTexture(textures->grass);
+            SDL_DestroyTexture(textures->grass);
         if (textures->stone)
-	  SDL_DestroyTexture(textures->stone);
+            SDL_DestroyTexture(textures->stone);
         if (textures->brick)
-	  SDL_DestroyTexture(textures->brick);
+            SDL_DestroyTexture(textures->brick);
         if (textures->bomb)
-	  SDL_DestroyTexture(textures->bomb);
-	if (textures->menu)
-	  SDL_DestroyTexture(textures->menu);
+            SDL_DestroyTexture(textures->bomb);
+        if (textures->menu)
+            SDL_DestroyTexture(textures->menu);
+        if (textures->flame)
+            SDL_DestroyTexture(textures->flame);
     }
     free(textures);
     textures = NULL;
@@ -143,6 +144,17 @@ textures_t *initTextures(sdl_t *sdl) {
         }
     }
 
+    SDL_Surface *flameSurface = IMG_Load("./assets/images/flame.png");
+    if (!flameSurface) {
+        fprintf(stderr, SDL_GetError());
+    } else {
+        textures->flame = SDL_CreateTextureFromSurface(sdl->renderer, flameSurface);
+        SDL_FreeSurface(flameSurface);
+        if (!textures->flame) {
+            fprintf(stderr, SDL_GetError());
+        }
+    }
+
     SDL_Surface *bombSurface = IMG_Load("./assets/images/bombeSprite.png");
     if (!bombSurface) {
         fprintf(stderr, SDL_GetError());
@@ -168,7 +180,8 @@ textures_t *initTextures(sdl_t *sdl) {
         fprintf(stderr, SDL_GetError());
     } else {
         textures->player = SDL_CreateTextureFromSurface(sdl->renderer, playerSurface);
-        SDL_Rect dest = {640 / 2 - playerSurface->w / 2, 480 / 2 - playerSurface->h / 2, playerSurface->w, playerSurface->h};
+        SDL_Rect dest = {640 / 2 - playerSurface->w / 2, 480 / 2 - playerSurface->h / 2, playerSurface->w,
+                         playerSurface->h};
         SDL_BlitSurface(playerSurface, NULL, SDL_GetWindowSurface(sdl->window), &dest);
         for (int i = 0; i < 4; ++i) {
             textures->player_clips[i].x = i / 2 * iW;

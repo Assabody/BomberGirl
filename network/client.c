@@ -37,7 +37,7 @@ int getServerInfo(int socket, game_t *game)
                 }
 
             }
-            printf("New player coords x%d y%d\n", game->player[game->player_key].x_pos, game->player[game->player_key].y_pos);
+            //printf("New player coords x%d y%d\n", game->player[game->player_key].x_pos, game->player[game->player_key].y_pos);
             return 1;
         }
     }

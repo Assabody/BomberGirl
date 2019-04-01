@@ -98,20 +98,20 @@ void updateBombs(game_t *game) {
 
 void bombCheckObjectRadius(game_t *game, bomb_t *bomb)
 {
-  if (get_cell_type(game->map[bomb->y / 40 ][bomb->x / 40 + RADIUS].cell) == MAP_WALL_BREAKABLE) {
-    game->map[bomb->y / 40][bomb->x / 40 + RADIUS].cell = grass_cell(0);
-  } else if (get_cell_type(game->map[bomb->y / 40 ][bomb->x / 40 - RADIUS].cell) == MAP_WALL_BREAKABLE) {
-    game->map[bomb->y / 40][bomb->x / 40 - RADIUS].cell = grass_cell(0);
-  } else if (get_cell_type(game->map[bomb->y / 40 - RADIUS][bomb->x / 40].cell) == MAP_WALL_BREAKABLE) {
-    game->map[bomb->y / 40 - RADIUS][bomb->x / 40].cell = grass_cell(0);
-  } else if (get_cell_type(game->map[bomb->y / 40 + RADIUS][bomb->x / 40].cell) == MAP_WALL_BREAKABLE) {
-    game->map[bomb->y / 40 + RADIUS][bomb->x / 40].cell = grass_cell(0);
-  }
-  checkPlayerDamagesFromBombs(game, bomb);
+    if (get_cell_type(game->map[bomb->y / 40 ][bomb->x / 40 + RADIUS].cell) == MAP_WALL_BREAKABLE) {
+        game->map[bomb->y / 40][bomb->x / 40 + RADIUS].cell = grass_cell(0);
+    } else if (get_cell_type(game->map[bomb->y / 40 ][bomb->x / 40 - RADIUS].cell) == MAP_WALL_BREAKABLE) {
+        game->map[bomb->y / 40][bomb->x / 40 - RADIUS].cell = grass_cell(0);
+    } else if (get_cell_type(game->map[bomb->y / 40 - RADIUS][bomb->x / 40].cell) == MAP_WALL_BREAKABLE) {
+        game->map[bomb->y / 40 - RADIUS][bomb->x / 40].cell = grass_cell(0);
+    } else if (get_cell_type(game->map[bomb->y / 40 + RADIUS][bomb->x / 40].cell) == MAP_WALL_BREAKABLE) {
+        game->map[bomb->y / 40 + RADIUS][bomb->x / 40].cell = grass_cell(0);
+    }
+    checkPlayerDamagesFromBombs(game, bomb);
 }
 
 void	checkPlayerDamagesFromBombs(game_t *game, bomb_t *bomb)
-{ 
+{
   if (bomb->y == game->player->y_pos && bomb->x == game->player->x_pos) {
       puts("Player ON BOMB");
   } else if (bomb->y / 40 + RADIUS == game->player->y_pos / 40

@@ -21,7 +21,9 @@ void drawMap(game_t *game) {
                     SDL_RenderCopy(game->sdl->renderer, game->textures->grass, NULL, &position);
                     break;
             }
-            if (has_bomb(game->map[y][x].cell)) {
+            if (has_flame(game->map[y][x].cell) && ) {
+                SDL_RenderCopy(game->sdl->renderer, game->textures->flame, NULL, &position);
+            } else if (has_bomb(game->map[y][x].cell)) {
                 drawBombs(game, position);
                 printf("bomb duration is %d\n", game->map[y][x].duration);
             }

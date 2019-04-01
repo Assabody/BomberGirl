@@ -12,6 +12,7 @@ void initPlayer(player_t *player, int player_position)
     player->frags = 0;
     player->life = 30;
     player->token = 0;
+    player->bomb_radius = 1;
     switch (player_position) {
         case 1:
             map_coords_to_player_coords(1, 1, &player->x_pos, &player->y_pos);

@@ -26,6 +26,7 @@ typedef struct textures_s {
     SDL_Texture *stone;
     SDL_Texture *brick;
     SDL_Texture *bomb;
+    SDL_Texture *flame;
     SDL_Rect bomb_clips[4];
     SDL_Rect player_clips[4];
 } textures_t;
