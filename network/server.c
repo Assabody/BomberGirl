@@ -74,7 +74,7 @@ void *server(void *arg) {
     printf("# Server - Number of clients : %d/%d\n", number_of_clients, MAX_PLAYERS);
     while (running) {
         read_fd_set = active_fd_set;
-        if (select(FD_SETSIZE, &read_fd_set, NULL, NULL, NULL) < 0) {
+        if (select(FD_SETSIZE, &read_fd_set, NULL, NULL, &timeout) < 0) {
             perror("select");
             pthread_exit(NULL);
         }
@@ -90,14 +90,13 @@ void *server(void *arg) {
                         if (number_of_clients >= MAX_PLAYERS || waiting_lobby == 0) {
                             close(new);
                         } else {
-                            printf("# Server - Client connected\n");
-                            printf("# Server - Send token\n");
+                            /*printf("# Server - Client connected\n");
+                            printf("# Server - Send token\n");*/
                             send(new, &number_of_clients, sizeof(number_of_clients), 0);
                             game_infos.players[number_of_clients].alive = 1;
                             number_of_clients++;
-                            printf("# Server - Number of clients : %d/%d\n", number_of_clients, MAX_PLAYERS);
-                            printf("# Server - In the game\n");
-                            printf("# Server - Send game_infos\n");
+                            /*printf("# Server - Number of clients : %d/%d\n", number_of_clients, MAX_PLAYERS);
+                            printf("# Server - Send game_infos\n");*/
                             send(new, &game_infos, sizeof(game_infos), 0);
                             FD_SET(new, &active_fd_set);
                         }
@@ -108,7 +107,7 @@ void *server(void *arg) {
                         char answer;
 
                         if (recv(i, &text, sizeof(text), 0)) {
-                            printf("# Server - in lobby, received %s, there is %d clients\n", text, number_of_clients);
+                            //printf("# Server - in lobby, received %s, there is %d clients\n", text, number_of_clients);
                             if (strncmp(text, "list", 4) == 0) {
                                 answer = number_of_clients;
                                 send(i, &answer, sizeof(char), 0);
@@ -122,7 +121,7 @@ void *server(void *arg) {
                         }
                     } else {
                         t_client_request client_request;
-                        puts("# Server - receiving game_infos\n");
+                        //puts("# Server - receiving game_infos\n");
                         if (!recv(i, &client_request, sizeof(client_request), 0)) {
                             printf("# Server - Client disconnected, killing him\n");
                             game_infos.players[number_of_clients].alive = 0;
@@ -131,22 +130,21 @@ void *server(void *arg) {
                             close(i);
                             FD_CLR(i, &active_fd_set);
                         } else {
-                            printf("== Request received ==\n");
+                            //printf("== Request received ==\n");
                             if (verify_request(client_request)) {
                                 int player_key = client_request.magic / 16 - 1;
-                                printf("Request sent by player [%d]\n", player_key);
-                                printf("  x_pos %d\n  y_pos %d\n", client_request.x_pos, client_request.y_pos);
+                                //printf("Request sent by player [%d]\n", player_key);
+                                //printf("  x_pos %d\n  y_pos %d\n", client_request.x_pos, client_request.y_pos);
                                 if (can_go_to_cell(game_infos.map[client_request.y_pos][client_request.x_pos])) {
                                     map_coords_to_player_coords(client_request.x_pos, client_request.y_pos, &game_infos.players[player_key].x_pos, &game_infos.players[player_key].y_pos);
                                 }
-                                printf("player at [X]%d  [Y]%d (%d %d)\n", game_infos.players[player_key].x_pos, game_infos.players[player_key].y_pos, client_request.x_pos, client_request.y_pos);
-                                if (client_request.command == 1)
-                                    printf("pose bomb\n");
-                            } else {
+                                /*if (client_request.command == 1)
+                                    printf("pose bomb\n");*/
+                            } /*else {
                                 printf("# Server - bad request data (checksum)\n");
-                            }
-                            printf("==   End Request   ==\n");
-                            puts("# Server - sending game_infos\n");
+                            }*/
+                            //printf("==   End Request   ==\n");
+                            //puts("# Server - sending game_infos\n");
                             send(i, &game_infos, sizeof(game_infos), 0);
                         }
                     }
@@ -166,6 +164,7 @@ void init_game_infos(game_infos_t *game_infos)
 {
     mapInit(game_infos);
 
+    memset(game_infos->clients_addresses, 0, sizeof(struct sockaddr_in) * MAX_PLAYERS);
     initPlayer(&game_infos->players[0], 1);
     initPlayer(&game_infos->players[1], 2);
     initPlayer(&game_infos->players[2], 3);

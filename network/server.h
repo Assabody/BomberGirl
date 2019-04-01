@@ -30,6 +30,7 @@ typedef struct game_infos_s
 {
     player_t players[MAX_PLAYERS];
     cell_t map[Y_MAP_SIZE][X_MAP_SIZE];
+    struct sockaddr_in clients_addresses[MAX_PLAYERS];
 } game_infos_t;
 
 void init_game_infos(game_infos_t *game_infos);
