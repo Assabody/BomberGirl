@@ -33,23 +33,23 @@ void print_map(game_t *game)
 {
     if (game->map != NULL) {
         for (int y = 0; y < Y_MAP_SIZE; y++) {
-            for (int x = 0; x < X_MAP_SIZE; x++) {
-                switch (get_cell_type(game->map[y][x].cell)) {
-                    case MAP_WALL_UNBREAKABLE:
-                        printf("u");
-                        break;
-                    case MAP_WALL_BREAKABLE:
-                        printf("b");
-                        break;
-                    case MAP_GRASS:
-                        printf("g");
-                        break;
-                    default:
-                        printf("\nother: %d\n", get_cell_type(game->map[y][x].cell));
-                }
-                putchar(' ');
-            }
-            putchar('\n');
+	  for (int x = 0; x < X_MAP_SIZE; x++) {
+	    switch (get_cell_type(game->map[y][x].cell)) {
+	    case MAP_WALL_UNBREAKABLE:
+	      printf("u");
+	      break;
+	    case MAP_WALL_BREAKABLE:
+	      printf("b");
+	      break;
+	    case MAP_GRASS:
+	      printf("g");
+	      break;
+	    default:
+	      printf("\nother: %d\n", get_cell_type(game->map[y][x].cell));
+	    }
+	    putchar(' ');
+	  }
+	  putchar('\n');
         }
     }
 }

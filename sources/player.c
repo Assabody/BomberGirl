@@ -10,6 +10,8 @@ void initPlayer(player_t *player, int player_position)
     player->current_speed = SPEED;
     player->max_speed = MAX_SPEED;
     player->frags = 0;
+    player->life = 30;
+    printf("%i\n\n", player->life);
     switch (player_position) {
         case 1:
             map_coords_to_player_coords(1, 1, &player->x_pos, &player->y_pos);

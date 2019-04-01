@@ -41,7 +41,7 @@
 #define DAMAGES 10
 #define PLAYER_LIFE 30
 #define WALL_LIFE 10
-#define RADIUS 40
+#define RADIUS 1
 
 // bonus
 #define RANGE_BONUS 0 // 000
@@ -202,6 +202,8 @@ void bombCheckObjectRadius(game_t *, bomb_t *);
 void checkPlayerDamagesFromBombs(game_t *, bomb_t *);
 
 char *bombDurationToChar(bomb_t *);
+
+int checkBreakableWall(cell_t);
 
 
 /**

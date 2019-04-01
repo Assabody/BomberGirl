@@ -143,10 +143,11 @@ void *server(void *arg) {
 void init_game_infos(game_infos_t *game_infos)
 {
     mapInit(game_infos);
-
-    memset(game_infos->clients_addresses, 0, sizeof(struct sockaddr_in) * MAX_PLAYERS);
     initPlayer(&game_infos->players[0], 1);
+    game_infos->players[0].life = 30;
     initPlayer(&game_infos->players[1], 2);
     initPlayer(&game_infos->players[2], 3);
     initPlayer(&game_infos->players[3], 4);
+
+    printf("%d", game_infos->players[0].life);
 }
