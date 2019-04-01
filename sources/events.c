@@ -6,27 +6,25 @@ void checkEvents(game_t *game) {
     if (SDL_PollEvent(&event)) {
         if (event.type == SDL_QUIT) {
             printf("Vous quittez le jeu\n");
+            close(game->client_sock);
             game->running = 0;
         }
         if (event.type == SDL_KEYDOWN) {
             switch (event.key.keysym.sym) {
                 case SDLK_SPACE:
                     placeBomb(game, game->player[game->player_key].x_pos, game->player[game->player_key].y_pos);
-                    /*game->request.magic = 1;
-                    game->request.command = 1;*/
-                    puts("bomb placed");
+                    puts("bomb placed\n");
                     break;
                 case SDLK_ESCAPE:
                     game->running = 0;
                     printf("Vous quittez le jeu\n");
+                    close(game->client_sock);
                     break;
                 case SDLK_UP:
                 case SDLK_DOWN:
                 case SDLK_LEFT:
                 case SDLK_RIGHT:
                     movePlayer(game, event.key.keysym.sym);
-                    //send_message(game->client_sock, SDL_GetKeyName(event.key.keysym.sym));
-                    //read_message(game->client_sock);
                     break;
                 default:
                     fprintf(stderr, "Touche inconnue\n");

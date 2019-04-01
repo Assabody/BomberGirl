@@ -2,12 +2,6 @@
 #include "../includes/main.h"
 #include "server.h"
 
-void error(const char *msg)
-{
-    perror(msg);
-    exit(0);
-}
-
 int getServerInfo(int socket, game_t *game)
 {
     game_infos_t game_infos;
@@ -29,10 +23,6 @@ int getServerInfo(int socket, game_t *game)
                 game->map[y][x].bomb_timing = game_infos.map[y][x].bomb_timing;
                 x++;
             }
-            /*if (game->player.token == -1) {
-                printf("actual %d new %d\n", game->player.token, game_infos.players[game->player.token].token);
-                game->player.token = game_infos.players[game->player.token].token;
-            }*/
             for (int i = 0; i < MAX_PLAYERS; i++) {
                 game->player[i].x_pos = game_infos.players[i].x_pos;
                 game->player[i].y_pos = game_infos.players[i].y_pos;
@@ -43,7 +33,6 @@ int getServerInfo(int socket, game_t *game)
                 game->player[i].bombs_capacity = game_infos.players[i].bombs_capacity;
                 printf("new position for Player [%d] [X]%d [Y]%d\n", i, game_infos.players[i].x_pos, game_infos.players[i].y_pos);
             }
-            //game->player = game_infos.players[game->player.token];
             return 1;
         }
     }
@@ -84,4 +73,8 @@ int initClient(char *address, char *port, game_t *game)
     if (!getServerInfo(sockfd, game))
         return -1;
     return sockfd;
+}
+
+void quit_client(int socket) {
+    close(socket);
 }

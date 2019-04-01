@@ -2,7 +2,7 @@
 
 void initPlayer(player_t *player, int player_position)
 {
-    player->alive = 1;
+    player->alive = 0;
     player->bombs_capacity = 1;
     player->bombs_left = 1;
     player->current_dir = UP;
@@ -29,12 +29,3 @@ void initPlayer(player_t *player, int player_position)
 void printPlayerStruct(player_t *player) {
     printf("PlayerStruct\n  alive: %d\n  bombs: %d/%d\n  dir: %d\n  token: %d\n  speed: %d/%d\n  pos: X %d - Y %d\n  frags: %d\n\n", player->alive, player->bombs_left, player->bombs_capacity, player->current_dir, player->token, player->current_speed, player->max_speed, player->x_pos, player->y_pos, player->frags);
 }
-
-/*
-char *serializePlayer(player_t *player)
-{
-    char *buffer = malloc(sizeof(char) * (8 * 10);
-    strcpy(buffer, serialize_int(player->token));
-    buffer
-    buffer[81] =
-}*/

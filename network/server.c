@@ -5,6 +5,27 @@ int connect_client(int sock, struct sockaddr_in *client_addr) {
     return accept(sock, (struct sockaddr *) client_addr, (socklen_t*)&len);
 }
 
+void startServer(game_t *game, int *port) {
+    printf("Creation du thread server.\n");
+    if (pthread_create(&game->server.server_thread, NULL, server, (void *) port)) {
+        perror("pthread_create");
+        free(port);
+    } else {
+        game->server.started = 1;
+    }
+}
+
+void stopServer(game_t *game) {
+    int result = -9;
+
+    char query[4] = {'s','t','o','p'};
+    send(game->client_sock, &query, sizeof(query), 0);
+
+    printf("pthread_join\n");
+    pthread_join(game->server.server_thread, (void *)&result);
+    printf("Server result %d\n", result);
+}
+
 void *server(void *arg) {
     int sock;
     int number_of_clients;
@@ -72,6 +93,7 @@ void *server(void *arg) {
                             printf("# Server - Client connected\n");
                             printf("# Server - Send token\n");
                             send(new, &number_of_clients, sizeof(number_of_clients), 0);
+                            game_infos.players[number_of_clients].alive = 1;
                             number_of_clients++;
                             printf("# Server - Number of clients : %d/%d\n", number_of_clients, MAX_PLAYERS);
                             printf("# Server - In the game\n");
@@ -102,7 +124,8 @@ void *server(void *arg) {
                         t_client_request client_request;
                         puts("# Server - receiving game_infos\n");
                         if (!recv(i, &client_request, sizeof(client_request), 0)) {
-                            printf("# Server - Client disconnected\n");
+                            printf("# Server - Client disconnected, killing him\n");
+                            game_infos.players[number_of_clients].alive = 0;
                             number_of_clients--;
                             printf("# Server - Number of clients : %d/%d\n", number_of_clients, MAX_PLAYERS);
                             close(i);
@@ -127,7 +150,10 @@ void *server(void *arg) {
                             send(i, &game_infos, sizeof(game_infos), 0);
                         }
                     }
-
+                    if (number_of_clients <= 0) {
+                        printf("# Server - No player connected, stopping server...\n");
+                        running = 0;
+                    }
                 }
             }
         }

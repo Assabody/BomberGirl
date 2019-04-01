@@ -31,8 +31,11 @@ int drawGame(game_t *game)
                 wait_server = 0;
         }
         frameTime = SDL_GetTicks() - frameStart;
+        usleep(1000 - frameTime);
+        /*
         if (TICKS_PER_FRAME > frameTime)
             SDL_Delay(TICKS_PER_FRAME - frameTime);
+            */
 //        if (getServerInfo(game->client_sock, game))
 //            wait_server = 0;
     }

@@ -38,9 +38,6 @@ void gameDestroy(game_t *game) {
         // TO DO: Fix Clear bombs (memory leak)
         clearBombs(game->bombs);
         clearSdl(game->sdl);
-        TTF_Quit();
-        SDL_Quit();
-        free(game);
     }
 }
 
@@ -102,5 +99,6 @@ int main() {
         menuWindow(game);
     }
     gameDestroy(game);
+    free(game);
     return (EXIT_SUCCESS);
 }

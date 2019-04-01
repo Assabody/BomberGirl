@@ -21,7 +21,6 @@ int isServerRunning(game_t *game) {
     if( (ret = pthread_kill(game->server.server_thread, 0)) == 0)
     {
         printf("still running\n");
-        //pthread_join(game->server.server_thread, NULL);
     }
     else
     {
@@ -29,41 +28,24 @@ int isServerRunning(game_t *game) {
     }
     return ret == 0;
 }
-void startServer(game_t *game, int *port) {
-    printf("Creation du thread server.\n");
-    if (pthread_create(&game->server.server_thread, NULL, server, (void *) port)) {
-        perror("pthread_create");
-    } else {
-        game->server.started = 1;
-    }
-}
-
-void stopServer(game_t *game) {
-    int result = -9;
-
-    char query[4] = {'s','t','o','p'};
-    send(game->client_sock, &query, sizeof(query), 0);
-
-    printf("pthread_join\n");
-    pthread_join(game->server.server_thread, (void *)&result);
-    printf("Server result %d\n", result);
-}
 
 int menuWindow(game_t *game) {
     int quit = 0;
     int counter = 0;
-    SDL_Event event;
     int menu_size = 4;
+    int update = 1;
     menu_t *menus = malloc(sizeof(menu_t) * 4);
+    char *address = malloc(sizeof(char) * 15);
+    char *port = malloc(sizeof(char) * 5);
 
     SDL_Color white = { 255, 255, 255, 255 };
-
     SDL_Rect text_pos;
+    SDL_Event event;
+
     text_pos.y = 80;
     text_pos.x = 80;
 
-    char *address = NULL;
-    char *port = NULL;
+
     menus[0].text = strdup("Se connecter a une partie");
     menus[0].enabled = 1;
     menus[1].text = strdup("Heberger une partie");
@@ -77,7 +59,6 @@ int menuWindow(game_t *game) {
     do {
         SDL_RenderClear(game->sdl->renderer);
 
-        int update = 0;
         game->running = 1;
         SDL_WaitEvent(&event);
         if (event.type == SDL_KEYDOWN) {
@@ -92,8 +73,9 @@ int menuWindow(game_t *game) {
                 switch (counter) {
                     case 0:
                         if (menus[counter].enabled) {
-                            address = showInputTextMenu(game, "addresse ip");
-                            port = showInputTextMenu(game, "port");
+                            ask_for_ip(game->sdl->renderer, game->sdl->font, address);
+                            SDL_RenderClear(game->sdl->renderer);
+                            ask_for_ip(game->sdl->renderer, game->sdl->font, port);
                             if (joinGame(address, port, game)) {
                                 if (waitingLobby(game)) {
                                     drawGame(game);
@@ -140,11 +122,11 @@ int menuWindow(game_t *game) {
                         break;
                 }
             }
-        }
-        if (event.type == SDL_QUIT)
+        } else if (event.type == SDL_QUIT)
             quit = 1;
         if (update) {
             showMenu(game, menus, menu_size, counter);
+            update = 0;
         }
     } while (!quit);
     game->running = 0;
@@ -153,23 +135,24 @@ int menuWindow(game_t *game) {
     free(menus[2].text);
     free(menus[3].text);
     free(menus);
+    free(port);
+    free(address);
     return 1;
 }
 
 int hostGame(game_t *game) {
     printf("== Host Game ==\n");
     SDL_Color white = { 255, 255, 255, 255 };
-    char *input_port = NULL;
+    char *input_port = malloc(sizeof(char) * 5);
     char message[30];
+    int retour = 1;
 
     SDL_Rect pos;
     pos.x = 80;
     pos.y = 80;
     SDL_RenderClear(game->sdl->renderer);
     SDL_RenderPresent(game->sdl->renderer);
-    while (input_port == NULL) {
-        input_port = showInputNumberMenu(game, "Host a game - Choose port (0-99999)");
-    }
+    ask_for_port(game->sdl->renderer, game->sdl->font, input_port);
     printf("Port chosen is %s\n", input_port);
     int port = atoi(input_port);
     startServer(game, &port);
@@ -177,14 +160,15 @@ int hostGame(game_t *game) {
     SDL_Delay(60);
     if (!isServerRunning(game)) {
         showPromptMessage(game, "Server error", pos, white);
-        return 0;
-    } else if (!joinGame("localhost", input_port, game) || game->client_sock  <= 0) {
+        retour = 0;
+    } else if (!joinGame("127.0.0.1", input_port, game) || game->client_sock  <= 0) {
         sprintf(message, "Cannot connect to localhost:%s", input_port);
         showPromptMessage(game, message, pos, white);
-        //stopServer();
-        return 0;
+        stopServer(game);
+        retour = 0;
     }
-    return 1;
+    free(input_port);
+    return retour;
 }
 
 int get_clients_number(int sock) {
@@ -198,31 +182,21 @@ int get_clients_number(int sock) {
 int waitingLobby(game_t *game)
 {
     printf("== Waiting Lobby ==\n");
-    SDL_Color white = { 255, 255, 255, 255 };
-    SDL_Rect pos;
     SDL_Event event;
-    unsigned int players;
+    unsigned int players = 4;
+    unsigned int players_tmp = 0;
+    int update = 1;
 
     char message[30];
-    Uint32 frameStart;
-    int frameTime;
 
-    pos.x = 80;
     while (1) {
-        frameStart = SDL_GetTicks();
-        SDL_RenderClear(game->sdl->renderer);
-        pos.y = 80;
-        showText(game, "Waiting for server to start...", pos, white);
-        players = get_clients_number(game->client_sock);
-        if (players > MAX_PLAYERS) {
-            return 1;
+        players_tmp = get_clients_number(game->client_sock);
+        if (players_tmp != players) {
+            players = players_tmp;
+            update = 1;
         }
-        sprintf(message, "%d/%d players", players, MAX_PLAYERS);
-        pos.y = 110;
-        showText(game, message, pos, white);
-        SDL_RenderPresent(game->sdl->renderer);
 
-        while (SDL_PollEvent(&event)) {
+        if (SDL_PollEvent(&event)) {
             switch (event.type) {
                 case SDL_QUIT:
                     return 0;
@@ -234,13 +208,22 @@ int waitingLobby(game_t *game)
                         send(game->client_sock, &query, sizeof(query), 0);
                         return 1;
                     }
-                    break;
             }
         }
+        if (players > MAX_PLAYERS) {
+            return 1;
+        }
 
-        frameTime = SDL_GetTicks() - frameStart;
-        if (TICKS_PER_FRAME > frameTime)
-            SDL_Delay(TICKS_PER_FRAME - frameTime);
+        if (update) {
+            SDL_RenderClear(game->sdl->renderer);
+            disp_text(game->sdl->renderer, "Waiting for server to start...", game->sdl->font, 80, 80);
+            sprintf(message, "%d/%d players", players, MAX_PLAYERS);
+            disp_text(game->sdl->renderer, message, game->sdl->font, 80, 110);
+            SDL_RenderPresent(game->sdl->renderer);
+            update = 0;
+        }
+
+        usleep(1000);
     }
 }
 
@@ -297,164 +280,77 @@ void    showSelection(game_t *game, int menu_selected_number)
     SDL_RenderCopy(game->sdl->renderer, game->textures->bomb, &texture_pos, &selection_pos);
 }
 
-char    *showInputNumberMenu(game_t *game, const char *placeholder)
-{
-    int width;
-    int height;
-    int texW = 0;
-    int texH = 0;
-
-    SDL_Color white = { 255, 255, 255, 255 };
-    SDL_Color gray = { 170, 170, 170, 255 };
-
-    SDL_Rect text_pos;
-    text_pos.y = 80;
-    text_pos.x = 80;
-    SDL_Rect placeholder_pos;
-    placeholder_pos.y = 50;
-    placeholder_pos.x = 80;
-
-    char *text = malloc(sizeof(char) * 6);
-    text = strdup("");
-    int done = 0;
-
-    SDL_GetRendererOutputSize(game->sdl->renderer, &width, &height);
-    SDL_StartTextInput();
-    while (!done) {
-        SDL_Event event;
-        SDL_WaitEvent(&event);
-        switch (event.type) {
-            case SDL_QUIT:
-                done = 1;
-                break;
-            case SDL_TEXTINPUT:
-                if ((strcmp(event.text.text, "0") == 0 ||
-                    strcmp(event.text.text, "1") == 0 ||
-                    strcmp(event.text.text, "2") == 0 ||
-                    strcmp(event.text.text, "3") == 0 ||
-                    strcmp(event.text.text, "4") == 0 ||
-                    strcmp(event.text.text, "5") == 0 ||
-                    strcmp(event.text.text, "6") == 0 ||
-                    strcmp(event.text.text, "7") == 0 ||
-                    strcmp(event.text.text, "8") == 0 ||
-                    strcmp(event.text.text, "9") == 0)
-                && strlen(text) < 5) {
-                    strcat(text, event.text.text);
-                }
-                break;
-            case SDL_KEYDOWN:
-                if(event.key.keysym.scancode == SDL_SCANCODE_BACKSPACE || event.key.keysym.scancode == SDL_SCANCODE_RETURN) {
-                    text[strlen(text)] = '\0';
-                    done = 1;
-                }
-                break;
-        }
-
-        SDL_Surface *surface;
-        if(text && strcmp("", text) != 0)
-            surface = TTF_RenderText_Solid(game->sdl->font, text, white);
-        else
-            surface = TTF_RenderText_Solid(game->sdl->font, "_", gray);
-        SDL_Texture *texture = SDL_CreateTextureFromSurface(game->sdl->renderer, surface);
-        SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
-        SDL_Rect dstrect = { text_pos.x, text_pos.y, texW, texH };
-        SDL_RenderClear(game->sdl->renderer);
-        showText(game, placeholder, placeholder_pos, white);
-        SDL_RenderCopy(game->sdl->renderer, texture, NULL, &dstrect);
-        SDL_DestroyTexture(texture);
-        SDL_FreeSurface(surface);
-        SDL_RenderPresent(game->sdl->renderer);
-    }
-    SDL_StopTextInput();
-    return text;
-}
-
-char    *showInputTextMenu(game_t *game, const char *placeholder)
-{
-    int width;
-    int height;
-    int texW = 0;
-    int texH = 0;
-
-    SDL_Color white = { 255, 255, 255, 255 };
-    SDL_Color gray = { 170, 170, 170, 255 };
-
-    SDL_Rect text_pos;
-    text_pos.y = 80;
-    text_pos.x = 80;
-    SDL_Rect placeholder_pos;
-    placeholder_pos.y = 50;
-    placeholder_pos.x = 80;
-
-    char *text = NULL;
-
-    text = strdup("");
-    int done = 0;
-
-    SDL_GetRendererOutputSize(game->sdl->renderer, &width, &height);
-    SDL_StartTextInput();
-    while (!done) {
-        SDL_Event event;
-        SDL_WaitEvent(&event);
-        switch (event.type) {
-            case SDL_QUIT:
-                done = 1;
-                break;
-            case SDL_TEXTINPUT:
-                if (strlen(text) / sizeof(*text) < 20)
-                    strcat(text, event.text.text);
-                break;
-            case SDL_KEYDOWN:
-                if(event.key.keysym.scancode == SDL_SCANCODE_BACKSPACE) {
-                    if (strlen(text) > 1) {
-                        text[strlen(text) - 1] = '\0';
-                    } else {
-                        text = strdup("");
+void ask_for_port(SDL_Renderer *renderer, TTF_Font *font, char *port) {
+    memset(port, ' ', 5);
+    SDL_Event e;
+    int position = 0;
+    int ok = 0;
+    while (!ok) {
+        if (SDL_PollEvent(&e)) {
+            if (e.type == SDL_KEYDOWN) {
+                if (e.key.keysym.sym >= SDLK_0 && e.key.keysym.sym <= SDLK_9) {
+                    if (position > 4) {
+                        position = 4;
                     }
-                } else if (event.key.keysym.scancode == SDL_SCANCODE_RETURN) {
-                    done = 1;
+                    port[position] = e.key.keysym.sym;
+                    position++;
                 }
-                break;
+                if (e.key.keysym.sym == SDLK_BACKSPACE) {
+                    position--;
+                    if (position < 0) {
+                        position = 0;
+                    }
+                    port[position] = ' ';
+                }
+                if (e.key.keysym.sym == SDLK_RETURN) {
+                    port[position] = 0;
+                    ok = 1;
+                }
+            }
         }
-
-        SDL_Surface *surface;
-        if(text && strcmp("", text) != 0)
-            surface = TTF_RenderText_Solid(game->sdl->font, text, white);
-        else
-            surface = TTF_RenderText_Solid(game->sdl->font, "_", gray);
-        SDL_Texture *texture = SDL_CreateTextureFromSurface(game->sdl->renderer, surface);
-        SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
-        SDL_Rect dstrect = { text_pos.x, text_pos.y, texW, texH };
-        SDL_RenderClear(game->sdl->renderer);
-        showText(game, placeholder, placeholder_pos, white);
-        SDL_RenderCopy(game->sdl->renderer, texture, NULL, &dstrect);
-        SDL_DestroyTexture(texture);
-        SDL_FreeSurface(surface);
-        SDL_RenderPresent(game->sdl->renderer);
+        usleep(200);
+        SDL_RenderClear(renderer);
+        disp_text(renderer, "port", font, 240, 200);
+        disp_text(renderer, port, font, 240, 230);
+        SDL_RenderPresent(renderer);
     }
-    SDL_StopTextInput();
-    return text;
 }
 
-void showText(game_t *game, const char* text, SDL_Rect text_pos, SDL_Color color)
-{
-    int width;
-    int height;
-    int texW = 0;
-    int texH = 0;
-
-    //printf("# Display Text: %s\n", text);
-    SDL_GetRendererOutputSize(game->sdl->renderer, &width, &height);
-    SDL_Surface *surface;
-    surface = TTF_RenderText_Solid(game->sdl->font, text, color);
-    SDL_Texture *texture = SDL_CreateTextureFromSurface(game->sdl->renderer, surface);
-    SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
-    SDL_Rect dstrect = { text_pos.x, text_pos.y, texW, texH };
-    SDL_RenderCopy(game->sdl->renderer, texture, NULL, &dstrect);
-    SDL_DestroyTexture(texture);
-    SDL_FreeSurface(surface);
+void ask_for_ip(SDL_Renderer *renderer, TTF_Font *font, char *ip) {
+    memset(ip, ' ', 15);
+    SDL_Event e;
+    int position = 0;
+    int ok = 0;
+    while (!ok) {
+        if (SDL_PollEvent(&e)) {
+            if (e.type == SDL_KEYDOWN) {
+                if ((e.key.keysym.sym >= SDLK_0 && e.key.keysym.sym <= SDLK_9) || e.key.keysym.sym == SDLK_PERIOD) {
+                    if (position > 14) {
+                        position = 14;
+                    }
+                    ip[position] = e.key.keysym.sym;
+                    position++;
+                }
+                if (e.key.keysym.sym == SDLK_BACKSPACE) {
+                    position--;
+                    if (position < 0) {
+                        position = 0;
+                    }
+                    ip[position] = ' ';
+                }
+                if (e.key.keysym.sym == SDLK_RETURN) {
+                    ip[position] = 0;
+                    ok = 1;
+                }
+            }
+        }
+        usleep(200);
+        SDL_RenderClear(renderer);
+        disp_text(renderer, "ip address", font, 240, 200);
+        disp_text(renderer, ip, font, 240, 230);
+        SDL_RenderPresent(renderer);
+    }
 }
-
 
 void showPromptMessage(game_t *game, const char* text, SDL_Rect text_pos, SDL_Color color)
 {

@@ -51,6 +51,8 @@ void clearSdl(sdl_t *sdl)
         if (sdl->font) {
             TTF_CloseFont(sdl->font);
         }
+        TTF_Quit();
+        SDL_Quit();
         free(sdl);
     }
     sdl = NULL;

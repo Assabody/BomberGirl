@@ -161,6 +161,11 @@ int hostGame(game_t *);
 
 int waitingLobby(game_t *);
 
+void ask_for_ip(SDL_Renderer *, TTF_Font *, char *);
+
+void ask_for_port(SDL_Renderer *, TTF_Font *, char *);
+
+
 /**
  * Drawing.c
  */
@@ -171,6 +176,8 @@ void drawPlayer(game_t *game);
 void drawMap(game_t *);
 
 int drawGame(game_t *);
+
+void disp_text(SDL_Renderer *, char *, TTF_Font *, int, int);
 
 
 /**
@@ -244,5 +251,12 @@ void player_coords_to_map_coords(int, int, int *, int *);
 int getServerInfo(int, game_t *);
 
 void *server(void *arg);
+
+/**
+ * Server.c
+ */
+void startServer(game_t *, int *);
+
+void stopServer(game_t *);
 
 #endif
