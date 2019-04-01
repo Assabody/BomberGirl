@@ -20,6 +20,7 @@ typedef struct player_s
     int bombs_left;
     int bombs_capacity;
     int frags;
+  int	life;
 } player_t;
 
 #endif
