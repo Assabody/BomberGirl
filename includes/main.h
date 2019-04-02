@@ -39,7 +39,7 @@
 
 // bombs
 #define DAMAGES 10
-#define PLAYER_LIFE 30
+#define PLAYER_LIFE 20
 #define WALL_LIFE 10
 #define RADIUS 1
 
