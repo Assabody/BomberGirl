@@ -42,13 +42,13 @@ void drawBombs(game_t *game, SDL_Rect position) {
     int y;
     player_coords_to_map_coords(position.x, position.y, &x, &y);
     int bomb_clip = 0;
-    if (game->map[y][x].duration > 80 && game->map[y][x].duration < 110) {
+    if (game->map[y][x].duration > 50 && game->map[y][x].duration <= 90) {
         bomb_clip = 2;
-    } else if (game->map[y][x].duration > 15 && game->map[y][x].duration < 50) {
-        bomb_clip = 1;
-    } else if (game->map[y][x].duration > 0 && game->map[y][x].duration < 15) {
-        bomb_clip = 3;
-    }
+    } else if (game->map[y][x].duration > 15 && game->map[y][x].duration <= 50) {
+      bomb_clip = 1;
+    }  else if (game->map[y][x].duration > 0 && game->map[y][x].duration < 15) {
+      bomb_clip = 3;
+    } 
     game->map[y][x].duration--;
     if (game->map[y][x].duration <= 0) {
         send_bomb_exploded(game->client_sock, position.x, position.y);
