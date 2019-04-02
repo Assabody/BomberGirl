@@ -45,9 +45,9 @@ void drawBombs(game_t *game, SDL_Rect position) {
     if (game->map[y][x].duration > 50 && game->map[y][x].duration <= 90) {
         bomb_clip = 2;
     } else if (game->map[y][x].duration > 15 && game->map[y][x].duration <= 50) {
-      bomb_clip = 1;
-    }  else if (game->map[y][x].duration > 0 && game->map[y][x].duration < 15) {
-      bomb_clip = 3;
+        bomb_clip = 1;
+    } else if (game->map[y][x].duration > 0 && game->map[y][x].duration < 15) {
+        bomb_clip = 3;
     } 
     game->map[y][x].duration--;
     if (game->map[y][x].duration <= 0) {
