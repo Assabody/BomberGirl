@@ -44,6 +44,26 @@ void processRequest(game_infos_t *game, t_client_request request) {
     game->players[player_key].current_dir = request.dir;
 
 }
+void updateDuration(game_infos_t *game_infos)
+{
+    for (int y = 0; y < Y_MAP_SIZE; y++) {
+        for (int x = 0; x < X_MAP_SIZE; x++) {
+            if (game_infos->map[y][x].duration) {
+                if (game_infos->map[y][x].duration - 1 >= 0) {
+                    game_infos->map[y][x].duration -= 1;
+                } else {
+                    game_infos->map[y][x].duration = 0;
+                }
+            } else {
+                if (has_flame(game_infos->map[y][x].cell)) {
+                    game_infos->map[y][x].cell = grass_cell(0);
+                } else if (has_bomb(game_infos->map[y][x].cell)) {
+                    explode_cell(&game_infos->map[y][x]);
+                }
+            }
+        }
+    }
+}
 
 void *server(void *arg) {
     int sock;
@@ -53,9 +73,9 @@ void *server(void *arg) {
     int i;
     int running;
     int waiting_lobby;
-    fd_set active_fd_set, read_fd_set;
     int *server_port = (int*) arg;
 
+    fd_set active_fd_set, read_fd_set;
     sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock == -1) {
         perror("socket()");
@@ -80,6 +100,7 @@ void *server(void *arg) {
     running = 1;
     init_game_infos(&game_infos);
     printf("# Server - Number of clients : %d/%d\n", number_of_clients, MAX_PLAYERS);
+    unsigned int startTime = SDL_GetTicks();
     while (running) {
         read_fd_set = active_fd_set;
         if (select(FD_SETSIZE, &read_fd_set, NULL, NULL, NULL) < 0) {
@@ -148,6 +169,11 @@ void *server(void *arg) {
                 }
             }
         }
+        if (SDL_GetTicks() - startTime >= 1000 / FPS) {
+            startTime = SDL_GetTicks();
+            printf("1 second\n");
+            updateDuration(&game_infos);
+        }
     }
     close(sock);
     pthread_exit(NULL);
@@ -157,6 +183,7 @@ void plantBomb(game_infos_t *game_infos, int player_key, int x, int y)
 {
     if (game_infos->players[player_key].bombs_left && can_pose_bomb(game_infos->map[y][x].cell)) {
         game_infos->map[y][x].cell = add_bomb_to_cell(game_infos->map[y][x].cell);
+        game_infos->map[y][x].duration = 3 * FPS;
         game_infos->players[player_key].bombs_left--;
         game_infos->bombs[y][x].bomb_posed = 1;
         game_infos->bombs[y][x].player = player_key;
