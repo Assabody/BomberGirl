@@ -2,7 +2,7 @@
 
 int connect_client(int sock, struct sockaddr_in *client_addr) {
     int len = sizeof(client_addr);
-    return accept(sock, (struct sockaddr *) client_addr, (socklen_t*)&len);
+    return accept(sock, (struct sockaddr *) client_addr, (socklen_t * ) & len);
 }
 
 void startServer(game_t *game, int *port) {
@@ -16,7 +16,7 @@ void startServer(game_t *game, int *port) {
 }
 
 void stopServer(game_t *game) {
-    char query[4] = {'s','t','o','p'};
+    char query[4] = {'s', 't', 'o', 'p'};
     send(game->client_sock, &query, sizeof(query), MSG_NOSIGNAL);
     sleep(1);
     pthread_cancel(game->server.server_thread);
@@ -24,26 +24,21 @@ void stopServer(game_t *game) {
 
 void processRequest(game_infos_t *game, t_client_request request) {
     int player_key = request.magic / 16 - 1;
-    // Is special request ?
-    //printf("server request pos x%d y%d\n", request.x_pos, request.y_pos);
-    if (request.speed == 2 * FPS) {
-        // Remove bomb from the cell
-        if (has_bomb(game->map[request.y_pos][request.x_pos].cell) && request.command == 0) {
-            explodeBomb(game, request.x_pos, request.y_pos);
-        }
-    }
+
     // Move to new coords if possible
-    else if (can_go_to_cell(game->map[request.y_pos][request.x_pos])) {
+    if (can_go_to_cell(game->map[request.y_pos][request.x_pos])) {
         //printf("move request\n");
-        map_coords_to_player_coords(request.x_pos, request.y_pos, &game->players[player_key].x_pos, &game->players[player_key].y_pos);
+        map_coords_to_player_coords(request.x_pos, request.y_pos, &game->players[player_key].x_pos,
+                                    &game->players[player_key].y_pos);
         // Pose bomb
         if (request.command) {
+            printf("plant bomb at x%d y%d\n", request.x_pos, request.y_pos);
             plantBomb(game, player_key, request.x_pos, request.y_pos);
         }
     }
     game->players[player_key].current_dir = request.dir;
-
 }
+
 void updateDuration(game_infos_t *game_infos)
 {
     for (int y = 0; y < Y_MAP_SIZE; y++) {
@@ -56,9 +51,11 @@ void updateDuration(game_infos_t *game_infos)
                 }
             } else {
                 if (has_flame(game_infos->map[y][x].cell)) {
+                    printf("remove flame at x%d y%d\n", x, y);
                     game_infos->map[y][x].cell = grass_cell(0);
                 } else if (has_bomb(game_infos->map[y][x].cell)) {
-                    explode_cell(&game_infos->map[y][x]);
+                    printf("remove bomb at x%d y%d\n", x, y);
+                    explodeBombRadius(game_infos, x, y);
                 }
             }
         }
@@ -73,9 +70,9 @@ void *server(void *arg) {
     int i;
     int running;
     int waiting_lobby;
-    int *server_port = (int*) arg;
-
     fd_set active_fd_set, read_fd_set;
+    int *server_port = (int *) arg;
+
     sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock == -1) {
         perror("socket()");
@@ -114,8 +111,7 @@ void *server(void *arg) {
                     if ((new = connect_client(sock, &client_addr)) < 0) {
                         perror("accept");
                         pthread_exit(NULL);
-                    }
-                    else {
+                    } else {
                         if (number_of_clients >= MAX_PLAYERS || waiting_lobby == 0) {
                             close(new);
                         } else {
@@ -171,7 +167,6 @@ void *server(void *arg) {
         }
         if (SDL_GetTicks() - startTime >= 1000 / FPS) {
             startTime = SDL_GetTicks();
-            printf("1 second\n");
             updateDuration(&game_infos);
         }
     }
@@ -179,8 +174,7 @@ void *server(void *arg) {
     pthread_exit(NULL);
 }
 
-void plantBomb(game_infos_t *game_infos, int player_key, int x, int y)
-{
+void plantBomb(game_infos_t *game_infos, int player_key, int x, int y) {
     if (game_infos->players[player_key].bombs_left && can_pose_bomb(game_infos->map[y][x].cell)) {
         game_infos->map[y][x].cell = add_bomb_to_cell(game_infos->map[y][x].cell);
         game_infos->map[y][x].duration = 3 * FPS;
@@ -190,14 +184,20 @@ void plantBomb(game_infos_t *game_infos, int player_key, int x, int y)
     }
 }
 
-void explodeBombRadius(game_infos_t *game_infos, int x, int y)
-{
+void explodeBombRadius(game_infos_t *game_infos, int x, int y) {
     int player_owner = game_infos->bombs[y][x].player;
     int radius = game_infos->players[player_owner].bomb_radius;
     int stop = 0;
 
     printf("bomb exploded onx%d y%d\n", x, y);
+    if (game_infos->bombs[y][x].bomb_posed) {
+        int bomb_planter = (int) game_infos->bombs[y][x].player;
+        if (game_infos->players[bomb_planter].bombs_left < game_infos->players[bomb_planter].bombs_capacity) {
+            game_infos->players[bomb_planter].bombs_left++;
+        }
+    }
     explode_cell(&game_infos->map[y][x]);
+    bombCheckPlayerRadius(game_infos, x, y);
     for (int x_max = x + 1; x_max <= x + radius; x_max++) {
         if (stop) {
             break;
@@ -206,6 +206,7 @@ void explodeBombRadius(game_infos_t *game_infos, int x, int y)
             case MAP_WALL_BREAKABLE:
                 //break wall and set the cell on flame
                 explode_cell(&game_infos->map[y][x_max]);
+                bombCheckPlayerRadius(game_infos, x_max, y);
                 printf("explosion spreading to x%d y%d: wall\n", x_max, y);
                 stop = 1;
                 break;
@@ -214,8 +215,9 @@ void explodeBombRadius(game_infos_t *game_infos, int x, int y)
                 break;
             case MAP_GRASS:
                 //set the cell on flame
-                printf("explosion spreading to x%d y%d: grass\n", x_max, y);
                 explode_cell(&game_infos->map[y][x_max]);
+                bombCheckPlayerRadius(game_infos, x_max, y);
+                printf("explosion spreading to x%d y%d: grass\n", x_max, y);
                 break;
         }
     }
@@ -227,17 +229,19 @@ void explodeBombRadius(game_infos_t *game_infos, int x, int y)
         switch (get_cell_type(game_infos->map[y][x_min].cell)) {
             case MAP_WALL_BREAKABLE:
                 //break wall and set the cell on flame
-                printf("explosion spreading to x%d y%d: wall\n", x_min, y);
                 explode_cell(&game_infos->map[y][x_min]);
+                bombCheckPlayerRadius(game_infos, x_min, y);
+                printf("explosion spreading to x%d y%d: wall\n", x_min, y);
                 stop = 1;
                 break;
             case MAP_WALL_UNBREAKABLE:
                 stop = 1;
                 break;
             case MAP_GRASS:
-                printf("explosion spreading to x%d y%d: grass\n", x_min, y);
-                explode_cell(&game_infos->map[y][x_min]);
                 //set the cell on flame
+                explode_cell(&game_infos->map[y][x_min]);
+                bombCheckPlayerRadius(game_infos, x_min, y);
+                printf("explosion spreading to x%d y%d: grass\n", x_min, y);
                 break;
         }
     }
@@ -249,8 +253,8 @@ void explodeBombRadius(game_infos_t *game_infos, int x, int y)
         switch (get_cell_type(game_infos->map[y_max][x].cell)) {
             case MAP_WALL_BREAKABLE:
                 //break wall and set the cell on flame
-                //game_infos->map[y_max][x].cell =
                 explode_cell(&game_infos->map[y_max][x]);
+                bombCheckPlayerRadius(game_infos, x, y_max);
                 printf("explosion spreading to x%d y%d: wall\n", x, y_max);
                 stop = 1;
                 break;
@@ -258,9 +262,10 @@ void explodeBombRadius(game_infos_t *game_infos, int x, int y)
                 stop = 1;
                 break;
             case MAP_GRASS:
-                explode_cell(&game_infos->map[y_max][x]);
-                printf("explosion spreading to x%d y%d: grass\n", x, y_max);
                 //set the cell on flame
+                explode_cell(&game_infos->map[y_max][x]);
+                bombCheckPlayerRadius(game_infos, x, y_max);
+                printf("explosion spreading to x%d y%d: grass\n", x, y_max);
                 break;
         }
     }
@@ -273,6 +278,7 @@ void explodeBombRadius(game_infos_t *game_infos, int x, int y)
             case MAP_WALL_BREAKABLE:
                 //break wall and set the cell on flame
                 explode_cell(&game_infos->map[y_min][x]);
+                bombCheckPlayerRadius(game_infos, x, y_min);
                 printf("explosion spreading to x%d y%d: wall\n", x, y_min);
                 stop = 1;
                 break;
@@ -280,30 +286,46 @@ void explodeBombRadius(game_infos_t *game_infos, int x, int y)
                 stop = 1;
                 break;
             case MAP_GRASS:
-                explode_cell(&game_infos->map[y_min][x]);
-                printf("explosion spreading to x%d y%d: grass\n", x, y_min);
                 //set the cell on flame
+                explode_cell(&game_infos->map[y_min][x]);
+                bombCheckPlayerRadius(game_infos, x, y_min);
+                printf("explosion spreading to x%d y%d: grass\n", x, y_min);
                 break;
         }
     }
 }
 
-void explodeBomb(game_infos_t *game_infos, int x, int y)
-{
+void bombCheckPlayerRadius(game_infos_t *game_infos, int x, int y) {
+    int x_player;
+    int y_player;
+    for (int i = 0; i < MAX_PLAYERS; i++) {
+        player_coords_to_map_coords(game_infos->players[i].x_pos, game_infos->players[i].y_pos, &x_player, &y_player);
+        if (x_player == x && y_player == y) {
+            if (game_infos->players[i].life - DAMAGES < 0) {
+                game_infos->players[i].life = 0;
+                game_infos->players[i].alive = 0;
+            } else {
+                game_infos->players[i].life -= DAMAGES;
+            }
+            printf("Player [%d] took %d damages. life before: %d, life after: %d\n", i, DAMAGES, game_infos->players[i].life + DAMAGES, game_infos->players[i].life);
+        }
+    }
+}
+
+void explodeBomb(game_infos_t *game_infos, int x, int y) {
     int bomb_planter;
     explodeBombRadius(game_infos, x, y);
     game_infos->map[y][x].duration = 0;
     game_infos->map[y][x].cell = grass_cell(0);
     if (game_infos->bombs[y][x].bomb_posed) {
-        bomb_planter = (int)game_infos->bombs[y][x].player;
+        bomb_planter = (int) game_infos->bombs[y][x].player;
         if (game_infos->players[bomb_planter].bombs_left < game_infos->players[bomb_planter].bombs_capacity) {
             game_infos->players[bomb_planter].bombs_left++;
         }
     }
 }
 
-void initBombGrid(game_infos_t *game_infos)
-{
+void initBombGrid(game_infos_t *game_infos) {
     for (int y = 0; y <= Y_MAP_SIZE; y++) {
         for (int x = 0; x <= X_MAP_SIZE; x++) {
             game_infos->bombs[y][x].player = 0;
@@ -312,8 +334,7 @@ void initBombGrid(game_infos_t *game_infos)
     }
 }
 
-void init_game_infos(game_infos_t *game_infos)
-{
+void init_game_infos(game_infos_t *game_infos) {
     mapInit(game_infos);
     initBombGrid(game_infos);
     initPlayer(&game_infos->players[0], 1);

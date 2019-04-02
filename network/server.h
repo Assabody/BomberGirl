@@ -42,5 +42,7 @@ typedef struct game_infos_s
 void init_game_infos(game_infos_t *game_infos);
 void explodeBomb(game_infos_t *, int, int);
 void plantBomb(game_infos_t *, int, int, int);
+void bombCheckPlayerRadius(game_infos_t *, int, int);
+void explodeBombRadius(game_infos_t *, int, int);
 
 #endif
