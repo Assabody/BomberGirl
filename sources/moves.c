@@ -4,7 +4,7 @@ int can_go_to_cell(cell_t cell) {
     switch (get_cell_type(cell.cell)) {
         case MAP_GRASS:
             // if doesn't have bomb
-            return 1;
+            return !has_bomb(cell.cell);
         default:
             return 0;
     }

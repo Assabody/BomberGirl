@@ -1,7 +1,7 @@
 #include "request.h"
 #include "../includes/main.h"
 
-int send_bomb_exploded(int socket, int x, int y) {
+/* int send_bomb_exploded(int socket, int x, int y) {
     int x_map;
     int y_map;
     t_client_request request;
@@ -11,7 +11,7 @@ int send_bomb_exploded(int socket, int x, int y) {
     request.x_pos = x_map;
     request.y_pos = y_map;
     return send(socket, &request, sizeof(request), MSG_NOSIGNAL);
-}
+} */
 
 int send_request(game_t *game) {
     game->request.magic = (game->player_key + 1) * 16;
@@ -37,7 +37,7 @@ int verify_request(t_client_request request) {
     return 0;
 }
 
-void string_to_bytes(char n, char *str)
+/* void string_to_bytes(char n, char *str)
 {
     for (int i = 7; i >= 0; i--) {
         if (((n >> i) & 0x01) == 0) {
@@ -55,7 +55,7 @@ int bytes_to_int(char n)
         result += (n >> i);
     }
     return result;
-}
+} */
 
 int is_cell_in_flame(char cell)
 {

@@ -28,8 +28,12 @@ void processRequest(game_infos_t *game, t_client_request request) {
     // Move to new coords if possible
     if (can_go_to_cell(game->map[request.y_pos][request.x_pos])) {
         //printf("move request\n");
-        map_coords_to_player_coords(request.x_pos, request.y_pos, &game->players[player_key].x_pos,
-                                    &game->players[player_key].y_pos);
+        map_coords_to_player_coords(
+            request.x_pos, 
+            request.y_pos, 
+            &game->players[player_key].x_pos,
+            &game->players[player_key].y_pos
+        );
         // Pose bomb
         if (request.command) {
             printf("plant bomb at x%d y%d\n", request.x_pos, request.y_pos);
