@@ -20,9 +20,11 @@ int getServerInfo(int socket, game_t *game)
                     }
                 }
                 game->map[y][x].cell = game_infos.map[y][x].cell;
-                if (has_bomb(game->map[y][x].cell) && game->map[y][x].duration == 0) {
+                /*if (has_bomb(game->map[y][x].cell) && game->map[y][x].duration == 0) {
                     game->map[y][x].duration = 2 * FPS;
-                }
+                } else {*/
+                    game->map[y][x].duration = game_infos.map[y][x].duration;
+                //}
                 x++;
             }
             for (int i = 0; i < MAX_PLAYERS; i++) {

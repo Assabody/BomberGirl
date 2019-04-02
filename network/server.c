@@ -24,26 +24,42 @@ void stopServer(game_t *game) {
 
 void processRequest(game_infos_t *game, t_client_request request) {
     int player_key = request.magic / 16 - 1;
-    // Is special request ?
-    //printf("server request pos x%d y%d\n", request.x_pos, request.y_pos);
-    if (request.speed == 2 * FPS) {
-        // Remove bomb from the cell
-        if (has_bomb(game->map[request.y_pos][request.x_pos].cell) && request.command == 0) {
-            explodeBomb(game, request.x_pos, request.y_pos);
-        }
-    }
-        // Move to new coords if possible
-    else if (can_go_to_cell(game->map[request.y_pos][request.x_pos])) {
+
+    // Move to new coords if possible
+    if (can_go_to_cell(game->map[request.y_pos][request.x_pos])) {
         //printf("move request\n");
         map_coords_to_player_coords(request.x_pos, request.y_pos, &game->players[player_key].x_pos,
                                     &game->players[player_key].y_pos);
         // Pose bomb
         if (request.command) {
+            printf("plant bomb at x%d y%d\n", request.x_pos, request.y_pos);
             plantBomb(game, player_key, request.x_pos, request.y_pos);
         }
     }
     game->players[player_key].current_dir = request.dir;
+}
 
+void updateDuration(game_infos_t *game_infos)
+{
+    for (int y = 0; y < Y_MAP_SIZE; y++) {
+        for (int x = 0; x < X_MAP_SIZE; x++) {
+            if (game_infos->map[y][x].duration) {
+                if (game_infos->map[y][x].duration - 1 >= 0) {
+                    game_infos->map[y][x].duration -= 1;
+                } else {
+                    game_infos->map[y][x].duration = 0;
+                }
+            } else {
+                if (has_flame(game_infos->map[y][x].cell)) {
+                    printf("remove flame at x%d y%d\n", x, y);
+                    game_infos->map[y][x].cell = grass_cell(0);
+                } else if (has_bomb(game_infos->map[y][x].cell)) {
+                    printf("remove bomb at x%d y%d\n", x, y);
+                    explodeBombRadius(game_infos, x, y);
+                }
+            }
+        }
+    }
 }
 
 void *server(void *arg) {
@@ -81,6 +97,7 @@ void *server(void *arg) {
     running = 1;
     init_game_infos(&game_infos);
     printf("# Server - Number of clients : %d/%d\n", number_of_clients, MAX_PLAYERS);
+    unsigned int startTime = SDL_GetTicks();
     while (running) {
         read_fd_set = active_fd_set;
         if (select(FD_SETSIZE, &read_fd_set, NULL, NULL, NULL) < 0) {
@@ -148,6 +165,10 @@ void *server(void *arg) {
                 }
             }
         }
+        if (SDL_GetTicks() - startTime >= 1000 / FPS) {
+            startTime = SDL_GetTicks();
+            updateDuration(&game_infos);
+        }
     }
     close(sock);
     pthread_exit(NULL);
@@ -156,6 +177,7 @@ void *server(void *arg) {
 void plantBomb(game_infos_t *game_infos, int player_key, int x, int y) {
     if (game_infos->players[player_key].bombs_left && can_pose_bomb(game_infos->map[y][x].cell)) {
         game_infos->map[y][x].cell = add_bomb_to_cell(game_infos->map[y][x].cell);
+        game_infos->map[y][x].duration = 3 * FPS;
         game_infos->players[player_key].bombs_left--;
         game_infos->bombs[y][x].bomb_posed = 1;
         game_infos->bombs[y][x].player = player_key;
@@ -168,6 +190,12 @@ void explodeBombRadius(game_infos_t *game_infos, int x, int y) {
     int stop = 0;
 
     printf("bomb exploded onx%d y%d\n", x, y);
+    if (game_infos->bombs[y][x].bomb_posed) {
+        int bomb_planter = (int) game_infos->bombs[y][x].player;
+        if (game_infos->players[bomb_planter].bombs_left < game_infos->players[bomb_planter].bombs_capacity) {
+            game_infos->players[bomb_planter].bombs_left++;
+        }
+    }
     explode_cell(&game_infos->map[y][x]);
     bombCheckPlayerRadius(game_infos, x, y);
     for (int x_max = x + 1; x_max <= x + radius; x_max++) {

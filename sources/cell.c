@@ -45,5 +45,5 @@ int flame_cell(char cell)
 void explode_cell(cell_t *cell)
 {
     cell->cell = flame_cell(0);
-    cell->duration = 50;
+    cell->duration = FPS / 2;
 }

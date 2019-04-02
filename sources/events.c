@@ -13,7 +13,6 @@ void checkEvents(game_t *game) {
             switch (event.key.keysym.sym) {
                 case SDLK_SPACE:
                     game->request.command = 1;
-                    //placeBomb(game, game->player[game->player_key].x_pos, game->player[game->player_key].y_pos);
                     break;
                 case SDLK_ESCAPE:
                     game->running = 0;

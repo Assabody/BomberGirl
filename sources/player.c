@@ -10,7 +10,7 @@ void initPlayer(player_t *player, int player_position)
     player->current_speed = SPEED;
     player->max_speed = MAX_SPEED;
     player->frags = 0;
-    player->life = 30;
+    player->life = PLAYER_LIFE;
     player->token = 0;
     player->bomb_radius = 1;
     switch (player_position) {

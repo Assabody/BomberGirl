@@ -11,7 +11,6 @@ SRC		=	sources/main.c \
 			sources/map.c \
 			sources/events.c \
 			sources/player.c \
-			sources/bomb.c \
 			sources/sdl.c \
 			sources/game.c \
 			sources/cell.c \

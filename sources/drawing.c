@@ -22,6 +22,9 @@ void drawMap(game_t *game) {
                     break;
             }
             if (has_flame(game->map[y][x].cell)) {
+                printf("flame at x%d y%d, duration %d\n", x, y, game->map[y][x].duration);
+            }
+            if (has_flame(game->map[y][x].cell)) {
                 SDL_RenderCopy(game->sdl->renderer, game->textures->flame, NULL, &position);
             } else if (has_bomb(game->map[y][x].cell)) {
                 drawBombs(game, position);
@@ -50,9 +53,9 @@ void drawBombs(game_t *game, SDL_Rect position) {
         bomb_clip = 3;
     } 
     game->map[y][x].duration--;
-    if (game->map[y][x].duration <= 0) {
+    /*if (game->map[y][x].duration <= 0) {
         send_bomb_exploded(game->client_sock, position.x, position.y);
-    }
+    }*/
     renderTexture(
         game->textures->bomb,
         game->sdl,

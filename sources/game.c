@@ -20,7 +20,6 @@ int drawGame(game_t *game)
         getServerInfo(game->client_sock, game);
 
         SDL_RenderClear(game->sdl->renderer);
-        updateBombs(game);
         drawMap(game);
         drawPlayer(game);
         SDL_RenderPresent(game->sdl->renderer);
