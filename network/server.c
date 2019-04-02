@@ -172,7 +172,8 @@ void explodeBombRadius(game_infos_t *game_infos, int x, int y)
     printf("bomb exploded onx%d y%d\n", x, y);
     explode_cell(&game_infos->map[y][x]);
     for (int x_max = x + 1; x_max <= x + radius; x_max++) {
-        if (stop) {
+      bombCheckPlayerRadius(game_infos, x, y);
+      if (stop) {
             break;
         }
         switch (get_cell_type(game_infos->map[y][x_max].cell)) {
@@ -191,10 +192,12 @@ void explodeBombRadius(game_infos_t *game_infos, int x, int y)
                 explode_cell(&game_infos->map[y][x_max]);
                 break;
         }
+	bombCheckPlayerRadius(game_infos, x_max, y);
     }
     stop = 0;
     for (int x_min = x - 1; x_min >= x - radius; x_min--) {
-        if (stop) {
+      bombCheckPlayerRadius(game_infos, x, y);
+      if (stop) {
             break;
         }
         switch (get_cell_type(game_infos->map[y][x_min].cell)) {
@@ -216,7 +219,8 @@ void explodeBombRadius(game_infos_t *game_infos, int x, int y)
     }
     stop = 0;
     for (int y_max = y + 1; y_max <= y + radius; y_max++) {
-        if (stop) {
+      bombCheckPlayerRadius(game_infos, x, y);
+      if (stop) {
             break;
         }
         switch (get_cell_type(game_infos->map[y_max][x].cell)) {
@@ -239,10 +243,11 @@ void explodeBombRadius(game_infos_t *game_infos, int x, int y)
     }
     stop = 0;
     for (int y_min = y - 1; y_min >= y - radius; y_min--) {
-        if (stop) {
-            break;
-        }
-        switch (get_cell_type(game_infos->map[y_min][x].cell)) {
+      bombCheckPlayerRadius(game_infos, x, y);
+      if (stop) {
+	break;
+      }
+      switch (get_cell_type(game_infos->map[y_min][x].cell)) {
             case MAP_WALL_BREAKABLE:
                 //break wall and set the cell on flame
                 explode_cell(&game_infos->map[y_min][x]);
@@ -258,6 +263,34 @@ void explodeBombRadius(game_infos_t *game_infos, int x, int y)
                 //set the cell on flame
                 break;
         }
+    }
+}
+
+void bombCheckPlayerRadius(game_infos_t *game_infos, int x, int y)
+{
+  for (int i = 0; i < MAX_PLAYERS; i++)
+    {
+      if (game_infos->players[i].x_pos/40 + 1 == x && game_infos->players[i].y_pos/40 == y)
+	{
+	  game_infos->players[i].life -= DAMAGES;
+	}
+      else if (game_infos->players[i].x_pos/40 - 1 == x && game_infos->players[i].y_pos/40 == y)
+	{
+          game_infos->players[i].life-= DAMAGES;
+	}
+      else if (game_infos->players[i].x_pos/40 == x && game_infos->players[i].y_pos/40 + 1 == y)
+	{
+          game_infos->players[i].life-= DAMAGES;
+	}
+      else if (game_infos->players[i].x_pos/40 == x && game_infos->players[i].y_pos/40 - 1 == y)
+	{
+          game_infos->players[i].life-= DAMAGES;
+	}
+      else if (game_infos->players[i].x_pos/40 == x && game_infos->players[i].y_pos/40 == y)
+	{
+          game_infos->players[i].life-= DAMAGES;
+      }
+      printf("%i\n", game_infos->players[i].life);
     }
 }
 

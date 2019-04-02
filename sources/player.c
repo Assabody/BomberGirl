@@ -3,7 +3,7 @@
 void initPlayer(player_t *player, int player_position)
 {
     player->alive = 0;
-    player->bombs_capacity = 1;
+    player->bombs_capacity = 5;
     player->bombs_left = 1;
     player->current_dir = UP;
     player->token = player_position;
