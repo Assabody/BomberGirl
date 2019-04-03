@@ -159,14 +159,10 @@ void disp_text(SDL_Renderer *, char *, TTF_Font *, int, int);
  */
 void initPlayer(player_t *, int);
 
-void printPlayerStruct(player_t *);
-
-int initClient(char *, char *, game_t *);
-
-
 /**
  * Cell.c
  */
+void show_bits(int);
 void toggle_byte(unsigned char *, int);
 void clear_byte(unsigned char *, int);
 int test_byte(unsigned char, int);
@@ -202,7 +198,7 @@ void player_coords_to_map_coords(int, int, int *, int *);
  */
 int getServerInfo(int, game_t *);
 
-void *server(void *arg);
+int initClient(char *, char *, game_t *);
 
 /**
  * Server.c
@@ -210,6 +206,8 @@ void *server(void *arg);
 void startServer(game_t *, int *);
 
 void stopServer(game_t *);
+
+void *server(void *arg);
 
 /**
  * Request.c

@@ -33,46 +33,10 @@ void gameDestroy(game_t *game) {
         clearSdl(game->sdl);
     }
 }
-int my_pow(int nb, int pow)
-{
-    int p;
-    int result;
-
-    p = 1;
-    result = 1;
-    if (pow < 0)
-        return (0);
-    if (pow == 0)
-        return (1);
-    while (p <= pow)
-    {
-        result = result * nb;
-        p = p + 1;
-    }
-    return (result);
-}
-
-void showbits(int x)
-{
-    for (int i = 8 - 1; i >= 0; i--)
-    {
-        (x & (1 << i)) ? putchar('1') : putchar('0');
-    }
-    printf("\n");
-}
 
 int main() {
-   /*  cell_t cell;
-    cell.cell  = 0;
-    showbits(cell.cell);
-    putchar('\n');
-    set_bonus(&cell.cell, BOMB_NUMBER_BONUS);
-    showbits(cell.cell);
-    printf("bonus is %d\n", get_bonus(cell.cell));
-    putchar('\n');
-    exit(0);  */
     game_t *game = init();
-
+    
     srandom(time(0));
     if (game == NULL)
         return (EXIT_FAILURE);

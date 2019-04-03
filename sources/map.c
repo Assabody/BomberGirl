@@ -33,12 +33,29 @@ void mapInit(game_infos_t *game_infos)
         set_breakable(&game_infos->map[y][x].cell);
         printf("breakable %d\n", game_infos->map[y][x].cell);
 
-        /* if (randomNumber(1, 3) == 3)
-        { */
-          set_bonus(&game_infos->map[y][x].cell, BOMB_NUMBER_BONUS);
-          printf("Setting bomb bonus on x%d y%d: %d\n", x, y, game_infos->map[y][x].cell);
-
-          /* } */
+        if (randomNumber(1, 3) == 3)
+        {
+          switch (randomNumber(1, 6)) {
+            case 1:
+              set_bonus(&game_infos->map[y][x].cell, RANGE_BONUS);
+              break;
+            case 2:
+              set_bonus(&game_infos->map[y][x].cell, RANGE_MALUS);
+              break;
+            case 3:
+              set_bonus(&game_infos->map[y][x].cell, BOMB_NUMBER_BONUS);
+              break;
+            case 4:
+              set_bonus(&game_infos->map[y][x].cell, BOMB_NUMBER_MALUS);
+              break;
+            case 5:
+              set_bonus(&game_infos->map[y][x].cell, SPEED_BONUS);
+              break;
+            case 6:
+              set_bonus(&game_infos->map[y][x].cell, SPEED_MALUS);
+              break;
+            }
+        }
       }
     }
   }

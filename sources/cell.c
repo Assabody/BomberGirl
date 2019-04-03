@@ -18,6 +18,15 @@ int test_byte(unsigned char number, int n)
     return number &(1 << n);
 }
 
+void show_bits(int x)
+{
+    for (int i = 8 - 1; i >= 0; i--)
+    {
+        (x & (1 << i)) ? putchar('1') : putchar('0');
+    }
+    printf("\n");
+}
+
 /**
  * Getters
  */
