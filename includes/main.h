@@ -41,7 +41,7 @@
 #define DAMAGES 10
 #define PLAYER_LIFE 20
 #define WALL_LIFE 10
-#define RADIUS 1
+#define RADIUS 3
 
 // bonus
 #define RANGE_BONUS 0 // 000
@@ -50,29 +50,6 @@
 #define BOMB_NUMBER_MALUS 3 // 011
 #define SPEED_BONUS 4 // 100
 #define SPEED_MALUS 5 // 101
-
-typedef struct bomb_s {
-  int x;
-  int y;
-  int duration;
-  int	damages;
-  int clip;
-} bomb_t;
-
-typedef struct breakablewall_s {
-    int life;
-} breakablewall_t;
-
-typedef struct bomb_node_s {
-  bomb_t *bomb;
-  struct bomb_node_s *next;
-  struct bomb_node_s *prev;
-} bomb_node_t;
-
-typedef struct bombs_s {
-  struct bomb_node_s *first;
-  struct bomb_node_s *last;
-} bombs_t;
 
 typedef struct server_s
 {
@@ -85,7 +62,6 @@ typedef struct server_s
 
 typedef struct game_s {
   sdl_t *sdl;
-  bombs_t *bombs;
   player_t player[MAX_PLAYERS];
   textures_t *textures;
   server_t server;
@@ -179,31 +155,6 @@ void disp_text(SDL_Renderer *, char *, TTF_Font *, int, int);
 
 
 /**
- * Bomb.c
- */
-bombs_t *initBombs(void);
-
-void clearBombs(bombs_t *);
-
-void placeBomb(game_t *, int, int);
-
-void removeBomb(game_t *, bomb_t *);
-
-void removeBombNode(bombs_t *, bomb_node_t *);
-
-void bombExplosion(bomb_t *, game_t *);
-
-void updateBombs(game_t *);
-
-void bombCheckObjectRadius(game_t *, bomb_t *);
-
-void checkPlayerDamagesFromBombs(game_t *, bomb_t *);
-
-int checkBreakableWall(cell_t);
-
-
-
-/**
  * Player.c
  */
 void initPlayer(player_t *, int);
@@ -211,12 +162,6 @@ void initPlayer(player_t *, int);
 void printPlayerStruct(player_t *);
 
 int initClient(char *, char *, game_t *);
-
-
-/**
- * Game.c
- */
-int fetchDataFromServer(game_t *game);
 
 
 /**
@@ -245,6 +190,7 @@ void explode_cell(cell_t *);
  * Bonus.c
  */
 int get_bonus(char);
+
 int cell_has_bonus(char cell);
 
 
@@ -252,7 +198,9 @@ int cell_has_bonus(char cell);
  * Moves.c
  */
 int can_go_to_cell(cell_t);
+
 void map_coords_to_player_coords(int, int, int *, int *);
+
 void player_coords_to_map_coords(int, int, int *, int *);
 
 
@@ -263,12 +211,14 @@ int getServerInfo(int, game_t *);
 
 void *server(void *arg);
 
+
 /**
  * Server.c
  */
 void startServer(game_t *, int *);
 
 void stopServer(game_t *);
+
 
 /**
  * Request.c

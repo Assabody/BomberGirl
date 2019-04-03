@@ -1,18 +1,6 @@
 #include "request.h"
 #include "../includes/main.h"
 
-int send_bomb_exploded(int socket, int x, int y) {
-    int x_map;
-    int y_map;
-    t_client_request request;
-    player_coords_to_map_coords(x, y, &x_map, &y_map);
-    request.speed = 2 * FPS;
-    request.command = 0;
-    request.x_pos = x_map;
-    request.y_pos = y_map;
-    return send(socket, &request, sizeof(request), MSG_NOSIGNAL);
-}
-
 int send_request(game_t *game) {
     game->request.magic = (game->player_key + 1) * 16;
     game->request.checksum = game->request.dir + game->request.speed + game->request.command + game->request.x_pos + game->request.y_pos + game->request.magic;
@@ -35,26 +23,6 @@ int verify_request(t_client_request request) {
         return 1;
     }
     return 0;
-}
-
-void string_to_bytes(char n, char *str)
-{
-    for (int i = 7; i >= 0; i--) {
-        if (((n >> i) & 0x01) == 0) {
-            str[i] = '0';
-        } else {
-            str[i] = '1';
-        }
-    }
-}
-
-int bytes_to_int(char n)
-{
-    int result = 0;
-    for (int i = 0; i <= 7; i++) {
-        result += (n >> i);
-    }
-    return result;
 }
 
 int is_cell_in_flame(char cell)

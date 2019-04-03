@@ -15,11 +15,6 @@ game_t *init() {
         gameDestroy(game);
         return NULL;
     }
-    game->bombs = initBombs();
-    if (!game->bombs) {
-        gameDestroy(game);
-        return NULL;
-    }
 
     game->request.checksum = 0;
     game->request.magic = 0;
@@ -35,8 +30,6 @@ void gameDestroy(game_t *game) {
     puts("Cleaning everything...");
     if (game) {
         clearTextures(game->textures);
-        // TO DO: Fix Clear bombs (memory leak)
-        clearBombs(game->bombs);
         clearSdl(game->sdl);
     }
 }

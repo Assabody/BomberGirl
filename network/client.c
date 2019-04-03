@@ -20,9 +20,7 @@ int getServerInfo(int socket, game_t *game)
                     }
                 }
                 game->map[y][x].cell = game_infos.map[y][x].cell;
-                if (has_bomb(game->map[y][x].cell) && game->map[y][x].duration == 0) {
-                    game->map[y][x].duration = 2 * FPS;
-                }
+                game->map[y][x].duration = game_infos.map[y][x].duration;
                 x++;
             }
             for (int i = 0; i < MAX_PLAYERS; i++) {
@@ -37,7 +35,6 @@ int getServerInfo(int socket, game_t *game)
                 }
 
             }
-            //printf("New player coords x%d y%d\n", game->player[game->player_key].x_pos, game->player[game->player_key].y_pos);
             return 1;
         }
     }

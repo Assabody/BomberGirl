@@ -155,7 +155,7 @@ textures_t *initTextures(sdl_t *sdl) {
         }
     }
 
-    SDL_Surface *bombSurface = IMG_Load("./assets/images/bombeSprite.png");
+    SDL_Surface *bombSurface = IMG_Load("./assets/images/bombeSpriteNew.png");
     if (!bombSurface) {
         fprintf(stderr, SDL_GetError());
     } else {

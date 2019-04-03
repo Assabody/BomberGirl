@@ -22,6 +22,4 @@ int is_cell_bombed(char cell);
 
 int verify_request(t_client_request);
 
-int send_bomb_exploded(int, int, int);
-
 #endif

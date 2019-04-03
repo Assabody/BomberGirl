@@ -4,7 +4,7 @@ int can_go_to_cell(cell_t cell) {
     switch (get_cell_type(cell.cell)) {
         case MAP_GRASS:
             // if doesn't have bomb
-            return 1;
+            return !has_bomb(cell.cell);
         default:
             return 0;
     }
@@ -35,9 +35,8 @@ void map_coords_to_player_coords(int player_x, int player_y, int *map_x, int *ma
 void movePlayer(game_t *game, SDL_Keycode direction) {
     int x;
     int y;
-    printf("Player [%d] moving...\n", game->player_key);
     game->request.dir = game->player[game->player_key].current_dir;
-
+    
     if (direction == SDLK_UP) {
         player_coords_to_map_coords(game->player[game->player_key].x_pos, game->player[game->player_key].y_pos - game->player[game->player_key].current_speed, &x, &y);
         game->request.x_pos = x;
