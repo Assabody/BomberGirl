@@ -35,7 +35,6 @@ void map_coords_to_player_coords(int player_x, int player_y, int *map_x, int *ma
 void movePlayer(game_t *game, SDL_Keycode direction) {
     int x;
     int y;
-    printf("Player [%d] moving...\n", game->player_key);
     game->request.dir = game->player[game->player_key].current_dir;
     
     if (direction == SDLK_UP) {
