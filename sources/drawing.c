@@ -21,8 +21,9 @@ void drawMap(game_t *game) {
                     SDL_RenderCopy(game->sdl->renderer, game->textures->grass, NULL, &position);
                     break;
             }
-            if (has_flame(game->map[y][x].cell)) {
-                printf("flame at x%d y%d, duration %d\n", x, y, game->map[y][x].duration);
+
+            if (has_flame(game->map[y][x].cell)) {	      
+	      printf("flame at x%d y%d, duration %d\n", x, y, game->map[y][x].duration);
             }
             if (has_flame(game->map[y][x].cell)) {
                 SDL_RenderCopy(game->sdl->renderer, game->textures->flame, NULL, &position);
@@ -45,11 +46,11 @@ void drawBombs(game_t *game, SDL_Rect position) {
     int y;
     player_coords_to_map_coords(position.x, position.y, &x, &y);
     int bomb_clip = 0;
-    if (game->map[y][x].duration > 50 && game->map[y][x].duration <= 90) {
+    if (game->map[y][x].duration > 80 && game->map[y][x].duration <= 160) {
         bomb_clip = 2;
-    } else if (game->map[y][x].duration > 15 && game->map[y][x].duration <= 50) {
+    } else if (game->map[y][x].duration > 5 && game->map[y][x].duration <= 80) {
         bomb_clip = 1;
-    } else if (game->map[y][x].duration > 0 && game->map[y][x].duration < 15) {
+    } else if (game->map[y][x].duration > 0 && game->map[y][x].duration < 5) {
         bomb_clip = 3;
     } 
     game->map[y][x].duration--;

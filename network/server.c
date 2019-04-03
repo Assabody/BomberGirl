@@ -54,14 +54,14 @@ void updateDuration(game_infos_t *game_infos)
                     game_infos->map[y][x].duration = 0;
                 }
             } else {
-                if (has_flame(game_infos->map[y][x].cell)) {
-                    printf("remove flame at x%d y%d\n", x, y);
-                    game_infos->map[y][x].cell = grass_cell(0);
-                } else if (has_bomb(game_infos->map[y][x].cell)) {
-                    printf("remove bomb at x%d y%d\n", x, y);
-                    explodeBombRadius(game_infos, x, y);
-                }
-            }
+	      if (has_bomb(game_infos->map[y][x].cell)) {
+		printf("remove bomb at x%d y%d\n", x, y);
+		explodeBombRadius(game_infos, x, y);
+	      } else if (has_flame(game_infos->map[y][x].cell)) {
+	      	printf("remove flame at x%d y%d\n", x, y);
+	      	game_infos->map[y][x].cell = grass_cell(0);
+	      }
+	    }
         }
     }
 }
@@ -200,102 +200,99 @@ void explodeBombRadius(game_infos_t *game_infos, int x, int y) {
             game_infos->players[bomb_planter].bombs_left++;
         }
     }
-    explode_cell(&game_infos->map[y][x]);
     bombCheckPlayerRadius(game_infos, x, y);
-    for (int x_max = x + 1; x_max <= x + radius; x_max++) {
-        if (stop) {
-            break;
-        }
-        switch (get_cell_type(game_infos->map[y][x_max].cell)) {
-            case MAP_WALL_BREAKABLE:
-                //break wall and set the cell on flame
-                explode_cell(&game_infos->map[y][x_max]);
-                bombCheckPlayerRadius(game_infos, x_max, y);
-                printf("explosion spreading to x%d y%d: wall\n", x_max, y);
-                stop = 1;
-                break;
-            case MAP_WALL_UNBREAKABLE:
-                stop = 1;
-                break;
-            case MAP_GRASS:
-                //set the cell on flame
-                explode_cell(&game_infos->map[y][x_max]);
-                bombCheckPlayerRadius(game_infos, x_max, y);
-                printf("explosion spreading to x%d y%d: grass\n", x_max, y);
-                break;
-        }
+    for (int x_max = x; x_max <= x + radius; x_max++) {
+      if (stop) {
+    	break;
+      }
+      switch (get_cell_type(game_infos->map[y][x_max].cell)) {
+      case MAP_WALL_BREAKABLE:
+    	//break wall and set the cell on flame
+    	explode_cell(&game_infos->map[y][x_max]);
+    	bombCheckPlayerRadius(game_infos, x_max, y);
+    	printf("explosion spreading to x%d y%d: wall\n", x_max, y);
+    	stop = 1;
+    	break;
+      case MAP_WALL_UNBREAKABLE:
+    	stop = 1;
+    	break;
+      case MAP_GRASS:
+      	//set the cell on flame
+      	explode_cell(&game_infos->map[y][x]);
+      	explode_cell(&game_infos->map[y][x_max]);
+      	bombCheckPlayerRadius(game_infos, x_max, y);
+      	printf("explosion spreading to x%d y%d: grass\n", x_max, y);
+      	break;
+      }
     }
     stop = 0;
-    for (int x_min = x - 1; x_min >= x - radius; x_min--) {
-        if (stop) {
-            break;
-        }
-        switch (get_cell_type(game_infos->map[y][x_min].cell)) {
-            case MAP_WALL_BREAKABLE:
-                //break wall and set the cell on flame
-                explode_cell(&game_infos->map[y][x_min]);
-                bombCheckPlayerRadius(game_infos, x_min, y);
-                printf("explosion spreading to x%d y%d: wall\n", x_min, y);
-                stop = 1;
-                break;
-            case MAP_WALL_UNBREAKABLE:
-                stop = 1;
-                break;
-            case MAP_GRASS:
-                //set the cell on flame
-                explode_cell(&game_infos->map[y][x_min]);
-                bombCheckPlayerRadius(game_infos, x_min, y);
-                printf("explosion spreading to x%d y%d: grass\n", x_min, y);
-                break;
-        }
+    for (int x_min = x; x_min >= x - radius; x_min--) {
+      if (stop) {
+    	break;
+      }
+      switch (get_cell_type(game_infos->map[y][x_min].cell)) {
+      case MAP_WALL_BREAKABLE:
+    	explode_cell(&game_infos->map[y][x_min]);
+    	bombCheckPlayerRadius(game_infos, x_min, y);
+    	printf("explosion spreading to x%d y%d: wall\n", x_min, y);
+    	stop = 1;
+    	break;
+      case MAP_WALL_UNBREAKABLE:
+    	stop = 1;
+    	break;
+      case MAP_GRASS:
+      	explode_cell(&game_infos->map[y][x]);
+      	explode_cell(&game_infos->map[y][x_min]);
+      	bombCheckPlayerRadius(game_infos, x_min, y);
+      	printf("explosion spreading to x%d y%d: grass\n", x_min, y);
+      	break;
+      }
     }
     stop = 0;
-    for (int y_max = y + 1; y_max <= y + radius; y_max++) {
-        if (stop) {
-            break;
-        }
-        switch (get_cell_type(game_infos->map[y_max][x].cell)) {
-            case MAP_WALL_BREAKABLE:
-                //break wall and set the cell on flame
-                explode_cell(&game_infos->map[y_max][x]);
-                bombCheckPlayerRadius(game_infos, x, y_max);
-                printf("explosion spreading to x%d y%d: wall\n", x, y_max);
-                stop = 1;
-                break;
-            case MAP_WALL_UNBREAKABLE:
-                stop = 1;
-                break;
-            case MAP_GRASS:
-                //set the cell on flame
-                explode_cell(&game_infos->map[y_max][x]);
-                bombCheckPlayerRadius(game_infos, x, y_max);
-                printf("explosion spreading to x%d y%d: grass\n", x, y_max);
-                break;
-        }
+    for (int y_max = y; y_max <= y + radius; y_max++) {
+      if (stop) {
+    	break;
+      }
+      switch (get_cell_type(game_infos->map[y_max][x].cell)) {
+      case MAP_WALL_BREAKABLE:
+    	explode_cell(&game_infos->map[y_max][x]);
+    	bombCheckPlayerRadius(game_infos, x, y_max);
+    	printf("explosion spreading to x%d y%d: wall\n", x, y_max);
+    	stop = 1;
+    	break;
+      case MAP_WALL_UNBREAKABLE:
+    	stop = 1;
+    	break;
+      case MAP_GRASS:
+      	explode_cell(&game_infos->map[y][x]);
+    	explode_cell(&game_infos->map[y_max][x]);
+    	bombCheckPlayerRadius(game_infos, x, y_max);
+    	printf("explosion spreading to x%d y%d: grass\n", x, y_max);
+    	break;
+      }
     }
     stop = 0;
-    for (int y_min = y - 1; y_min >= y - radius; y_min--) {
-        if (stop) {
-            break;
-        }
-        switch (get_cell_type(game_infos->map[y_min][x].cell)) {
-            case MAP_WALL_BREAKABLE:
-                //break wall and set the cell on flame
-                explode_cell(&game_infos->map[y_min][x]);
-                bombCheckPlayerRadius(game_infos, x, y_min);
-                printf("explosion spreading to x%d y%d: wall\n", x, y_min);
-                stop = 1;
-                break;
-            case MAP_WALL_UNBREAKABLE:
-                stop = 1;
-                break;
-            case MAP_GRASS:
-                //set the cell on flame
-                explode_cell(&game_infos->map[y_min][x]);
-                bombCheckPlayerRadius(game_infos, x, y_min);
-                printf("explosion spreading to x%d y%d: grass\n", x, y_min);
-                break;
-        }
+    for (int y_min = y; y_min >= y - radius; y_min--) {
+      if (stop) {
+    	break;
+      }
+      switch (get_cell_type(game_infos->map[y_min][x].cell)) {
+      case MAP_WALL_BREAKABLE:
+    	explode_cell(&game_infos->map[y_min][x]);
+    	bombCheckPlayerRadius(game_infos, x, y_min);
+    	printf("explosion spreading to x%d y%d: wall\n", x, y_min);
+    	stop = 1;
+    	break;
+      case MAP_WALL_UNBREAKABLE:
+    	stop = 1;
+    	break;
+      case MAP_GRASS:
+      	explode_cell(&game_infos->map[y][x]);
+    	explode_cell(&game_infos->map[y_min][x]);
+    	bombCheckPlayerRadius(game_infos, x, y_min);
+    	printf("explosion spreading to x%d y%d: grass\n", x, y_min);
+    	break;
+      }
     }
 }
 

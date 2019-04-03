@@ -22,7 +22,7 @@ int has_bomb(char cell)
 
 int has_flame(char cell)
 {
-    return cell & 0x01;
+  return cell & 0x01;
 }
 
 int add_bomb_to_cell(char cell)
@@ -45,5 +45,5 @@ int flame_cell(char cell)
 void explode_cell(cell_t *cell)
 {
     cell->cell = flame_cell(0);
-    cell->duration = FPS / 2;
+    cell->duration = FPS / 3;
 }

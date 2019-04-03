@@ -41,7 +41,7 @@
 #define DAMAGES 10
 #define PLAYER_LIFE 20
 #define WALL_LIFE 10
-#define RADIUS 1
+#define RADIUS 3
 
 // bonus
 #define RANGE_BONUS 0 // 000
