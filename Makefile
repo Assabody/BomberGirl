@@ -15,7 +15,6 @@ SRC		=	sources/main.c \
 			sources/game.c \
 			sources/cell.c \
 			sources/menu.c \
-			sources/bonus.c \
 			network/client.c \
 			network/checksum.c \
 			network/message.c \
@@ -24,7 +23,7 @@ SRC		=	sources/main.c \
 
 GCC		=	gcc
 
-CFLAGS		=	-Wall -Wextra -Werror -g -pthread
+CFLAGS		=	-Wall -Wextra -g -pthread
 
 SDL		=   -L./lib -lSDL2 -lSDL2_image -lSDL2_ttf
 

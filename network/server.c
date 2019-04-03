@@ -76,7 +76,9 @@ void updateDuration(game_infos_t *game_infos)
                 }
                 else if (has_flame(game_infos->map[y][x].cell))
                 {
-                    game_infos->map[y][x].cell = grass_cell(0);
+                    printf("remove flame, cell %d\n", game_infos->map[y][x].cell);
+                    remove_flame(&game_infos->map[y][x]);
+                    printf("bonus kept? cell %d\n", game_infos->map[y][x].cell);
                 }
             }
         }

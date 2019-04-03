@@ -27,7 +27,19 @@ void drawMap(game_t *game) {
             } else if (has_bomb(game->map[y][x].cell)) {
                 drawBombs(game, position);
             }
-            x++;
+            else if (has_bonus(game->map[y][x].cell) && get_cell_type(game->map[y][x].cell) == MAP_GRASS)
+            {
+                switch (get_bonus(game->map[y][x].cell))
+                {
+                    case BOMB_NUMBER_BONUS:
+                        SDL_RenderCopy(game->sdl->renderer, game->textures->bomb_bonus, NULL, &position);
+                        break;
+                    case SPEED_BONUS:
+                        SDL_RenderCopy(game->sdl->renderer, game->textures->speed_bonus, NULL, &position);
+                        break;
+                }
+            }
+                x++;
             position.x += 40;
         }
         x = 0;
@@ -60,7 +72,8 @@ void drawBombs(game_t *game, SDL_Rect position) {
 
 void drawPlayer(game_t *game) {
     for (int i = 0; i < MAX_PLAYERS; i++) {
-        if (game->player[i].alive) {
+        if (game->player[i].alive && game->player[i].y_pos > 0 && game->player[i].x_pos > 0)
+        {
             renderTexture(
                     game->textures->player,
                     game->sdl,

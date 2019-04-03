@@ -88,6 +88,10 @@ void clearTextures(textures_t *textures) {
             SDL_DestroyTexture(textures->menu);
         if (textures->flame)
             SDL_DestroyTexture(textures->flame);
+        if (textures->bomb_bonus)
+            SDL_DestroyTexture(textures->bomb_bonus);
+        if (textures->speed_bonus)
+            SDL_DestroyTexture(textures->speed_bonus);
     }
     free(textures);
     textures = NULL;
@@ -190,6 +194,36 @@ textures_t *initTextures(sdl_t *sdl) {
             textures->player_clips[i].h = iH;
         }
         SDL_FreeSurface(playerSurface);
+    }
+
+    SDL_Surface *bombBonusSurface = IMG_Load("./assets/images/bomb_bonus.png");
+    if (!bombBonusSurface)
+    {
+        fprintf(stderr, SDL_GetError());
+    }
+    else
+    {
+        textures->bomb_bonus = SDL_CreateTextureFromSurface(sdl->renderer, bombBonusSurface);
+        SDL_FreeSurface(bombBonusSurface);
+        if (!textures->bomb_bonus)
+        {
+            fprintf(stderr, SDL_GetError());
+        }
+    }
+
+    SDL_Surface *speedBonusSurface = IMG_Load("./assets/images/speed_bonus.png");
+    if (!speedBonusSurface)
+    {
+        fprintf(stderr, SDL_GetError());
+    }
+    else
+    {
+        textures->speed_bonus = SDL_CreateTextureFromSurface(sdl->renderer, speedBonusSurface);
+        SDL_FreeSurface(speedBonusSurface);
+        if (!textures->speed_bonus)
+        {
+            fprintf(stderr, SDL_GetError());
+        }
     }
     return textures;
 }

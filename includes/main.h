@@ -39,7 +39,7 @@
 
 // bombs
 #define DAMAGES 10
-#define PLAYER_LIFE 20
+#define PLAYER_LIFE 100
 #define WALL_LIFE 10
 #define RADIUS 3
 
@@ -167,6 +167,13 @@ int initClient(char *, char *, game_t *);
 /**
  * Cell.c
  */
+
+void clear_byte(unsigned char *number, int byte);
+
+void toggle_byte(unsigned char *number, int n);
+
+int test_byte(unsigned char number, int n);
+
 int grass_cell(char);
 
 int breakable_wall_cell(char);
@@ -185,14 +192,15 @@ int flame_cell(char);
 
 void explode_cell(cell_t *);
 
+void remove_breakable_wall(cell_t *cell);
 
-/**
- * Bonus.c
- */
-int get_bonus(char);
+void set_bonus(cell_t *cell, int bonus);
 
-int cell_has_bonus(char cell);
+int get_bonus(char cell);
 
+int has_bonus(char cell);
+
+void remove_flame(cell_t *cell);
 
 /**
  * Moves.c

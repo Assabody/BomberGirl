@@ -31,6 +31,11 @@ void mapInit(game_infos_t *game_infos)
       else
       {
         game_infos->map[y][x].cell = breakable_wall_cell(0);
+        /* if (randomNumber(1, 3) == 3)
+        { */
+          printf("Setting bomb bonus on x%d y%d\n", x, y);
+          set_bonus(&game_infos->map[y][x], BOMB_NUMBER_BONUS);
+        /* } */
       }
     }
   }
