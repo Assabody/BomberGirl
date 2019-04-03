@@ -39,12 +39,50 @@ void processRequest(game_infos_t *game, t_client_request request)
             request.x_pos,
             request.y_pos,
             &game->players[player_key].x_pos,
-            &game->players[player_key].y_pos);
+            &game->players[player_key].y_pos
+        );
         // Pose bomb
-        if (request.command)
-        {
+        if (request.command) {
             printf("plant bomb at x%d y%d\n", request.x_pos, request.y_pos);
             plantBomb(game, player_key, request.x_pos, request.y_pos);
+        } 
+        else if (is_bonus(game->map[request.y_pos][request.x_pos].cell)) {
+            switch (get_bonus(game->map[request.y_pos][request.x_pos].cell)) {
+            case BOMB_NUMBER_BONUS:
+                game->players[player_key].bombs_capacity++;
+                game->players[player_key].bombs_left++;
+                printf("New player [%d] capacity: %d bombs\n", player_key, game->players[player_key].bombs_capacity);
+                break;
+            case BOMB_NUMBER_MALUS:
+                if (game->players[player_key].bombs_capacity > 1) {
+                    game->players[player_key].bombs_capacity--;
+                    game->players[player_key].bombs_left--;
+                }
+                break;
+            case RANGE_BONUS:
+                game->players[player_key].bomb_radius++;
+                break;
+            case RANGE_MALUS:
+                if (game->players[player_key].bomb_radius > 1) {
+                    game->players[player_key].bomb_radius--;
+                }
+                break;
+            case SPEED_BONUS:
+                if (game->players[player_key].current_speed + SPEED / 2 <= game->players[player_key].max_speed) {
+                    game->players[player_key].current_speed += SPEED / 2;
+                } else {
+                    game->players[player_key].current_speed = game->players[player_key].max_speed;
+                }
+                break;
+            case SPEED_MALUS:
+                if (game->players[player_key].current_speed - SPEED / 2 >= SPEED / 2) {
+                    game->players[player_key].current_speed -= SPEED / 2;
+                } else {
+                    game->players[player_key].current_speed = SPEED / 2;
+                }
+                break;
+            }
+            remove_bonus(&game->map[request.y_pos][request.x_pos].cell);
         }
     }
     game->players[player_key].current_dir = request.dir;
@@ -69,16 +107,10 @@ void updateDuration(game_infos_t *game_infos)
             }
             else
             {
-                if (has_bomb(game_infos->map[y][x].cell))
-                {
-                    printf("remove bomb at x%d y%d\n", x, y);
+                if (is_bomb(game_infos->map[y][x].cell)) {
                     explodeBombRadius(game_infos, x, y);
-                }
-                else if (has_flame(game_infos->map[y][x].cell))
-                {
-                    printf("remove flame, cell %d\n", game_infos->map[y][x].cell);
-                    remove_flame(&game_infos->map[y][x]);
-                    printf("bonus kept? cell %d\n", game_infos->map[y][x].cell);
+                } else if (is_flame(game_infos->map[y][x].cell)) {
+                    set_flame(&game_infos->map[y][x].cell, 0);
                 }
             }
         }
@@ -233,7 +265,7 @@ void plantBomb(game_infos_t *game_infos, int player_key, int x, int y)
     if (game_infos->players[player_key].bombs_left && can_pose_bomb(game_infos->map[y][x].cell))
     {
         printf("player [%d] planted bomb at x%d y%d\n", player_key, x, y);
-        game_infos->map[y][x].cell = add_bomb_to_cell(game_infos->map[y][x].cell);
+        set_bomb(&game_infos->map[y][x].cell, 1);
         game_infos->map[y][x].duration = 3 * FPS;
         game_infos->players[player_key].bombs_left--;
         game_infos->bombs[y][x].bomb_posed = 1;
@@ -266,7 +298,7 @@ void explodeBombRadius(game_infos_t *game_infos, int x, int y)
         {
             break;
         }
-        if (has_bomb(game_infos->map[y][x_max].cell) && game_infos->bombs[y][x_max].bomb_posed)
+        if (is_bomb(game_infos->map[y][x_max].cell) && game_infos->bombs[y][x_max].bomb_posed)
         {
             printf("other bomb exploded:\n");
             explodeBombRadius(game_infos, x_max, y);
@@ -299,7 +331,7 @@ void explodeBombRadius(game_infos_t *game_infos, int x, int y)
         {
             break;
         }
-        if (has_bomb(game_infos->map[y][x_min].cell) && game_infos->bombs[y][x_min].bomb_posed)
+        if (is_bomb(game_infos->map[y][x_min].cell) && game_infos->bombs[y][x_min].bomb_posed)
         {
             printf("other bomb exploded:\n");
             explodeBombRadius(game_infos, x_min, y);
@@ -330,7 +362,7 @@ void explodeBombRadius(game_infos_t *game_infos, int x, int y)
         {
             break;
         }
-        if (has_bomb(game_infos->map[y_max][x].cell) && game_infos->bombs[y_max][x].bomb_posed)
+        if (is_bomb(game_infos->map[y_max][x].cell) && game_infos->bombs[y_max][x].bomb_posed)
         {
             printf("other bomb exploded:\n");
             explodeBombRadius(game_infos, x, y_max);
@@ -347,7 +379,6 @@ void explodeBombRadius(game_infos_t *game_infos, int x, int y)
             stop = 1;
             break;
         case MAP_GRASS:
-            explode_cell(&game_infos->map[y][x]);
             explode_cell(&game_infos->map[y_max][x]);
             bombCheckPlayerRadius(game_infos, x, y_max);
             printf("explosion spreading to x%d y%d: grass\n", x, y_max);
@@ -361,7 +392,7 @@ void explodeBombRadius(game_infos_t *game_infos, int x, int y)
         {
             break;
         }
-        if (has_bomb(game_infos->map[y_min][x].cell) && game_infos->bombs[y_min][x].bomb_posed)
+        if (is_bomb(game_infos->map[y_min][x].cell) && game_infos->bombs[y_min][x].bomb_posed)
         {
             printf("other bomb exploded:\n");
             explodeBombRadius(game_infos, x, y_min);
@@ -406,22 +437,6 @@ void bombCheckPlayerRadius(game_infos_t *game_infos, int x, int y)
                 game_infos->players[i].life -= DAMAGES;
             }
             printf("Player [%d] took %d damages. life before: %d, life after: %d\n", i, DAMAGES, game_infos->players[i].life + DAMAGES, game_infos->players[i].life);
-        }
-    }
-}
-
-void explodeBomb(game_infos_t *game_infos, int x, int y)
-{
-    int bomb_planter;
-    explodeBombRadius(game_infos, x, y);
-    game_infos->map[y][x].duration = 0;
-    game_infos->map[y][x].cell = grass_cell(0);
-    if (game_infos->bombs[y][x].bomb_posed)
-    {
-        bomb_planter = (int)game_infos->bombs[y][x].player;
-        if (game_infos->players[bomb_planter].bombs_left < game_infos->players[bomb_planter].bombs_capacity)
-        {
-            game_infos->players[bomb_planter].bombs_left++;
         }
     }
 }

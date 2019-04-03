@@ -45,10 +45,10 @@
 
 // bonus
 #define RANGE_BONUS 0 // 000
-#define RANGE_MALUS 1 // 001
+#define RANGE_MALUS 4 // 001
 #define BOMB_NUMBER_BONUS 2 // 010
-#define BOMB_NUMBER_MALUS 3 // 011
-#define SPEED_BONUS 4 // 100
+#define BOMB_NUMBER_MALUS 6 // 011
+#define SPEED_BONUS 1 // 100
 #define SPEED_MALUS 5 // 101
 
 typedef struct server_s
@@ -167,40 +167,26 @@ int initClient(char *, char *, game_t *);
 /**
  * Cell.c
  */
-
-void clear_byte(unsigned char *number, int byte);
-
-void toggle_byte(unsigned char *number, int n);
-
-int test_byte(unsigned char number, int n);
-
-int grass_cell(char);
-
-int breakable_wall_cell(char);
-
-int unbreakable_wall_cell(char);
-
-int can_pose_bomb(char);
-
-int add_bomb_to_cell(char);
-
-int has_bomb(char);
-
-int has_flame(char);
-
-int flame_cell(char);
-
+void toggle_byte(unsigned char *, int);
+void clear_byte(unsigned char *, int);
+int test_byte(unsigned char, int);
+int is_grass(unsigned char);
+int is_breakable(unsigned char);
+int is_unbreakable(unsigned char);
+int is_bonus(unsigned char);
+int is_bomb(unsigned char);
+int is_flame(unsigned char);
+void set_bonus(unsigned char *, int);
+void set_bomb(unsigned char *, int);
+void set_flame(unsigned char *, int);
+void set_grass(unsigned char *);
+void set_breakable(unsigned char *);
+void set_unbreakable(unsigned char *);
+// TO MOVE
+int get_bonus(unsigned char);
+void remove_bonus(unsigned char *);
+int can_pose_bomb(unsigned char);
 void explode_cell(cell_t *);
-
-void remove_breakable_wall(cell_t *cell);
-
-void set_bonus(cell_t *cell, int bonus);
-
-int get_bonus(char cell);
-
-int has_bonus(char cell);
-
-void remove_flame(cell_t *cell);
 
 /**
  * Moves.c
@@ -211,7 +197,6 @@ void map_coords_to_player_coords(int, int, int *, int *);
 
 void player_coords_to_map_coords(int, int, int *, int *);
 
-
 /**
  * Client.c
  */
@@ -219,14 +204,12 @@ int getServerInfo(int, game_t *);
 
 void *server(void *arg);
 
-
 /**
  * Server.c
  */
 void startServer(game_t *, int *);
 
 void stopServer(game_t *);
-
 
 /**
  * Request.c

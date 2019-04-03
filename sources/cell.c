@@ -1,5 +1,8 @@
 #include "../includes/main.h"
 
+/**
+ * Byte Manipulation
+ */
 void clear_byte(unsigned char *number, int n)
 {
     *number &= ~(1 << n);
@@ -15,85 +18,115 @@ int test_byte(unsigned char number, int n)
     return number &(1 << n);
 }
 
-int is_grass_cell(char cell)
+/**
+ * Getters
+ */
+int is_grass(unsigned char cell)
 {
-    return cell | 0x00;
+    return !test_byte(cell, 1) && !test_byte(cell, 2);
 }
 
-int is_breakable_wall_cell(char cell)
+int is_breakable(unsigned char cell)
 {
-    return cell | 0x06;
+    return test_byte(cell, 1) && test_byte(cell, 2);
 }
 
-int is_unbreakable_wall_cell(char cell)
+int is_unbreakable(unsigned char cell)
 {
-    return cell | 0x02;
+    return test_byte(cell, 1);
 }
 
-int is_bomb(char cell)
+int is_bomb(unsigned char cell)
 {
-    return ((cell >> 3) & 0x01);
+    return test_byte(cell, 3);
 }
 
-int is_flame(char cell)
+int is_flame(unsigned char cell)
 {
-  return cell & 0x01;
+    return test_byte(cell, 0);
 }
 
-int add_bomb_to_cell(char cell)
+int is_bonus(unsigned char cell)
 {
-    return cell | 0x08;
+    return test_byte(cell, 4);
 }
 
-int can_pose_bomb(char cell) {
-    if (get_cell_type(cell) == MAP_GRASS && !has_bomb(cell)) {
+int get_bonus(unsigned char cell)
+{
+    return cell >> 5;
+}
+/**
+ * Setters
+ */
+void set_grass(unsigned char *cell)
+{
+    clear_byte(cell, 1);
+    clear_byte(cell, 2);
+}
+
+void set_breakable(unsigned char *cell)
+{
+    toggle_byte(cell, 1);
+    toggle_byte(cell, 2);
+}
+
+void set_unbreakable(unsigned char *cell)
+{
+    toggle_byte(cell, 1);
+    clear_byte(cell, 2);
+}
+
+void set_bomb(unsigned char *cell, int set)
+{
+    if (set) {
+        toggle_byte(cell, 3);
+    } else {
+        clear_byte(cell, 3);
+    }
+}
+
+void set_flame(unsigned char *cell, int set)
+{
+    if (set)
+    {
+        toggle_byte(cell, 0);
+    }
+    else
+    {
+        clear_byte(cell, 0);
+    }
+}
+
+void remove_bonus(unsigned char *cell)
+{
+    clear_byte(cell, 4);
+    clear_byte(cell, 5);
+    clear_byte(cell, 6);
+    clear_byte(cell, 7);
+}
+
+void set_bonus(unsigned char *cell, int bonus)
+{
+    toggle_byte(cell, 4);             // has bonus
+    *cell = *cell | (bonus << 5); // le bonus est l'int
+}
+
+// Others
+int can_pose_bomb(unsigned char cell)
+{
+    if (get_cell_type(cell) == MAP_GRASS && !is_bomb(cell)) {
         return 1;
     }
     return 0;
 }
 
-void remove_flame(cell_t *cell)
-{
-    cell->cell &= 0;
-}
-
-int is_flame(char cell)
-{
-    return cell | 0x01;
-}
-
 void explode_cell(cell_t *cell)
 {
-    int bonus = get_bonus(cell->cell);
-    cell->cell = flame_cell(0);
-    set_bonus(cell, bonus);
+    if (is_grass(cell->cell)) {
+        remove_bonus(&cell->cell);
+    }
+    set_grass(&cell->cell);
+    set_bomb(&cell->cell, 0);
+    set_flame(&cell->cell, 1);
     cell->duration = FPS / 3;
-}
-
-/* #define RANGE_BONUS 0       // 000
-#define RANGE_MALUS 1       // 001
-#define BOMB_NUMBER_BONUS 2 // 010
-#define BOMB_NUMBER_MALUS 3 // 011
-#define SPEED_BONUS 4       // 100
-#define SPEED_MALUS 5       // 101 */
-
-void remove_breakable_wall(cell_t *cell)
-{
-    cell->cell = (get_bonus(cell->cell) << 5) | (has_bonus(cell->cell) << 4);
-}
-
-void set_bonus(cell_t *cell, int bonus)
-{
-    cell->cell = cell->cell | (0x01 << 4);  // présence d'un bonus
-    cell->cell = cell->cell | (bonus << 5); // le bonus est l'int
-}
-
-int is_bonus(char cell)
-{
-    return cell & (0x01 << 4);
-}
-
-int get_bonus(char cell)
-{
-    return cell >> 5;
 }

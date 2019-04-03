@@ -10,24 +10,25 @@ void drawMap(game_t *game) {
     position.h = 40;
     while (y < Y_MAP_SIZE) {
         while (x < X_MAP_SIZE) {
-            switch (get_cell_type(game->map[y][x].cell)) {
-                case MAP_WALL_UNBREAKABLE:
-                    SDL_RenderCopy(game->sdl->renderer, game->textures->stone, NULL, &position);
-                    break;
-                case MAP_WALL_BREAKABLE:
-                    SDL_RenderCopy(game->sdl->renderer, game->textures->brick, NULL, &position);
-                    break;
-                case MAP_GRASS:
-                    SDL_RenderCopy(game->sdl->renderer, game->textures->grass, NULL, &position);
-                    break;
+            switch (get_cell_type(game->map[y][x].cell))
+            {
+            case MAP_WALL_UNBREAKABLE:
+                SDL_RenderCopy(game->sdl->renderer, game->textures->stone, NULL, &position);
+                break;
+            case MAP_WALL_BREAKABLE:
+                SDL_RenderCopy(game->sdl->renderer, game->textures->brick, NULL, &position);
+                break;
+            case MAP_GRASS:
+                SDL_RenderCopy(game->sdl->renderer, game->textures->grass, NULL, &position);
+                break;
             }
 
-            if (has_flame(game->map[y][x].cell)) {
+            if (is_flame(game->map[y][x].cell)) {
                 SDL_RenderCopy(game->sdl->renderer, game->textures->flame, NULL, &position);
-            } else if (has_bomb(game->map[y][x].cell)) {
+            } else if (is_bomb(game->map[y][x].cell)) {
                 drawBombs(game, position);
             }
-            else if (has_bonus(game->map[y][x].cell) && get_cell_type(game->map[y][x].cell) == MAP_GRASS)
+            else if (is_bonus(game->map[y][x].cell) && get_cell_type(game->map[y][x].cell) == MAP_GRASS)
             {
                 switch (get_bonus(game->map[y][x].cell))
                 {

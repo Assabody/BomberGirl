@@ -12,12 +12,12 @@ void mapInit(game_infos_t *game_infos)
       if (x == X_MAP_SIZE - 1 || y == Y_MAP_SIZE - 1 || x == 0 || y == 0)
       {
         // borders
-        game_infos->map[y][x].cell = unbreakable_wall_cell(0);
+        set_unbreakable(&game_infos->map[y][x].cell);
       }
       else if (x % 2 == 0 && y % 2 == 0)
       {
         // every two lines and rows
-        game_infos->map[y][x].cell = unbreakable_wall_cell(0);
+        set_unbreakable(&game_infos->map[y][x].cell);
       }
       else if (
           (x >= 1 && x <= 2 && y >= 1 && y <= 2) ||
@@ -26,16 +26,19 @@ void mapInit(game_infos_t *game_infos)
           (x >= X_MAP_SIZE - 3 && x <= X_MAP_SIZE - 2 && y >= 1 && y <= 2))
       {
         // Put grass where the players spawn
-        game_infos->map[y][x].cell = grass_cell(0);
+        set_grass(&game_infos->map[y][x].cell);
       }
       else
       {
-        game_infos->map[y][x].cell = breakable_wall_cell(0);
+        set_breakable(&game_infos->map[y][x].cell);
+        printf("breakable %d\n", game_infos->map[y][x].cell);
+
         /* if (randomNumber(1, 3) == 3)
         { */
-          printf("Setting bomb bonus on x%d y%d\n", x, y);
-          set_bonus(&game_infos->map[y][x], BOMB_NUMBER_BONUS);
-        /* } */
+          set_bonus(&game_infos->map[y][x].cell, BOMB_NUMBER_BONUS);
+          printf("Setting bomb bonus on x%d y%d: %d\n", x, y, game_infos->map[y][x].cell);
+
+          /* } */
       }
     }
   }

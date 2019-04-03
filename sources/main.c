@@ -62,16 +62,15 @@ void showbits(int x)
 }
 
 int main() {
-    cell_t cell;
-    cell.cell  = 7; // flame + breakable
-    //printf("%d\n", cell.cell);
+   /*  cell_t cell;
+    cell.cell  = 0;
     showbits(cell.cell);
     putchar('\n');
-    clear_byte(&cell.cell, 1);
-    //printf("%d\n", cell.cell);
+    set_bonus(&cell.cell, BOMB_NUMBER_BONUS);
     showbits(cell.cell);
+    printf("bonus is %d\n", get_bonus(cell.cell));
     putchar('\n');
-    exit(0);
+    exit(0);  */
     game_t *game = init();
 
     srandom(time(0));
