@@ -10,28 +10,37 @@ void drawMap(game_t *game) {
     position.h = 40;
     while (y < Y_MAP_SIZE) {
         while (x < X_MAP_SIZE) {
-            switch (get_cell_type(game->map[y][x].cell)) {
-                case MAP_WALL_UNBREAKABLE:
-                    SDL_RenderCopy(game->sdl->renderer, game->textures->stone, NULL, &position);
-                    break;
-                case MAP_WALL_BREAKABLE:
-                    SDL_RenderCopy(game->sdl->renderer, game->textures->brick, NULL, &position);
-                    break;
-                case MAP_GRASS:
-                    SDL_RenderCopy(game->sdl->renderer, game->textures->grass, NULL, &position);
-                    break;
+            switch (get_cell_type(game->map[y][x].cell))
+            {
+            case MAP_WALL_UNBREAKABLE:
+                SDL_RenderCopy(game->sdl->renderer, game->textures->stone, NULL, &position);
+                break;
+            case MAP_WALL_BREAKABLE:
+                SDL_RenderCopy(game->sdl->renderer, game->textures->brick, NULL, &position);
+                break;
+            case MAP_GRASS:
+                SDL_RenderCopy(game->sdl->renderer, game->textures->grass, NULL, &position);
+                break;
             }
 
-            if (has_flame(game->map[y][x].cell)) {	      
-	      printf("flame at x%d y%d, duration %d\n", x, y, game->map[y][x].duration);
-            }
-            if (has_flame(game->map[y][x].cell)) {
+            if (is_flame(game->map[y][x].cell)) {
                 SDL_RenderCopy(game->sdl->renderer, game->textures->flame, NULL, &position);
-            } else if (has_bomb(game->map[y][x].cell)) {
+            } else if (is_bomb(game->map[y][x].cell)) {
                 drawBombs(game, position);
-                printf("bomb duration is %d\n", game->map[y][x].duration);
             }
-            x++;
+            else if (is_bonus(game->map[y][x].cell) && get_cell_type(game->map[y][x].cell) == MAP_GRASS)
+            {
+                switch (get_bonus(game->map[y][x].cell))
+                {
+                    case BOMB_NUMBER_BONUS:
+                        SDL_RenderCopy(game->sdl->renderer, game->textures->bomb_bonus, NULL, &position);
+                        break;
+                    case SPEED_BONUS:
+                        SDL_RenderCopy(game->sdl->renderer, game->textures->speed_bonus, NULL, &position);
+                        break;
+                }
+            }
+                x++;
             position.x += 40;
         }
         x = 0;
@@ -54,9 +63,6 @@ void drawBombs(game_t *game, SDL_Rect position) {
         bomb_clip = 3;
     } 
     game->map[y][x].duration--;
-    /*if (game->map[y][x].duration <= 0) {
-        send_bomb_exploded(game->client_sock, position.x, position.y);
-    }*/
     renderTexture(
         game->textures->bomb,
         game->sdl,
@@ -67,7 +73,8 @@ void drawBombs(game_t *game, SDL_Rect position) {
 
 void drawPlayer(game_t *game) {
     for (int i = 0; i < MAX_PLAYERS; i++) {
-        if (game->player[i].alive) {
+        if (game->player[i].alive && game->player[i].y_pos > 0 && game->player[i].x_pos > 0)
+        {
             renderTexture(
                     game->textures->player,
                     game->sdl,

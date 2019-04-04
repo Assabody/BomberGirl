@@ -28,7 +28,3 @@ void initPlayer(player_t *player, int player_position)
             break;
     }
 }
-
-void printPlayerStruct(player_t *player) {
-    printf("PlayerStruct\n  alive: %d\n  bombs: %d/%d\n  dir: %d\n  token: %d\n  speed: %d/%d\n  pos: X %d - Y %d\n  frags: %d\n\n", player->alive, player->bombs_left, player->bombs_capacity, player->current_dir, player->token, player->current_speed, player->max_speed, player->x_pos, player->y_pos, player->frags);
-}
