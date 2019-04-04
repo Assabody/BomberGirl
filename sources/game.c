@@ -18,6 +18,7 @@ int drawGame(game_t *game)
         send_request(game);
         usleep(1000);
         getServerInfo(game->client_sock, game);
+        usleep(1000);
 
         SDL_RenderClear(game->sdl->renderer);
         drawMap(game);

@@ -73,14 +73,14 @@ void drawBombs(game_t *game, SDL_Rect position) {
 
 void drawPlayer(game_t *game) {
     for (int i = 0; i < MAX_PLAYERS; i++) {
-        if (game->player[i].alive && game->player[i].y_pos > 0 && game->player[i].x_pos > 0)
+        if (game->player[i].alive)
         {
             renderTexture(
-                    game->textures->player,
-                    game->sdl,
-                    game->player[i].x_pos,
-                    game->player[i].y_pos - 20,
-                    &game->textures->player_clips[game->player[i].current_dir]);
+                game->textures->player,
+                game->sdl,
+                game->player[i].x_pos,
+                game->player[i].y_pos - 20,
+                &game->textures->player_clips[game->player[i].current_dir]);
         }
     }
 }

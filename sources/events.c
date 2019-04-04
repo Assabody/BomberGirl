@@ -20,7 +20,7 @@ void checkEvents(game_t *game) {
                     close(game->client_sock);
                     gameDestroy(game);
                     if (game->player_key == 0) {
-                        stopServer(game->server.server_thread);
+                        stopServer(game);
                     }
                     exit(0);
                     break;
