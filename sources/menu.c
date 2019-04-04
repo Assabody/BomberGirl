@@ -32,9 +32,9 @@ int isServerRunning(game_t *game) {
 int menuWindow(game_t *game) {
     int quit = 0;
     int counter = 0;
-    int menu_size = 4;
+    int menu_size = 3;
     int update = 1;
-    menu_t *menus = malloc(sizeof(menu_t) * 4);
+    menu_t *menus = malloc(sizeof(menu_t) * 3);
     char *address = malloc(sizeof(char) * 15);
     char *port = malloc(sizeof(char) * 5);
 
@@ -50,10 +50,8 @@ int menuWindow(game_t *game) {
     menus[0].enabled = 1;
     menus[1].text = strdup("Heberger une partie");
     menus[1].enabled = game->server.started ? 0 : 1;
-    menus[2].text = strdup("Local");
+    menus[2].text = strdup("Quitter");
     menus[2].enabled = 1;
-    menus[3].text = strdup("Quitter");
-    menus[3].enabled = 1;
 
     showMenu(game, menus, menu_size, counter);
     do {
@@ -75,9 +73,9 @@ int menuWindow(game_t *game) {
                         if (menus[counter].enabled) {
                             ask_for_ip(game->sdl->renderer, game->sdl->font, address);
                             SDL_RenderClear(game->sdl->renderer);
-                            ask_for_ip(game->sdl->renderer, game->sdl->font, port);
+                            ask_for_port(game->sdl->renderer, game->sdl->font, port);
                             if (joinGame(address, port, game)) {
-                                if (waitingLobby(game)) {
+			      if (waitingLobby(game, 0)) {
                                     drawGame(game);
                                 } else {
                                     quit = 1;
@@ -95,7 +93,7 @@ int menuWindow(game_t *game) {
                     case 1:
                         if (menus[counter].enabled) {
                             if (hostGame(game)) {
-                                 if (waitingLobby(game)) {
+			      if (waitingLobby(game, 1)) {
                                      drawGame(game);
                                  } else {
                                      disp_text(game->sdl->renderer, "Stopping server...", game->sdl->font, 80, 80);
@@ -105,19 +103,6 @@ int menuWindow(game_t *game) {
                         }
                         break;
                     case 2:
-                        if (menus[counter].enabled) {
-                            if (joinGame("127.0.0.1", "1234", game)) {
-                                drawGame(game);
-                            } else {
-                                showPromptMessage(game, "Cannot connect to the server", text_pos, white);
-                            }
-                            if (address && port) {
-                                free(address);
-                                free(port);
-                            }
-                        }
-                        break;
-                    case 3:
                         quit = 1;
                         break;
                 }
@@ -178,7 +163,7 @@ int get_clients_number(int sock) {
     return players_number;
 }
 
-int waitingLobby(game_t *game)
+int waitingLobby(game_t *game, int host)
 {
     printf("== Waiting Lobby ==\n");
     SDL_Event event;
@@ -203,8 +188,11 @@ int waitingLobby(game_t *game)
                     if(event.key.keysym.scancode == SDL_SCANCODE_ESCAPE ) {
                         return 0;
                     } else if (event.key.keysym.scancode == SDL_SCANCODE_RETURN || event.key.keysym.scancode == SDL_SCANCODE_BACKSPACE) {
-                        char query[4] = {'p','l','a','y'};
-                        send(game->client_sock, &query, sizeof(query), MSG_NOSIGNAL);
+			if (host == 1) {
+			  char query[4] = {'p','l','a','y'};
+			  send(game->client_sock, &query, sizeof(query), MSG_NOSIGNAL);
+			  return 1;
+			}
                         return 1;
                     }
             }
@@ -265,7 +253,7 @@ void    showSelection(game_t *game, int menu_selected_number)
 
     SDL_GetRendererOutputSize(game->sdl->renderer, &width, &height);
     selection_pos.x = 40;
-    selection_pos.y = height / 2 - 3 * 25 / 2 + 30 * menu_selected_number - 25  ;
+    selection_pos.y = height / 2 - 3 * 25 / 2 + 30 * menu_selected_number - 10;
     selection_pos.w = 30;
     selection_pos.h = 30;
 
@@ -280,7 +268,7 @@ void    showSelection(game_t *game, int menu_selected_number)
 }
 
 void ask_for_port(SDL_Renderer *renderer, TTF_Font *font, char *port) {
-    memset(port, ' ', 5);
+    memset(port, ' ', 6);
     SDL_Event e;
     int position = 0;
     int ok = 0;

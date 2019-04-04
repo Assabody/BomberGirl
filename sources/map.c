@@ -31,8 +31,6 @@ void mapInit(game_infos_t *game_infos)
       else
       {
         set_breakable(&game_infos->map[y][x].cell);
-        printf("breakable %d\n", game_infos->map[y][x].cell);
-
         if (randomNumber(1, 3) == 3)
         {
           switch (randomNumber(1, 6)) {
