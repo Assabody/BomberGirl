@@ -98,4 +98,5 @@ void disp_text(SDL_Renderer *renderer, char *text, TTF_Font *font, int x, int y)
     pos.y = y;
     SDL_FreeSurface(surface);
     SDL_RenderCopy(renderer, texture, NULL, &pos);
+    SDL_DestroyTexture(texture);
 }
