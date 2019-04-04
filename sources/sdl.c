@@ -90,8 +90,12 @@ void clearTextures(textures_t *textures) {
             SDL_DestroyTexture(textures->flame);
         if (textures->bomb_bonus)
             SDL_DestroyTexture(textures->bomb_bonus);
-        if (textures->speed_bonus)
-            SDL_DestroyTexture(textures->speed_bonus);
+        if (textures->bomb_malus)
+            SDL_DestroyTexture(textures->bomb_malus);
+        if (textures->range_bonus)
+            SDL_DestroyTexture(textures->range_bonus);
+        if (textures->range_malus)
+            SDL_DestroyTexture(textures->range_malus);
     }
     free(textures);
     textures = NULL;
@@ -195,7 +199,7 @@ textures_t *initTextures(sdl_t *sdl) {
         SDL_FreeSurface(playerSurface);
     }
 
-    SDL_Surface *bombBonusSurface = IMG_Load("./assets/images/bomb_bonus.png");
+    SDL_Surface *bombBonusSurface = IMG_Load("./assets/images/bomb_bonus.jpg");
     if (!bombBonusSurface)
     {
         fprintf(stderr, SDL_GetError());
@@ -210,16 +214,46 @@ textures_t *initTextures(sdl_t *sdl) {
         }
     }
 
-    SDL_Surface *speedBonusSurface = IMG_Load("./assets/images/speed_bonus.png");
-    if (!speedBonusSurface)
+    SDL_Surface *bombMalusSurface = IMG_Load("./assets/images/bomb_malus.jpg");
+    if (!bombMalusSurface)
     {
         fprintf(stderr, SDL_GetError());
     }
     else
     {
-        textures->speed_bonus = SDL_CreateTextureFromSurface(sdl->renderer, speedBonusSurface);
-        SDL_FreeSurface(speedBonusSurface);
-        if (!textures->speed_bonus)
+        textures->bomb_malus = SDL_CreateTextureFromSurface(sdl->renderer, bombMalusSurface);
+        SDL_FreeSurface(bombMalusSurface);
+        if (!textures->bomb_malus)
+        {
+            fprintf(stderr, SDL_GetError());
+        }
+    }
+
+    SDL_Surface *rangeBonusSurface = IMG_Load("./assets/images/range_bonus.jpg");
+    if (!rangeBonusSurface)
+    {
+        fprintf(stderr, SDL_GetError());
+    }
+    else
+    {
+        textures->range_bonus = SDL_CreateTextureFromSurface(sdl->renderer, rangeBonusSurface);
+        SDL_FreeSurface(rangeBonusSurface);
+        if (!textures->range_bonus)
+        {
+            fprintf(stderr, SDL_GetError());
+        }
+    }
+
+    SDL_Surface *rangeMalusSurface = IMG_Load("./assets/images/range_malus.jpg");
+    if (!rangeMalusSurface)
+    {
+        fprintf(stderr, SDL_GetError());
+    }
+    else
+    {
+        textures->range_malus = SDL_CreateTextureFromSurface(sdl->renderer, rangeMalusSurface);
+        SDL_FreeSurface(rangeMalusSurface);
+        if (!textures->range_malus)
         {
             fprintf(stderr, SDL_GetError());
         }

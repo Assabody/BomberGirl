@@ -49,8 +49,6 @@
 #define RANGE_MALUS 4 // 001
 #define BOMB_NUMBER_BONUS 2 // 010
 #define BOMB_NUMBER_MALUS 6 // 011
-#define SPEED_BONUS 1 // 100
-#define SPEED_MALUS 5 // 101
 
 typedef struct server_s
 {

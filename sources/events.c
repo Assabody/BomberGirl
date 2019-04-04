@@ -12,7 +12,9 @@ void checkEvents(game_t *game) {
         if (event.type == SDL_KEYDOWN) {
             switch (event.key.keysym.sym) {
                 case SDLK_SPACE:
-                    game->request.command = 1;
+                    if (game->player[game->player_key].alive) {
+                        game->request.command = 1;
+                    }
                     break;
                 case SDLK_ESCAPE:
                     game->running = 0;
@@ -28,7 +30,9 @@ void checkEvents(game_t *game) {
                 case SDLK_DOWN:
                 case SDLK_LEFT:
                 case SDLK_RIGHT:
-                    movePlayer(game, event.key.keysym.sym);
+                    if (game->player[game->player_key].alive) {
+                        movePlayer(game, event.key.keysym.sym);
+                    }
                     break;
                 default:
                     fprintf(stderr, "Touche inconnue\n");

@@ -31,9 +31,9 @@ void mapInit(game_infos_t *game_infos)
       else
       {
         set_breakable(&game_infos->map[y][x].cell);
-        if (randomNumber(1, 3) == 3)
+        if (randomNumber(1, 5) == 5)
         {
-          switch (randomNumber(1, 6)) {
+          switch (randomNumber(1, 4)) {
             case 1:
               set_bonus(&game_infos->map[y][x].cell, RANGE_BONUS);
               break;
@@ -45,12 +45,6 @@ void mapInit(game_infos_t *game_infos)
               break;
             case 4:
               set_bonus(&game_infos->map[y][x].cell, BOMB_NUMBER_MALUS);
-              break;
-            case 5:
-              set_bonus(&game_infos->map[y][x].cell, SPEED_BONUS);
-              break;
-            case 6:
-              set_bonus(&game_infos->map[y][x].cell, SPEED_MALUS);
               break;
             }
         }

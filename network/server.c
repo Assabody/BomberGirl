@@ -43,7 +43,6 @@ void processRequest(game_infos_t *game, t_client_request request)
         );
         // Pose bomb
         if (request.command) {
-            printf("plant bomb at x%d y%d\n", request.x_pos, request.y_pos);
             plantBomb(game, player_key, request.x_pos, request.y_pos);
         } 
         else if (is_bonus(game->map[request.y_pos][request.x_pos].cell)) {
@@ -51,7 +50,6 @@ void processRequest(game_infos_t *game, t_client_request request)
             case BOMB_NUMBER_BONUS:
                 game->players[player_key].bombs_capacity++;
                 game->players[player_key].bombs_left++;
-                printf("New player [%d] capacity: %d bombs\n", player_key, game->players[player_key].bombs_capacity);
                 break;
             case BOMB_NUMBER_MALUS:
                 if (game->players[player_key].bombs_capacity > 1) {
@@ -65,20 +63,6 @@ void processRequest(game_infos_t *game, t_client_request request)
             case RANGE_MALUS:
                 if (game->players[player_key].bomb_radius > 1) {
                     game->players[player_key].bomb_radius--;
-                }
-                break;
-            case SPEED_BONUS:
-                if (game->players[player_key].current_speed + SPEED / 2 <= game->players[player_key].max_speed) {
-                    game->players[player_key].current_speed += SPEED / 2;
-                } else {
-                    game->players[player_key].current_speed = game->players[player_key].max_speed;
-                }
-                break;
-            case SPEED_MALUS:
-                if (game->players[player_key].current_speed - SPEED / 2 >= SPEED / 2) {
-                    game->players[player_key].current_speed -= SPEED / 2;
-                } else {
-                    game->players[player_key].current_speed = SPEED / 2;
                 }
                 break;
             }
@@ -285,8 +269,6 @@ void explodeBombRadius(game_infos_t *game_infos, int x, int y)
         int bomb_planter = (int)game_infos->bombs[y][x].player;
         if (game_infos->players[bomb_planter].bombs_left < game_infos->players[bomb_planter].bombs_capacity)
         {
-            printf("player [%d] gained one more bomb\n", bomb_planter);
-
             game_infos->players[bomb_planter].bombs_left++;
         }
         game_infos->bombs[y][x].bomb_posed = 0;
@@ -306,21 +288,17 @@ void explodeBombRadius(game_infos_t *game_infos, int x, int y)
         switch (get_cell_type(game_infos->map[y][x_max].cell))
         {
         case MAP_WALL_BREAKABLE:
-            //break wall and set the cell on flame
             explode_cell(&game_infos->map[y][x_max]);
             bombCheckPlayerRadius(game_infos, x_max, y);
-            printf("explosion spreading to x%d y%d: wall\n", x_max, y);
             stop = 1;
             break;
         case MAP_WALL_UNBREAKABLE:
             stop = 1;
             break;
         case MAP_GRASS:
-            //set the cell on flame
             explode_cell(&game_infos->map[y][x]);
             explode_cell(&game_infos->map[y][x_max]);
             bombCheckPlayerRadius(game_infos, x_max, y);
-            printf("explosion spreading to x%d y%d: grass\n", x_max, y);
             break;
         }
     }
@@ -341,7 +319,6 @@ void explodeBombRadius(game_infos_t *game_infos, int x, int y)
         case MAP_WALL_BREAKABLE:
             explode_cell(&game_infos->map[y][x_min]);
             bombCheckPlayerRadius(game_infos, x_min, y);
-            printf("explosion spreading to x%d y%d: wall\n", x_min, y);
             stop = 1;
             break;
         case MAP_WALL_UNBREAKABLE:
@@ -351,7 +328,6 @@ void explodeBombRadius(game_infos_t *game_infos, int x, int y)
             explode_cell(&game_infos->map[y][x]);
             explode_cell(&game_infos->map[y][x_min]);
             bombCheckPlayerRadius(game_infos, x_min, y);
-            printf("explosion spreading to x%d y%d: grass\n", x_min, y);
             break;
         }
     }
@@ -372,7 +348,6 @@ void explodeBombRadius(game_infos_t *game_infos, int x, int y)
         case MAP_WALL_BREAKABLE:
             explode_cell(&game_infos->map[y_max][x]);
             bombCheckPlayerRadius(game_infos, x, y_max);
-            printf("explosion spreading to x%d y%d: wall\n", x, y_max);
             stop = 1;
             break;
         case MAP_WALL_UNBREAKABLE:
@@ -382,7 +357,6 @@ void explodeBombRadius(game_infos_t *game_infos, int x, int y)
             explode_cell(&game_infos->map[y][x]);
             explode_cell(&game_infos->map[y_max][x]);
             bombCheckPlayerRadius(game_infos, x, y_max);
-            printf("explosion spreading to x%d y%d: grass\n", x, y_max);
             break;
         }
     }
@@ -403,7 +377,6 @@ void explodeBombRadius(game_infos_t *game_infos, int x, int y)
         case MAP_WALL_BREAKABLE:
             explode_cell(&game_infos->map[y_min][x]);
             bombCheckPlayerRadius(game_infos, x, y_min);
-            printf("explosion spreading to x%d y%d: wall\n", x, y_min);
             stop = 1;
             break;
         case MAP_WALL_UNBREAKABLE:
@@ -413,7 +386,6 @@ void explodeBombRadius(game_infos_t *game_infos, int x, int y)
             explode_cell(&game_infos->map[y][x]);
             explode_cell(&game_infos->map[y_min][x]);
             bombCheckPlayerRadius(game_infos, x, y_min);
-            printf("explosion spreading to x%d y%d: grass\n", x, y_min);
             break;
         }
     }
@@ -437,7 +409,6 @@ void bombCheckPlayerRadius(game_infos_t *game_infos, int x, int y)
             {
                 game_infos->players[i].life -= DAMAGES;
             }
-            printf("Player [%d] took %d damages. life before: %d, life after: %d\n", i, DAMAGES, game_infos->players[i].life + DAMAGES, game_infos->players[i].life);
         }
     }
 }

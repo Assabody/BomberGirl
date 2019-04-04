@@ -60,6 +60,7 @@ void movePlayer(game_t *game, SDL_Keycode direction) {
     }
 
     game->request.command = 0;
+    game->request.dir = game->player[game->player_key].current_dir;
     game->request.speed = game->player[game->player_key].current_speed;
     game->request.magic = 1;
 }

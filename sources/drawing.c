@@ -41,8 +41,14 @@ void drawMap(game_t *game)
                 case BOMB_NUMBER_BONUS:
                     SDL_RenderCopy(game->sdl->renderer, game->textures->bomb_bonus, NULL, &position);
                     break;
-                case SPEED_BONUS:
-                    SDL_RenderCopy(game->sdl->renderer, game->textures->speed_bonus, NULL, &position);
+                case BOMB_NUMBER_MALUS:
+                    SDL_RenderCopy(game->sdl->renderer, game->textures->bomb_malus, NULL, &position);
+                    break;
+                case RANGE_BONUS:
+                    SDL_RenderCopy(game->sdl->renderer, game->textures->range_bonus, NULL, &position);
+                    break;
+                case RANGE_MALUS:
+                    SDL_RenderCopy(game->sdl->renderer, game->textures->range_malus, NULL, &position);
                     break;
                 }
             }
@@ -123,10 +129,23 @@ void drawHUD(game_t *game)
     SDL_Rect pos;
     SDL_Color color = {255, 255, 0, 255};
     char message[7];
+    int alives = 0;
+    if (!game->player[game->player_key].alive) {
+        surface = TTF_RenderText_Solid(game->sdl->font, "You Lost", color);
+        texture = SDL_CreateTextureFromSurface(game->sdl->renderer, surface);
+        pos.w = surface->w;
+        pos.h = surface->h;
+        pos.x = SCREEN_SIZE_X / 2 - pos.w;
+        pos.y = SCREEN_SIZE_Y / 2 - pos.h;
+        SDL_FreeSurface(surface);
+        SDL_RenderCopy(game->sdl->renderer, texture, NULL, &pos);
+        SDL_DestroyTexture(texture);
+    }
     for (int i = 0; i < MAX_PLAYERS; i++)
     {
         if (game->player[i].alive)
         {
+            alives++;
             sprintf(message, "PV %d", game->player[i].life);
             surface = TTF_RenderText_Solid(game->sdl->font, message, color);
             texture = SDL_CreateTextureFromSurface(game->sdl->renderer, surface);
@@ -155,5 +174,16 @@ void drawHUD(game_t *game)
             SDL_RenderCopy(game->sdl->renderer, texture, NULL, &pos);
             SDL_DestroyTexture(texture);
         }
+    }
+    if (alives == 1 && game->player[game->player_key].alive) {
+        surface = TTF_RenderText_Solid(game->sdl->font, "You Won", color);
+        texture = SDL_CreateTextureFromSurface(game->sdl->renderer, surface);
+        pos.w = surface->w;
+        pos.h = surface->h;
+        pos.x = SCREEN_SIZE_X / 2 - pos.w;
+        pos.y = SCREEN_SIZE_Y / 2 - pos.h;
+        SDL_FreeSurface(surface);
+        SDL_RenderCopy(game->sdl->renderer, texture, NULL, &pos);
+        SDL_DestroyTexture(texture);
     }
 }
