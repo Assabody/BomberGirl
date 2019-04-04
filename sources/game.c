@@ -23,6 +23,7 @@ int drawGame(game_t *game)
         SDL_RenderClear(game->sdl->renderer);
         drawMap(game);
         drawPlayer(game);
+	drawHUD(game);
         SDL_RenderPresent(game->sdl->renderer);
         frameTime = SDL_GetTicks() - frameStart;
         if (TICKS_PER_FRAME > frameTime)

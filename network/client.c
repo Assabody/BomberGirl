@@ -32,6 +32,7 @@ int getServerInfo(int socket, game_t *game)
                 game->player[i].max_speed = game_infos.players[i].max_speed;
                 game->player[i].bombs_left = game_infos.players[i].bombs_left;
                 game->player[i].bombs_capacity = game_infos.players[i].bombs_capacity;
+		game->player[i].life = game_infos.players[i].life;
             }
             return 1;
         }

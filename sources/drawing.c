@@ -100,3 +100,30 @@ void disp_text(SDL_Renderer *renderer, char *text, TTF_Font *font, int x, int y)
     SDL_RenderCopy(renderer, texture, NULL, &pos);
     SDL_DestroyTexture(texture);
 }
+
+void drawHUD(game_t *game)
+{
+    SDL_Surface *surface;
+    SDL_Texture *texture;
+    SDL_Rect pos;
+    SDL_Color color = {255, 255, 0, 255};
+    int x = 0;
+    int y = 5;
+    char message[10];
+    for (int i = 0; i < MAX_PLAYERS; i++)
+      {
+	if (game->player[i].alive)
+	  {
+	    sprintf(message, "PV J%d: %d", i+1, game->player[i].life);
+	    surface = TTF_RenderText_Solid(game->sdl->font, message, color);
+	    texture = SDL_CreateTextureFromSurface(game->sdl->renderer, surface);
+	    pos.w = surface->w;
+	    pos.h = surface->h;
+	    pos.x = x ;
+	    pos.y = y;
+	    SDL_FreeSurface(surface);
+	    SDL_RenderCopy(game->sdl->renderer, texture, NULL, &pos);
+	  }
+	x += 70;
+      }
+}
