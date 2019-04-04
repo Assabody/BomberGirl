@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <string.h>
 #include <time.h>
 #include <pthread.h>
 #include <signal.h>
@@ -153,6 +154,7 @@ int drawGame(game_t *);
 
 void disp_text(SDL_Renderer *, char *, TTF_Font *, int, int);
 
+void drawHUD(game_t *);
 
 /**
  * Player.c
