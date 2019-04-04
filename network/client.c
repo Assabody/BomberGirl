@@ -24,17 +24,14 @@ int getServerInfo(int socket, game_t *game)
                 x++;
             }
             for (int i = 0; i < MAX_PLAYERS; i++) {
-                if (game_infos.players[i].alive) {
-                    game->player[i].x_pos = game_infos.players[i].x_pos;
-                    game->player[i].y_pos = game_infos.players[i].y_pos;
-                    game->player[i].alive = game_infos.players[i].alive;
-                    game->player[i].current_dir = game_infos.players[i].current_dir;
-                    game->player[i].current_speed = game_infos.players[i].current_speed;
-                    game->player[i].max_speed = game_infos.players[i].max_speed;
-                    game->player[i].bombs_left = game_infos.players[i].bombs_left;
-                    game->player[i].bombs_capacity = game_infos.players[i].bombs_capacity;
-                }
-
+                game->player[i].x_pos = game_infos.players[i].x_pos;
+                game->player[i].y_pos = game_infos.players[i].y_pos;
+                game->player[i].alive = game_infos.players[i].alive;
+                game->player[i].current_dir = game_infos.players[i].current_dir;
+                game->player[i].current_speed = game_infos.players[i].current_speed;
+                game->player[i].max_speed = game_infos.players[i].max_speed;
+                game->player[i].bombs_left = game_infos.players[i].bombs_left;
+                game->player[i].bombs_capacity = game_infos.players[i].bombs_capacity;
             }
             return 1;
         }

@@ -61,7 +61,7 @@ void drawBombs(game_t *game, SDL_Rect position) {
         bomb_clip = 1;
     } else if (game->map[y][x].duration > 0 && game->map[y][x].duration < 5) {
         bomb_clip = 3;
-    } 
+    }
     game->map[y][x].duration--;
     renderTexture(
         game->textures->bomb,
