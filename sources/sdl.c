@@ -103,7 +103,7 @@ textures_t *initTextures(sdl_t *sdl) {
     if (!textures) {
         return NULL;
     }
-    SDL_Surface *menuSurface = IMG_Load("./assets/images/menuBackground.png");
+    SDL_Surface *menuSurface = IMG_Load("./assets/images/menuBackground2.png");
     if (!menuSurface) {
         fprintf(stderr, SDL_GetError());
     } else {
@@ -113,7 +113,6 @@ textures_t *initTextures(sdl_t *sdl) {
             fprintf(stderr, SDL_GetError());
         }
     }
-
 
     SDL_Surface *grassSurface = IMG_Load("./assets/images/grass.jpg");
     if (!grassSurface) {

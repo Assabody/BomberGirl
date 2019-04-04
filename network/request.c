@@ -3,6 +3,7 @@
 
 int send_request(game_t *game) {
     game->request.magic = (game->player_key + 1) * 16;
+    game->request.dir = game->player[game->player_key].current_dir;
     game->request.checksum = game->request.dir + game->request.speed + game->request.command + game->request.x_pos + game->request.y_pos + game->request.magic;
 
     if (send(game->client_sock, &game->request, sizeof(game->request), MSG_NOSIGNAL)) {

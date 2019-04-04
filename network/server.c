@@ -379,6 +379,7 @@ void explodeBombRadius(game_infos_t *game_infos, int x, int y)
             stop = 1;
             break;
         case MAP_GRASS:
+            explode_cell(&game_infos->map[y][x]);
             explode_cell(&game_infos->map[y_max][x]);
             bombCheckPlayerRadius(game_infos, x, y_max);
             printf("explosion spreading to x%d y%d: grass\n", x, y_max);

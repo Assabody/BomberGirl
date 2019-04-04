@@ -18,6 +18,11 @@ void checkEvents(game_t *game) {
                     game->running = 0;
                     printf("Vous quittez le jeu\n");
                     close(game->client_sock);
+                    gameDestroy(game);
+                    if (game->player_key == 0) {
+                        stopServer(game);
+                    }
+                    exit(0);
                     break;
                 case SDLK_UP:
                 case SDLK_DOWN:
