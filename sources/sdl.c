@@ -114,7 +114,6 @@ textures_t *initTextures(sdl_t *sdl) {
         }
     }
 
-
     SDL_Surface *grassSurface = IMG_Load("./assets/images/grass.jpg");
     if (!grassSurface) {
         fprintf(stderr, SDL_GetError());
