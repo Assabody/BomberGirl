@@ -228,7 +228,7 @@ int waitingLobby(game_t *game, int host)
                 }
                 else if (event.key.keysym.scancode == SDL_SCANCODE_RETURN || event.key.keysym.scancode == SDL_SCANCODE_BACKSPACE)
                 {
-                    if (host == 1)
+                    if (host == 1 && players > 1)
                     {
                         char query[4] = {'p', 'l', 'a', 'y'};
                         send(game->client_sock, &query, sizeof(query), MSG_NOSIGNAL);

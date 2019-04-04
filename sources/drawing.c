@@ -96,7 +96,7 @@ void drawPlayer(game_t *game)
         if (game->player[i].alive)
         {
             renderTexture(
-                game->textures->player,
+                game->player_key == i ? game->textures->player : game->textures->enemy_player,
                 game->sdl,
                 game->player[i].x_pos,
                 game->player[i].y_pos - 20,

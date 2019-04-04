@@ -22,6 +22,7 @@ typedef struct sdl_s {
 typedef struct textures_s {
     SDL_Texture *menu;
     SDL_Texture *player;
+    SDL_Texture *enemy_player;
     SDL_Texture *grass;
     SDL_Texture *stone;
     SDL_Texture *brick;

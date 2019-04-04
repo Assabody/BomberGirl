@@ -56,3 +56,7 @@ bomberman
 server
 *~
 *.o
+**/._.DS_Store
+**/#*#
+.vscode
+.idea

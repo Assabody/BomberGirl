@@ -76,6 +76,8 @@ void clearTextures(textures_t *textures) {
     if (textures) {
         if (textures->player)
             SDL_DestroyTexture(textures->player);
+        if (textures->enemy_player)
+            SDL_DestroyTexture(textures->enemy_player);
         if (textures->grass)
             SDL_DestroyTexture(textures->grass);
         if (textures->stone)
@@ -107,7 +109,7 @@ textures_t *initTextures(sdl_t *sdl) {
     if (!textures) {
         return NULL;
     }
-    SDL_Surface *menuSurface = IMG_Load("./assets/images/menuBackground2.png");
+    SDL_Surface *menuSurface = IMG_Load("./assets/images/background.png");
     if (!menuSurface) {
         fprintf(stderr, SDL_GetError());
     } else {
@@ -162,7 +164,7 @@ textures_t *initTextures(sdl_t *sdl) {
         }
     }
 
-    SDL_Surface *bombSurface = IMG_Load("./assets/images/bombeSpriteNew.png");
+    SDL_Surface *bombSurface = IMG_Load("./assets/images/bomb.png");
     if (!bombSurface) {
         fprintf(stderr, SDL_GetError());
     } else {
@@ -181,7 +183,7 @@ textures_t *initTextures(sdl_t *sdl) {
         }
     }
 
-    SDL_Surface *playerSurface = IMG_Load("./assets/images/sprite.png");
+    SDL_Surface *playerSurface = IMG_Load("./assets/images/player.png");
     int iW = 40, iH = 60;
     if (!playerSurface) {
         fprintf(stderr, SDL_GetError());
@@ -197,6 +199,21 @@ textures_t *initTextures(sdl_t *sdl) {
             textures->player_clips[i].h = iH;
         }
         SDL_FreeSurface(playerSurface);
+    }
+
+    SDL_Surface *enemyPlayerSurface = IMG_Load("./assets/images/enemy_player.png");
+    if (!enemyPlayerSurface)
+    {
+        fprintf(stderr, SDL_GetError());
+    }
+    else
+    {
+        textures->enemy_player = SDL_CreateTextureFromSurface(sdl->renderer, enemyPlayerSurface);
+        SDL_FreeSurface(enemyPlayerSurface);
+        if (!textures->enemy_player)
+        {
+            fprintf(stderr, SDL_GetError());
+        }
     }
 
     SDL_Surface *bombBonusSurface = IMG_Load("./assets/images/bomb_bonus.jpg");
